@@ -11,9 +11,12 @@ import java.util.List;
 public class Project implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
     String name;
+    
+    Integer probability;
 
     @ManyToOne
     Company company;
@@ -32,6 +35,14 @@ public class Project implements Serializable {
 
     public void setStep(Step step) {
         this.step = step;
+    }
+
+    public Integer getProbability() {
+        return probability;
+    }
+
+    public void setProbability(Integer probability) {
+        this.probability = probability;
     }
     
     public String getName() {

@@ -6,6 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 /**
  * Created by alacambra on 27/04/15.
@@ -14,6 +16,7 @@ import java.util.List;
 public class Resource implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
     @ManyToOne

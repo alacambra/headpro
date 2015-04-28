@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 /**
  * Created by alacambra on 27/04/15.
@@ -14,10 +16,10 @@ import java.util.List;
 public class Company implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
-    
+
     String name;
-    Integer probability;
     Calendar start;
     Calendar end;
     Integer abscence;
@@ -30,7 +32,6 @@ public class Company implements Serializable {
 
     @OneToMany
     List<Resource> resources;
-    
 
     public Integer getId() {
         return id;
@@ -39,21 +40,13 @@ public class Company implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-    
-      public String getName() {
+
+    public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getProbability() {
-        return probability;
-    }
-
-    public void setProbability(Integer probability) {
-        this.probability = probability;
     }
 
     public Calendar getStart() {
