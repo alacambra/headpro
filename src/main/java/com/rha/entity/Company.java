@@ -1,7 +1,6 @@
 package com.rha.entity;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -20,9 +19,7 @@ public class Company implements Serializable {
     Integer id;
 
     String name;
-    Calendar start;
-    Calendar end;
-    Integer abscence;
+    
 
     @OneToMany
     List<Division> divisions;
@@ -47,30 +44,6 @@ public class Company implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Calendar getStart() {
-        return start;
-    }
-
-    public void setStart(Calendar start) {
-        this.start = start;
-    }
-
-    public Calendar getEnd() {
-        return end;
-    }
-
-    public void setEnd(Calendar end) {
-        this.end = end;
-    }
-
-    public Integer getAbscence() {
-        return abscence;
-    }
-
-    public void setAbscence(Integer abscence) {
-        this.abscence = abscence;
     }
 
     public List<Division> getDivisions() {

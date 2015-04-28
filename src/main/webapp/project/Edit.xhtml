@@ -18,10 +18,18 @@
                         <p:inputText id="name" value="#{projectController.selected.name}" title="#{bundle.EditProjectTitle_name}" />
                         <p:outputLabel value="#{bundle.EditProjectLabel_id}" for="id" />
                         <p:inputText id="id" value="#{projectController.selected.id}" title="#{bundle.EditProjectTitle_id}" />
+                        <p:outputLabel value="#{bundle.EditCompanyLabel_probability}" for="probability" />
+                        <p:inputText id="probability" value="#{projectController.selected.probability}" title="#{bundle.EditCompanyTitle_probability}" />
+                        <p:outputLabel value="#{bundle.EditCompanyLabel_start}" for="start" />
+                        <p:inputText id="start" value="#{projectController.selected.start}" title="#{bundle.EditCompanyTitle_start}" />
+                        <p:outputLabel value="#{bundle.EditCompanyLabel_end}" for="end" />
+                        <p:inputText id="end" value="#{projectController.selected.end}" title="#{bundle.EditCompanyTitle_end}" />
+                        <p:outputLabel value="#{bundle.EditCompanyLabel_abscence}" for="abscence" />
+                        <p:inputText id="abscence" value="#{projectController.selected.abscence}" title="#{bundle.EditCompanyTitle_abscence}" />
                         <p:outputLabel value="#{bundle.EditProjectLabel_company}" for="company" />
                         <p:selectOneMenu id="company" value="#{projectController.selected.company}" >
                             <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
-                            <f:selectItems value="#{companyController.itemsAvailableSelectOne}"
+                            <f:selectItems value="#{projectController.itemsAvailableSelectOne}"
                                            var="companyItem"
                                            itemValue="#{companyItem}"/>
                         </p:selectOneMenu>

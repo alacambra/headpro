@@ -12,18 +12,8 @@
             <h:form id="CompanyCreateForm">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{companyController.selected != null}">
-                        <p:outputLabel value="#{bundle.CreateCompanyLabel_id}" for="id" />
-                        <p:inputText id="id" value="#{companyController.selected.id}" title="#{bundle.CreateCompanyTitle_id}" />
                         <p:outputLabel value="#{bundle.CreateCompanyLabel_name}" for="name" />
                         <p:inputText id="name" value="#{companyController.selected.name}" title="#{bundle.CreateCompanyTitle_name}" />
-                        <p:outputLabel value="#{bundle.CreateCompanyLabel_probability}" for="probability" />
-                        <p:inputText id="probability" value="#{companyController.selected.probability}" title="#{bundle.CreateCompanyTitle_probability}" />
-                        <p:outputLabel value="#{bundle.CreateCompanyLabel_start}" for="start" />
-                        <p:inputText id="start" value="#{companyController.selected.start}" title="#{bundle.CreateCompanyTitle_start}" />
-                        <p:outputLabel value="#{bundle.CreateCompanyLabel_end}" for="end" />
-                        <p:inputText id="end" value="#{companyController.selected.end}" title="#{bundle.CreateCompanyTitle_end}" />
-                        <p:outputLabel value="#{bundle.CreateCompanyLabel_abscence}" for="abscence" />
-                        <p:inputText id="abscence" value="#{companyController.selected.abscence}" title="#{bundle.CreateCompanyTitle_abscence}" />
                     </p:panelGrid>
                     <p:commandButton actionListener="#{companyController.create}" value="#{bundle.Save}" update="display,:CompanyListForm:datalist,:growl" oncomplete="handleSubmit(args,'CompanyCreateDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}" onclick="CompanyCreateDialog.hide()"/>

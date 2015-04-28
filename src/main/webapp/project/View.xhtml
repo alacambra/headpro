@@ -20,6 +20,13 @@
                         <h:outputText value="#{projectController.selected.id}" title="#{bundle.ViewProjectTitle_id}"/>
                         <h:outputText value="#{bundle.ViewProjectLabel_company}"/>
                         <h:outputText value="#{projectController.selected.company}" title="#{bundle.ViewProjectTitle_company}"/>
+                        <h:outputText value="#{projectController.selected.probability}" title="#{bundle.ViewCompanyTitle_probability}"/>
+                        <h:outputText value="#{bundle.ViewCompanyLabel_start}"/>
+                        <h:outputText value="#{projectController.selected.start}" title="#{bundle.ViewCompanyTitle_start}"/>
+                        <h:outputText value="#{bundle.ViewCompanyLabel_end}"/>
+                        <h:outputText value="#{projectController.selected.end}" title="#{bundle.ViewCompanyTitle_end}"/>
+                        <h:outputText value="#{bundle.ViewCompanyLabel_abscence}"/>
+                        <h:outputText value="#{projectController.selected.abscence}" title="#{bundle.ViewCompanyTitle_abscence}"/>
                     </p:panelGrid>
                     <p:commandButton value="#{bundle.Close}" onclick="ProjectViewDialog.hide()"/>
                 </h:panelGroup>

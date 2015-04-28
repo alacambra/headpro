@@ -16,14 +16,6 @@
                         <p:inputText id="id" value="#{companyController.selected.id}" title="#{bundle.EditCompanyTitle_id}" />
                         <p:outputLabel value="#{bundle.EditCompanyLabel_name}" for="name" />
                         <p:inputText id="name" value="#{companyController.selected.name}" title="#{bundle.EditCompanyTitle_name}" />
-                        <p:outputLabel value="#{bundle.EditCompanyLabel_probability}" for="probability" />
-                        <p:inputText id="probability" value="#{companyController.selected.probability}" title="#{bundle.EditCompanyTitle_probability}" />
-                        <p:outputLabel value="#{bundle.EditCompanyLabel_start}" for="start" />
-                        <p:inputText id="start" value="#{companyController.selected.start}" title="#{bundle.EditCompanyTitle_start}" />
-                        <p:outputLabel value="#{bundle.EditCompanyLabel_end}" for="end" />
-                        <p:inputText id="end" value="#{companyController.selected.end}" title="#{bundle.EditCompanyTitle_end}" />
-                        <p:outputLabel value="#{bundle.EditCompanyLabel_abscence}" for="abscence" />
-                        <p:inputText id="abscence" value="#{companyController.selected.abscence}" title="#{bundle.EditCompanyTitle_abscence}" />
                     </p:panelGrid>
                     <p:commandButton actionListener="#{companyController.update}" value="#{bundle.Save}" update="display,:CompanyListForm:datalist,:growl" oncomplete="handleSubmit(args, 'CompanyEditDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}" onclick="CompanyEditDialog.hide()"/>

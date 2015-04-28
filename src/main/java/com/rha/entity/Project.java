@@ -1,6 +1,7 @@
 package com.rha.entity;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import javax.persistence.*;
 import java.util.List;
 
@@ -17,6 +18,14 @@ public class Project implements Serializable {
     String name;
     
     Integer probability;
+    
+    @Temporal(TemporalType.DATE)
+    Calendar startDate;
+    
+    @Temporal(TemporalType.DATE)
+    Calendar endDate;
+    
+    Integer abscence;
 
     @ManyToOne
     Company company;
@@ -84,4 +93,31 @@ public class Project implements Serializable {
     public void setResources(List<Resource> resources) {
         this.resources = resources;
     }
+
+    public Calendar getStart() {
+        return startDate;
+    }
+
+    public void setStart(Calendar start) {
+        this.startDate = start;
+    }
+
+    public Calendar getEnd() {
+        return endDate;
+    }
+
+    public void setEnd(Calendar end) {
+        this.endDate = end;
+    }
+
+    public Integer getAbscence() {
+        return abscence;
+    }
+
+    public void setAbscence(Integer abscence) {
+        this.abscence = abscence;
+    }
+    
+    
+    
 }

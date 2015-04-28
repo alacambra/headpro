@@ -47,6 +47,30 @@
                         </p:column>
                         <p:column>
                             <f:facet name="header">
+                                <h:outputText value="#{bundle.ListCompanyTitle_probability}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.probability}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListCompanyTitle_start}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.start}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListCompanyTitle_end}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.end}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListCompanyTitle_abscence}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.abscence}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
                                 <h:outputText value="#{bundle.ListProjectTitle_company}"/>
                             </f:facet>
                             <h:outputText value="#{item.company}"/>
