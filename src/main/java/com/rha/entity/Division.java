@@ -4,7 +4,6 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,12 +21,6 @@ public class Division implements Serializable {
 
     @ManyToMany
     List<Project> projects;
-
-    @ManyToMany
-    List<Resource> resources;
-
-    @ManyToOne
-    Company company;
 
     public Integer getId() {
         return id;
@@ -51,21 +44,5 @@ public class Division implements Serializable {
 
     public void setProjects(List<Project> projects) {
         this.projects = projects;
-    }
-
-    public List<Resource> getResources() {
-        return resources;
-    }
-
-    public void setResources(List<Resource> resources) {
-        this.resources = resources;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
     }
 }
