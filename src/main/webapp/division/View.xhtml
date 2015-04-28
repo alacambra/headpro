@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="DivisionViewDlg" widgetVar="DivisionViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewDivisionTitle}">
+            <h:form id="DivisionViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{divisionController.selected != null}">
+                        <h:outputText value="#{bundle.ViewDivisionLabel_id}"/>
+                        <h:outputText value="#{divisionController.selected.id}" title="#{bundle.ViewDivisionTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewDivisionLabel_name}"/>
+                        <h:outputText value="#{divisionController.selected.name}" title="#{bundle.ViewDivisionTitle_name}"/>
+                        <h:outputText value="#{bundle.ViewDivisionLabel_company}"/>
+                        <h:outputText value="#{divisionController.selected.company}" title="#{bundle.ViewDivisionTitle_company}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="DivisionViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

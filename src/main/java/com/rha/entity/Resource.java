@@ -1,5 +1,6 @@
 package com.rha.entity;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -10,7 +11,7 @@ import java.util.List;
  * Created by alacambra on 27/04/15.
  */
 @Entity
-public class Resource {
+public class Resource implements Serializable {
 
     @Id
     Integer id;

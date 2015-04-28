@@ -1,5 +1,6 @@
 package com.rha.entity;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -10,10 +11,11 @@ import java.util.List;
  * Created by alacambra on 27/04/15.
  */
 @Entity
-public class Division {
+public class Division implements Serializable {
 
     @Id
     Integer id;
+    String name;
 
     @ManyToMany
     List<Project> projects;
@@ -30,6 +32,14 @@ public class Division {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Project> getProjects() {

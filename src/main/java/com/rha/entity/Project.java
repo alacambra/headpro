@@ -1,5 +1,6 @@
 package com.rha.entity;
 
+import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
 
@@ -7,10 +8,12 @@ import java.util.List;
  * Created by alacambra on 27/04/15.
  */
 @Entity
-public class Project {
+public class Project implements Serializable {
 
     @Id
     Integer id;
+
+    String name;
 
     @ManyToOne
     Company company;
@@ -20,6 +23,24 @@ public class Project {
 
     @ManyToMany
     List<Resource> resources;
+    
+    Step step;
+
+    public Step getStep() {
+        return step;
+    }
+
+    public void setStep(Step step) {
+        this.step = step;
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;

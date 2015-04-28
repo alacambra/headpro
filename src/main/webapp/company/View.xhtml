@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="CompanyViewDlg" widgetVar="CompanyViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewCompanyTitle}">
+            <h:form id="CompanyViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{companyController.selected != null}">
+                        <h:outputText value="#{bundle.ViewCompanyLabel_id}"/>
+                        <h:outputText value="#{companyController.selected.id}" title="#{bundle.ViewCompanyTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewCompanyLabel_name}"/>
+                        <h:outputText value="#{companyController.selected.name}" title="#{bundle.ViewCompanyTitle_name}"/>
+                        <h:outputText value="#{bundle.ViewCompanyLabel_probability}"/>
+                        <h:outputText value="#{companyController.selected.probability}" title="#{bundle.ViewCompanyTitle_probability}"/>
+                        <h:outputText value="#{bundle.ViewCompanyLabel_start}"/>
+                        <h:outputText value="#{companyController.selected.start}" title="#{bundle.ViewCompanyTitle_start}"/>
+                        <h:outputText value="#{bundle.ViewCompanyLabel_end}"/>
+                        <h:outputText value="#{companyController.selected.end}" title="#{bundle.ViewCompanyTitle_end}"/>
+                        <h:outputText value="#{bundle.ViewCompanyLabel_abscence}"/>
+                        <h:outputText value="#{companyController.selected.abscence}" title="#{bundle.ViewCompanyTitle_abscence}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="CompanyViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>
