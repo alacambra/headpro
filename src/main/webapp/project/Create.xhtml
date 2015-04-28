@@ -9,7 +9,7 @@
     <ui:composition>
 
         <p:dialog id="ProjectCreateDlg" widgetVar="ProjectCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateProjectTitle}">
-            <h:form id="ProjectCreateForm">
+            <h:form id="ProjectCreateForm" >
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{projectController.selected != null}">
                         <p:outputLabel value="#{bundle.CreateProjectLabel_step}" for="step" />
@@ -21,16 +21,16 @@
                         <p:outputLabel value="#{bundle.CreateCompanyLabel_probability}" for="probability" />
                         <p:inputText id="probability" value="#{projectController.selected.probability}" title="#{bundle.CreateCompanyTitle_probability}" />
                         <p:outputLabel value="#{bundle.CreateCompanyLabel_start}" for="start" />
-                        <p:inputText id="start" value="#{projectController.selected.start}" title="#{bundle.CreateCompanyTitle_start}" />
+                        <p:inputText id="start" value="#{projectController.selected.startDate}" title="#{bundle.CreateCompanyTitle_start}" />
                         <p:outputLabel value="#{bundle.CreateCompanyLabel_end}" for="end" />
-                        <p:inputText id="end" value="#{projectController.selected.end}" title="#{bundle.CreateCompanyTitle_end}" />
+                        <p:inputText id="end" value="#{projectController.selected.endDate}" title="#{bundle.CreateCompanyTitle_end}" />
                         <p:outputLabel value="#{bundle.CreateCompanyLabel_abscence}" for="abscence" />
                         <p:inputText id="abscence" value="#{projectController.selected.abscence}" title="#{bundle.CreateCompanyTitle_abscence}" />
                         <p:outputLabel value="#{bundle.CreateProjectLabel_company}" for="company" />
-                        <p:selectOneMenu id="company" value="#{projectController.selected.company}" >
+                        <p:selectOneMenu id="company" value="#{projectController.selected.company}" validator="projectValidator">
                             <f:selectItems value="#{companyController.itemsAvailableSelectOne}"
                                            var="companyItem"
-                                           itemValue="#{companyItem}"/>
+                                           itemValue="#{companyItem}" itemLabel="#{companyItem.name}"/>
                         </p:selectOneMenu>
                     </p:panelGrid>
                     <p:commandButton actionListener="#{projectController.create}" value="#{bundle.Save}" update="display,:ProjectListForm:datalist,:growl" oncomplete="handleSubmit(args,'ProjectCreateDialog');"/>

@@ -131,7 +131,10 @@ public class CompanyController implements Serializable {
             }
             CompanyController controller = (CompanyController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "companyController");
-            return controller.getCompany(getKey(value));
+            
+            Company c = controller.getCompany(getKey(value));
+            
+            return c;
         }
 
         java.lang.Integer getKey(String value) {
@@ -161,5 +164,5 @@ public class CompanyController implements Serializable {
         }
 
     }
-
+    
 }

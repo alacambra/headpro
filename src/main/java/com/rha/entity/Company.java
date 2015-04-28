@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
@@ -69,4 +70,25 @@ public class Company implements Serializable {
     public void setResources(List<Resource> resources) {
         this.resources = resources;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+    
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Company))
+            return false;
+        return Objects.equals(id, ((Company)obj).getId());
+    }
+    
+    
 }

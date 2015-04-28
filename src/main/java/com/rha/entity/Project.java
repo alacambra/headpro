@@ -94,19 +94,19 @@ public class Project implements Serializable {
         this.resources = resources;
     }
 
-    public Calendar getStart() {
+    public Calendar getStartDate() {
         return startDate;
     }
 
-    public void setStart(Calendar start) {
-        this.startDate = start;
+    public void setStartDate(Calendar startDate) {
+        this.startDate = startDate;
     }
 
-    public Calendar getEnd() {
+    public Calendar getEndDate() {
         return endDate;
     }
 
-    public void setEnd(Calendar end) {
+    public void setEndDate(Calendar end) {
         this.endDate = end;
     }
 
