@@ -4,9 +4,6 @@ import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
 
-/**
- * Created by alacambra on 27/04/15.
- */
 @Entity
 public class Project implements Serializable {
 
@@ -15,7 +12,7 @@ public class Project implements Serializable {
     Integer id;
 
     @OneToMany
-    @JoinTable(name = AvailableResource.class)
+    @JoinTable(name = "BookedResource")
     List<Division> divisions;
 
     String name;

@@ -7,6 +7,7 @@ import javax.persistence.ManyToMany;
 import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.JoinTable;
 
 /**
  * Created by alacambra on 27/04/15.
@@ -20,6 +21,7 @@ public class Division implements Serializable {
     String name;
 
     @ManyToMany
+    @JoinTable(name = "BookedResource")
     List<Project> projects;
 
     public Integer getId() {
