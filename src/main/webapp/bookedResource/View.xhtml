@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="BookedResourceViewDlg" widgetVar="BookedResourceViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewBookedResourceTitle}">
+            <h:form id="BookedResourceViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{bookedResourceController.selected != null}">
+                        <h:outputText value="#{bundle.ViewBookedResourceLabel_id}"/>
+                        <h:outputText value="#{bookedResourceController.selected.id}" title="#{bundle.ViewBookedResourceTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewBookedResourceLabel_division}"/>
+                        <h:outputText value="#{bookedResourceController.selected.division}" title="#{bundle.ViewBookedResourceTitle_division}"/>
+                        <h:outputText value="#{bundle.ViewBookedResourceLabel_project}"/>
+                        <h:outputText value="#{bookedResourceController.selected.project}" title="#{bundle.ViewBookedResourceTitle_project}"/>
+                        <h:outputText value="#{bundle.ViewBookedResourceLabel_startDate}"/>
+                        <h:outputText value="#{bookedResourceController.selected.startDate}" title="#{bundle.ViewBookedResourceTitle_startDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewBookedResourceLabel_endDate}"/>
+                        <h:outputText value="#{bookedResourceController.selected.endDate}" title="#{bundle.ViewBookedResourceTitle_endDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewBookedResourceLabel_booked}"/>
+                        <h:outputText value="#{bookedResourceController.selected.booked}" title="#{bundle.ViewBookedResourceTitle_booked}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="BookedResourceViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

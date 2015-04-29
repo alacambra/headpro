@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="AvailableResourceEditDlg" widgetVar="AvailableResourceEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditAvailableResourceTitle}">
+            <h:form id="AvailableResourceEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{availableResourceController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditAvailableResourceLabel_id}" for="id" />
+                        <p:inputText id="id" value="#{availableResourceController.selected.id}" title="#{bundle.EditAvailableResourceTitle_id}" />
+                        <p:outputLabel value="#{bundle.EditAvailableResourceLabel_division}" for="division" />
+                        <p:selectOneMenu id="division" value="#{availableResourceController.selected.division}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{divisionController.itemsAvailableSelectOne}"
+                                           var="divisionItem"
+                                           itemValue="#{divisionItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditAvailableResourceLabel_startDate}" for="startDate" />
+                        <p:calendar id="startDate" pattern="MM/dd/yyyy" value="#{availableResourceController.selected.startDate}" title="#{bundle.EditAvailableResourceTitle_startDate}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditAvailableResourceLabel_endDate}" for="endDate" />
+                        <p:calendar id="endDate" pattern="MM/dd/yyyy" value="#{availableResourceController.selected.endDate}" title="#{bundle.EditAvailableResourceTitle_endDate}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditAvailableResourceLabel_available}" for="available" />
+                        <p:inputText id="available" value="#{availableResourceController.selected.available}" title="#{bundle.EditAvailableResourceTitle_available}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{availableResourceController.update}" value="#{bundle.Save}" update="display,:AvailableResourceListForm:datalist,:growl" oncomplete="handleSubmit(args, 'AvailableResourceEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="AvailableResourceEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

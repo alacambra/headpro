@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="AvailableResourceViewDlg" widgetVar="AvailableResourceViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewAvailableResourceTitle}">
+            <h:form id="AvailableResourceViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{availableResourceController.selected != null}">
+                        <h:outputText value="#{bundle.ViewAvailableResourceLabel_id}"/>
+                        <h:outputText value="#{availableResourceController.selected.id}" title="#{bundle.ViewAvailableResourceTitle_id}"/>
+                        <h:outputText value="#{bundle.ViewAvailableResourceLabel_division}"/>
+                        <h:outputText value="#{availableResourceController.selected.division}" title="#{bundle.ViewAvailableResourceTitle_division}"/>
+                        <h:outputText value="#{bundle.ViewAvailableResourceLabel_startDate}"/>
+                        <h:outputText value="#{availableResourceController.selected.startDate}" title="#{bundle.ViewAvailableResourceTitle_startDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewAvailableResourceLabel_endDate}"/>
+                        <h:outputText value="#{availableResourceController.selected.endDate}" title="#{bundle.ViewAvailableResourceTitle_endDate}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewAvailableResourceLabel_available}"/>
+                        <h:outputText value="#{availableResourceController.selected.available}" title="#{bundle.ViewAvailableResourceTitle_available}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="AvailableResourceViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>
