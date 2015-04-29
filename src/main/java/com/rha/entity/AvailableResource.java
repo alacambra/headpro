@@ -7,8 +7,6 @@ package com.rha.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,27 +14,29 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  *
  * @author alacambra
  */
 @Entity
-public class AvailableResource implements Serializable{
-    
+public class AvailableResource implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
-    
+
     @ManyToOne
     Division division;
-    
+
     @Temporal(TemporalType.DATE)
     Date startDate;
-    
+
     @Temporal(TemporalType.DATE)
     Date endDate;
-    
+
     Integer available;
 
     public Integer getId() {
@@ -78,9 +78,22 @@ public class AvailableResource implements Serializable{
     public void setAvailable(Integer available) {
         this.available = available;
     }
-    
-    
-    
-    
-    
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof AvailableResource) {
+            final AvailableResource other = (AvailableResource) obj;
+            return new EqualsBuilder()
+                    .append(id, other.getId())
+                    .isEquals();
+        } else {
+            return false;
+        }
+    }
+
 }

@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  *
@@ -87,6 +89,21 @@ public class BookedResource implements Serializable {
         this.booked = booked;
     }
 
-    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BookedResource) {
+            final BookedResource other = (BookedResource) obj;
+            return new EqualsBuilder()
+                    .append(id, other.getId())
+                    .isEquals();
+        } else {
+            return false;
+        }
+    }
     
 }

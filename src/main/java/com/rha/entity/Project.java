@@ -3,6 +3,8 @@ package com.rha.entity;
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @Entity
 public class Project implements Serializable {
@@ -66,6 +68,23 @@ public class Project implements Serializable {
 
     public void setAbscence(Integer abscence) {
         this.abscence = abscence;
+    }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Project) {
+            final Project other = (Project) obj;
+            return new EqualsBuilder()
+                    .append(id, other.getId())
+                    .isEquals();
+        } else {
+            return false;
+        }
     }
 
 }

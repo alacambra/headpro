@@ -8,6 +8,8 @@ import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.JoinTable;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Created by alacambra on 27/04/15.
@@ -47,4 +49,22 @@ public class Division implements Serializable {
     public void setProjects(List<Project> projects) {
         this.projects = projects;
     }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Division) {
+            final Division other = (Division) obj;
+            return new EqualsBuilder()
+                    .append(id, other.getId())
+                    .isEquals();
+        } else {
+            return false;
+        }
+    }
+
 }
