@@ -3,17 +3,11 @@ package com.rha.entity;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import java.util.List;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.JoinTable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-/**
- * Created by alacambra on 27/04/15.
- */
 @Entity
 public class Division implements Serializable {
 
@@ -22,9 +16,9 @@ public class Division implements Serializable {
     Integer id;
     String name;
 
-    @ManyToMany
-    @JoinTable(name = "BookedResource")
-    List<Project> projects;
+//    @ManyToMany
+//    @JoinTable(name = "BOOKEDRESOURCE")
+//    List<Project> projects;
 
     public Integer getId() {
         return id;
@@ -42,13 +36,13 @@ public class Division implements Serializable {
         this.name = name;
     }
 
-    public List<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
-    }
+//    public List<Project> getProjects() {
+//        return projects;
+//    }
+//
+//    public void setProjects(List<Project> projects) {
+//        this.projects = projects;
+//    }
     
     @Override
     public int hashCode() {

@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class DivisionFacade extends AbstractFacade<Division> {
-    @PersistenceContext
+    @PersistenceContext(unitName = "rha")
     private EntityManager em;
 
     @Override

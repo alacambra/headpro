@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class ProjectFacade extends AbstractFacade<Project> {
-    @PersistenceContext
+    @PersistenceContext(unitName = "rha")
     private EntityManager em;
 
     @Override

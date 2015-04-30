@@ -13,9 +13,12 @@ public class Project implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
-    @OneToMany
-    @JoinTable(name = "BookedResource")
-    List<Division> divisions;
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "BOOKEDRESOURCE")
+//    List<Division> divisions;
+    
+    @OneToMany(mappedBy = "project")
+    List<BookedResource> bookedResources;
 
     String name;
     Integer probability;
@@ -54,13 +57,13 @@ public class Project implements Serializable {
         this.id = id;
     }
 
-    public List<Division> getDivisions() {
-        return divisions;
-    }
-
-    public void setDivisions(List<Division> divisions) {
-        this.divisions = divisions;
-    }
+//    public List<Division> getDivisions() {
+//        return divisions;
+//    }
+//
+//    public void setDivisions(List<Division> divisions) {
+//        this.divisions = divisions;
+//    }
 
     public Integer getAbscence() {
         return abscence;
