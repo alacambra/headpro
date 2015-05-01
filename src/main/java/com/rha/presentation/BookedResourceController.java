@@ -4,12 +4,16 @@ import com.rha.entity.BookedResource;
 import com.rha.presentation.util.JsfUtil;
 import com.rha.presentation.util.JsfUtil.PersistAction;
 import com.rha.boundary.BookedResourceFacade;
+import com.rha.entity.StepPeriod;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
@@ -80,7 +84,26 @@ public class BookedResourceController implements Serializable {
         }
         return items;
     }
-
+    
+    public List<StepPeriod> getPeriods(){
+        return getFacade().getPeriods();
+    }
+    
+    public List<BookingRow> getBookings(){
+        return getProjects().stream()
+                .map(s -> new BookingRow(s, getFacade().getPeriods().stream()
+                        .map(p -> new Random().nextInt(100))
+                        .collect(Collectors.toList()))
+                )
+                .collect(Collectors.toList());
+    }
+    
+    public List<String> getProjects(){
+        
+        return Arrays.asList("p1", "p2", "p3", "p4");
+        
+    }
+    
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();

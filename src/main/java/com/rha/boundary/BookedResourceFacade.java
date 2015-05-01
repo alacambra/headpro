@@ -5,7 +5,12 @@
  */
 package com.rha.boundary;
 
+import com.rha.control.CalendarGenerator;
 import com.rha.entity.BookedResource;
+import com.rha.entity.Step;
+import com.rha.entity.StepPeriod;
+import java.time.LocalDate;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,9 +21,10 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class BookedResourceFacade extends AbstractFacade<BookedResource> {
+    
     @PersistenceContext(unitName = "rha")
     private EntityManager em;
-
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;
@@ -28,4 +34,10 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         super(BookedResource.class);
     }
     
+    public List<StepPeriod> getPeriods(){
+        return new CalendarGenerator(
+                LocalDate.now(),
+                LocalDate.now().plusYears(1), Step.MONTH)
+                .getEntries();
+    }
 }
