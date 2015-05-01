@@ -13,10 +13,6 @@ public class Project implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "BOOKEDRESOURCE")
-//    List<Division> divisions;
-    
     @OneToMany(mappedBy = "project")
     List<BookedResource> bookedResources;
 
@@ -56,14 +52,6 @@ public class Project implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-
-//    public List<Division> getDivisions() {
-//        return divisions;
-//    }
-//
-//    public void setDivisions(List<Division> divisions) {
-//        this.divisions = divisions;
-//    }
 
     public Integer getAbscence() {
         return abscence;
