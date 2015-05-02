@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -22,7 +24,28 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author alacambra
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = BookedResource.bookedResourceByProjectAndDivision, 
+            query = "SELECT br FROM BookedResource br JOIN br.project p JOIN br.division d "
+                    + "WHERE p.id=:pid and d.id=:did"),
+    
+    @NamedQuery(name = BookedResource.bookedTotalProjectResourcesByDivision, 
+            query = "SELECT sum(br.booked) FROM BookedResource br JOIN br.division d "
+                    + "WHERE d.id=:did group by br.position order by br.position"),
+        
+        @NamedQuery(name = BookedResource.bookedProjectResourcesByDivision, 
+            query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did")
+})
 public class BookedResource implements Serializable, Comparable<BookedResource> {
+    
+    public static final String bookedResourceByProjectAndDivision = 
+            "com.rha.entity.BookedResource.bookedResourceByProjectAndDivision";
+    
+    public static final String bookedTotalProjectResourcesByDivision = 
+            "com.rha.entity.BookedResource.bookedResourceByDivision";
+    
+    public static final String bookedProjectResourcesByDivision = 
+            "com.rha.entity.BookedResource.bookedProjectResourcesByDivision";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

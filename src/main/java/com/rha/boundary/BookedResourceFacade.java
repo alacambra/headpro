@@ -21,20 +21,52 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class BookedResourceFacade extends AbstractFacade<BookedResource> {
-    
+
     @PersistenceContext(unitName = "rha")
     private EntityManager em;
-    
+
     @Override
     protected EntityManager getEntityManager() {
         return em;
     }
 
+    public List<BookedResource> getBookedResourcesFor(int projectId, int divisionId) {
+
+        List<BookedResource> bookedResources
+                = em.createNamedQuery(
+                        BookedResource.bookedResourceByProjectAndDivision, BookedResource.class)
+                .setParameter("pid", projectId)
+                .setParameter("did", divisionId)
+                .getResultList();
+
+        return bookedResources;
+    }
+
+    public List<BookedResource> getBookedResourcesForDivision(int divisionId) {
+
+        List<BookedResource> bookedResources
+                = em.createNamedQuery(BookedResource.bookedProjectResourcesByDivision)
+                .setParameter("did", divisionId)
+                .getResultList();
+
+        return bookedResources;
+    }
+    
+    public List<Integer> getTotslBookedResourcesPerProjectForDivision(int divisionId) {
+
+        List<Integer> bookedResources
+                = em.createNamedQuery(BookedResource.bookedTotalProjectResourcesByDivision)
+                .setParameter("did", divisionId)
+                .getResultList();
+
+        return bookedResources;
+    }
+
     public BookedResourceFacade() {
         super(BookedResource.class);
     }
-    
-    public List<StepPeriod> getPeriods(){
+
+    public List<StepPeriod> getPeriods() {
         return new CalendarGenerator(
                 LocalDate.now(),
                 LocalDate.now().plusYears(1), Step.MONTH)

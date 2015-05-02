@@ -23,7 +23,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import com.rha.entity.Project;
 import java.util.Map;
-import java.util.function.BinaryOperator;
 import javax.inject.Inject;
 
 @Named("bookedResourceController")
@@ -96,8 +95,8 @@ public class BookedResourceController implements Serializable {
     }
 
     public List<BookingRow> getBookings() {
-
-        Map<Project, List<BookedResource>> bookings = getFacade().findAll().stream()
+        
+        Map<Project, List<BookedResource>> bookings = getFacade().getBookedResourcesForDivision(1).stream()
                 .collect(groupingBy(booking -> booking.getProject()));
 
         List<BookingRow> rows = bookings.keySet().stream()
@@ -107,11 +106,8 @@ public class BookedResourceController implements Serializable {
                                 .collect(toList())))
                 .collect(toList());
 
-        Map<Integer, Integer> r = getFacade().findAll().stream().collect(
-                groupingBy(booking -> booking.getPosition(), summingInt(BookedResource::getBooked)));
-
-        rows.add(new BookingRow("Estimation of required work resources",
-                r.keySet().stream().sorted().map(total -> r.get(total)).collect(toList())));
+        rows.add(new BookingRow("Estimation of required work resources", 
+                getFacade().getTotslBookedResourcesPerProjectForDivision(1)));
 
         return rows;
     }
