@@ -4,16 +4,15 @@ import com.rha.entity.BookedResource;
 import com.rha.presentation.util.JsfUtil;
 import com.rha.presentation.util.JsfUtil.PersistAction;
 import com.rha.boundary.BookedResourceFacade;
+import com.rha.boundary.ProjectFacade;
 import com.rha.entity.StepPeriod;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.*;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
@@ -22,6 +21,10 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import com.rha.entity.Project;
+import java.util.Map;
+import java.util.function.BinaryOperator;
+import javax.inject.Inject;
 
 @Named("bookedResourceController")
 @SessionScoped
@@ -31,6 +34,9 @@ public class BookedResourceController implements Serializable {
     private com.rha.boundary.BookedResourceFacade ejbFacade;
     private List<BookedResource> items = null;
     private BookedResource selected;
+
+    @Inject
+    ProjectFacade projectFacade;
 
     public BookedResourceController() {
     }
@@ -84,26 +90,38 @@ public class BookedResourceController implements Serializable {
         }
         return items;
     }
-    
-    public List<StepPeriod> getPeriods(){
+
+    public List<StepPeriod> getPeriods() {
         return getFacade().getPeriods();
     }
-    
-    public List<BookingRow> getBookings(){
-        return getProjects().stream()
-                .map(s -> new BookingRow(s, getFacade().getPeriods().stream()
-                        .map(p -> new Random().nextInt(100))
-                        .collect(Collectors.toList()))
-                )
-                .collect(Collectors.toList());
+
+    public List<BookingRow> getBookings() {
+
+        Map<Project, List<BookedResource>> bookings = getFacade().findAll().stream()
+                .collect(groupingBy(booking -> booking.getProject()));
+
+        List<BookingRow> rows = bookings.keySet().stream()
+                .map(pr -> new BookingRow(pr.getName(),
+                                bookings.get(pr).stream()
+                                .sorted().map(b -> b.getBooked())
+                                .collect(toList())))
+                .collect(toList());
+
+        Map<Integer, Integer> r = getFacade().findAll().stream().collect(
+                groupingBy(booking -> booking.getPosition(), summingInt(BookedResource::getBooked)));
+
+        rows.add(new BookingRow("Estimation of required work resources",
+                r.keySet().stream().sorted().map(total -> r.get(total)).collect(toList())));
+
+        return rows;
     }
-    
-    public List<String> getProjects(){
-        
-        return Arrays.asList("p1", "p2", "p3", "p4");
-        
+
+    public List<Project> getProjects() {
+
+        return projectFacade.findAll();
+
     }
-    
+
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();

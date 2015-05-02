@@ -22,7 +22,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author alacambra
  */
 @Entity
-public class BookedResource implements Serializable {
+public class BookedResource implements Serializable, Comparable<BookedResource> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,6 +40,8 @@ public class BookedResource implements Serializable {
     @Temporal(TemporalType.DATE)
     Date endDate;
     Integer booked;
+    
+    Integer position;
 
     public Integer getId() {
         return id;
@@ -89,6 +91,14 @@ public class BookedResource implements Serializable {
         this.booked = booked;
     }
 
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(id).toHashCode();
@@ -103,6 +113,22 @@ public class BookedResource implements Serializable {
                     .isEquals();
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public int compareTo(BookedResource o) {
+        
+        if(o.getPosition() == null){
+            return 1;
+        }
+        
+        if(position > o.getPosition()){
+            return 1;
+        }else if(position.equals(o.getPosition())){
+            return 0;
+        }else{
+            return -1;
         }
     }
     

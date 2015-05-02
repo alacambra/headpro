@@ -52,7 +52,7 @@ public class CalendarGeneratorTest {
         Step step = Step.MONTH;
         CalendarGenerator instance = new CalendarGenerator(startDate, endDate, step);
         List<StepPeriod> result = instance.getEntries();
-        result.stream().forEach(System.out::println);
+//        result.stream().forEach(System.out::println);
         assertEquals(12, result.size());
     }
     
@@ -63,7 +63,7 @@ public class CalendarGeneratorTest {
         Step step = Step.DAY;
         CalendarGenerator instance = new CalendarGenerator(startDate, endDate, step);
         List<StepPeriod> result = instance.getEntries();
-        result.stream().forEach(System.out::println);
+//        result.stream().forEach(System.out::println);
         assertEquals(365, result.size());
     }
     
@@ -74,7 +74,7 @@ public class CalendarGeneratorTest {
         Step step = Step.WEEK;
         CalendarGenerator instance = new CalendarGenerator(startDate, endDate, step);
         List<StepPeriod> result = instance.getEntries();
-        result.stream().forEach(System.out::println);
+//        result.stream().forEach(System.out::println);
         assertEquals(4, result.size());
     }
     

@@ -12,17 +12,27 @@ import java.util.List;
  * @author alacambra
  */
 public class BookingRow {
-    
+
     String project;
     List<Integer> resources;
 
     public BookingRow(String project, List<Integer> resources) {
         this.project = project;
         this.resources = resources;
+        roundResources();
     }
-    
+
     public String getProject() {
         return project;
+    }
+
+    private void roundResources() {
+
+//        Integer dummyResource = new Integer();
+//        dummyResource.setBooked(0);
+        while (resources.size() < 13) {
+            resources.add(0);
+        }
     }
 
     public void setProject(String project) {
@@ -35,7 +45,7 @@ public class BookingRow {
 
     public void setResources(List<Integer> resources) {
         this.resources = resources;
+        roundResources();
     }
-    
-    
+
 }
