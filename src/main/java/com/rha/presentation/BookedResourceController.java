@@ -22,10 +22,15 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import com.rha.entity.Project;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
+import javafx.scene.control.Cell;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
+import org.primefaces.component.api.UIColumn;
+import org.primefaces.event.CellEditEvent;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.CategoryAxis;
@@ -37,14 +42,21 @@ import org.primefaces.model.chart.LineChartSeries;
 public class BookedResourceController implements Serializable {
 
     private LineChartModel areaModel;
+    Logger logger = Logger.getLogger(this.getClass().getName());
 
     @EJB
     private com.rha.boundary.BookedResourceFacade ejbFacade;
     private List<BookedResource> items = null;
     private BookedResource selected;
 
+    List<BookingRow> rows;
+    List<BookingRow> originalRows;
+    List<Integer> totalBooking;
+
     @Inject
     ProjectFacade projectFacade;
+
+    Cell selectedCell;
 
     public BookedResourceController() {
     }
@@ -71,6 +83,30 @@ public class BookedResourceController implements Serializable {
         selected = new BookedResource();
         initializeEmbeddableKey();
         return selected;
+    }
+
+    public void onCellEdit(CellEditEvent event) {
+
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+
+        FacesContext context = FacesContext.getCurrentInstance();
+        BookingRow entity = context.getApplication().evaluateExpressionGet(context, "#{booking}", BookingRow.class);
+
+        if (newValue != null && !newValue.equals(oldValue)) {
+
+            getFacade().updateOrCreateBookings(entity.getResources());
+
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+
+            areaModel = null;
+            totalBooking = null;
+
+        } else {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cell not changed", "Old: " + oldValue + ", New:" + newValue);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
     }
 
     public void create() {
@@ -103,28 +139,29 @@ public class BookedResourceController implements Serializable {
         return getFacade().getPeriods();
     }
 
+    private void loadRows() {
+        if (rows == null) {
+
+            Map<Project, List<BookedResource>> bookings = getFacade()
+                    .getBookedResourcesForDivision(1).stream()
+                    .collect(groupingBy(booking -> booking.getProject()));
+
+            rows = bookings.keySet().stream()
+                    .map(pr -> new BookingRow(pr,
+                                    bookings.get(pr).stream()
+                                    .sorted()
+                                    .collect(toList())))
+                    .collect(toList());
+        }
+    }
+
     public List<BookingRow> getBookings() {
-
-        Map<Project, List<BookedResource>> bookings = getFacade().getBookedResourcesForDivision(1).stream()
-                .collect(groupingBy(booking -> booking.getProject()));
-
-        List<BookingRow> rows = bookings.keySet().stream()
-                .map(pr -> new BookingRow(pr.getName(),
-                                bookings.get(pr).stream()
-                                .sorted().map(b -> b.getBooked())
-                                .collect(toList())))
-                .collect(toList());
-
-        rows.add(new BookingRow("Estimation of required work resources",
-                getFacade().getTotslBookedResourcesPerProjectForDivision(1)));
-
+        loadRows();
         return rows;
     }
 
     public List<Project> getProjects() {
-
         return projectFacade.findAll();
-
     }
 
     private void persist(PersistAction persistAction, String successMessage) {
@@ -182,47 +219,39 @@ public class BookedResourceController implements Serializable {
         total.setFill(true);
         total.setLabel("Estimation of required work resources");
 
-        List<Integer> res = getFacade().getTotslBookedResourcesPerProjectForDivision(1);
-        IntStream.range(1, 13).forEach(i -> total.set(i, res.get(i - 1)));
+        rows.stream().forEach(row -> {
 
-//        areaModel.addSeries(total);
-        
-        Map<Project, List<BookedResource>> bookings = getFacade().getBookedResourcesForDivision(1).stream()
-                .collect(groupingBy(booking -> booking.getProject()));
-
-        bookings.keySet().stream().forEach(pr -> {
             LineChartSeries brc = new LineChartSeries();
             brc.setFill(true);
-            brc.setLabel(pr.getName());
+            brc.setLabel(row.getProject().getName());
 
-            bookings.get(pr).stream().sorted().forEach(b -> {
-                
-                int position = Optional.ofNullable(b.getPosition()).orElse(0);
+            row.getResources().stream().forEach(b -> {
+                int position = Optional.ofNullable(b.getPosition()).orElse(brc.getData().size());
                 int booked = Optional.ofNullable(b.getBooked()).orElse(0);
-                if(brc.getData().size() < 12)
+                if (brc.getData().size() < 12) {
                     brc.set(position + 1, booked);
+                }
             });
-            
-            //Shity code to make it works
-            if(brc.getData().size() == 12){
-                areaModel.addSeries(brc);
-            }
+            areaModel.addSeries(brc);
         });
 
         areaModel.setTitle("Resources booked for service X");
         areaModel.setLegendPosition("ne");
         areaModel.setStacked(true);
         areaModel.setShowPointLabels(true);
+        areaModel.setZoom(true);
 
-        Axis xAxis = new CategoryAxis("Years");
+        Axis xAxis = new CategoryAxis("Month");
+
         areaModel.getAxes().put(AxisType.X, xAxis);
         Axis yAxis = areaModel.getAxis(AxisType.Y);
-        yAxis.setLabel("Resources");
-        yAxis.setMin(0);
 
-//        yAxis.setMax(res.stream().mapToInt((Integer i) -> i).reduce(Integer::max));
+        yAxis.setLabel(
+                "Resources");
+        yAxis.setMin(
+                0);
     }
-
+    
     @FacesConverter(forClass = BookedResource.class)
     public static class BookedResourceControllerConverter implements Converter {
 
@@ -261,7 +290,16 @@ public class BookedResourceController implements Serializable {
                 return null;
             }
         }
-
     }
 
+    public List<List<Integer>> getTotalBooking() {
+
+        if (totalBooking == null) {
+            totalBooking = getFacade().getTotalBookedResourcesPerProjectForDivision(1);
+        }
+
+        List<List<Integer>> r = new ArrayList();
+        r.add(totalBooking);
+        return r;
+    }
 }

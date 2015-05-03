@@ -10,6 +10,7 @@ import com.rha.entity.BookedResource;
 import com.rha.entity.Step;
 import com.rha.entity.StepPeriod;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -52,7 +53,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         return bookedResources;
     }
     
-    public List<Integer> getTotslBookedResourcesPerProjectForDivision(int divisionId) {
+    public List<Integer> getTotalBookedResourcesPerProjectForDivision(int divisionId) {
 
         List<Integer> bookedResources
                 = em.createNamedQuery(BookedResource.bookedTotalProjectResourcesByDivision)
@@ -71,5 +72,9 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                 LocalDate.now(),
                 LocalDate.now().plusYears(1), Step.MONTH)
                 .getEntries();
+    }
+    
+    public void updateOrCreateBookings(Collection<BookedResource> resources){
+        resources.stream().forEach(r -> em.merge(r));
     }
 }

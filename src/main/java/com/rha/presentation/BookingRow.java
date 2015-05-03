@@ -5,47 +5,72 @@
  */
 package com.rha.presentation;
 
+import com.rha.entity.AvailableResource;
+import com.rha.entity.BookedResource;
+import com.rha.entity.Project;
+import java.io.Serializable;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  *
  * @author alacambra
  */
-public class BookingRow {
+@SessionScoped
+public class BookingRow implements Serializable{
 
-    String project;
-    List<Integer> resources;
+    Project project;
+    List<BookedResource> resources;
 
-    public BookingRow(String project, List<Integer> resources) {
+    public BookingRow(Project project, List<BookedResource> resources) {
         this.project = project;
         this.resources = resources;
         roundResources();
     }
 
-    public String getProject() {
+    public Project getProject() {
         return project;
     }
 
     private void roundResources() {
 
-//        Integer dummyResource = new Integer();
-//        dummyResource.setBooked(0);
+        BookedResource dummyResource = new BookedResource();
+        dummyResource.setBooked(0);
+        dummyResource.setId(-1);
         while (resources.size() < 13) {
-            resources.add(0);
+            resources.add(dummyResource);
         }
     }
 
-    public void setProject(String project) {
+    public void setProject(Project project) {
         this.project = project;
     }
 
-    public List<Integer> getResources() {
+    public List<BookedResource> getResources() {
         return resources;
     }
 
-    public void setResources(List<Integer> resources) {
+    public void setResources(List<BookedResource> resources) {
         this.resources = resources;
         roundResources();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BookingRow) {
+            final BookingRow other = (BookingRow) obj;
+            return new EqualsBuilder()
+                    .append(project.getId(), other.getProject().getId())
+                    .isEquals();
+        } else {
+            return false;
+        }
+    }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(project.getId()).append(resources).toHashCode();
+    }
 }
