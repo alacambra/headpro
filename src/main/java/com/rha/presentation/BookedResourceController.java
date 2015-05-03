@@ -22,12 +22,25 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import com.rha.entity.Project;
+import java.io.OptionalDataException;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import javax.inject.Inject;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.CategoryAxis;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.LineChartSeries;
 
 @Named("bookedResourceController")
 @SessionScoped
 public class BookedResourceController implements Serializable {
+
+    private LineChartModel areaModel;
 
     @EJB
     private com.rha.boundary.BookedResourceFacade ejbFacade;
@@ -95,7 +108,7 @@ public class BookedResourceController implements Serializable {
     }
 
     public List<BookingRow> getBookings() {
-        
+
         Map<Project, List<BookedResource>> bookings = getFacade().getBookedResourcesForDivision(1).stream()
                 .collect(groupingBy(booking -> booking.getProject()));
 
@@ -106,7 +119,7 @@ public class BookedResourceController implements Serializable {
                                 .collect(toList())))
                 .collect(toList());
 
-        rows.add(new BookingRow("Estimation of required work resources", 
+        rows.add(new BookingRow("Estimation of required work resources",
                 getFacade().getTotslBookedResourcesPerProjectForDivision(1)));
 
         return rows;
@@ -156,6 +169,65 @@ public class BookedResourceController implements Serializable {
 
     public List<BookedResource> getItemsAvailableSelectOne() {
         return getFacade().findAll();
+    }
+
+    public LineChartModel getAreaModel() {
+
+        if (areaModel == null) {
+            createAreaModel();
+        }
+
+        return areaModel;
+    }
+
+    private void createAreaModel() {
+        areaModel = new LineChartModel();
+        LineChartSeries total = new LineChartSeries();
+        total.setFill(true);
+        total.setLabel("Estimation of required work resources");
+
+        List<Integer> res = getFacade().getTotslBookedResourcesPerProjectForDivision(1);
+        IntStream.range(1, 13).forEach(i -> total.set(i, res.get(i - 1)));
+
+        areaModel.addSeries(total);
+        
+        System.out.println(total.getData().size());
+
+        Map<Project, List<BookedResource>> bookings = getFacade().getBookedResourcesForDivision(1).stream()
+                .collect(groupingBy(booking -> booking.getProject()));
+
+        bookings.keySet().stream().forEach(pr -> {
+            LineChartSeries brc = new LineChartSeries();
+            brc.setFill(true);
+            brc.setLabel(pr.getName());
+
+            bookings.get(pr).stream().sorted().forEach(b -> {
+                
+                int position = Optional.ofNullable(b.getPosition()).orElse(0);
+                int booked = Optional.ofNullable(b.getBooked()).orElse(0);
+                if(brc.getData().size() < 12)
+                    brc.set(position + 1, booked);
+            });
+            
+            //Shity code to make it works
+            if(brc.getData().size() == 12){
+                System.out.println(brc.getData().size());
+                areaModel.addSeries(brc);
+            }
+        });
+
+        areaModel.setTitle("Resources booked for service X");
+        areaModel.setLegendPosition("ne");
+        areaModel.setStacked(true);
+        areaModel.setShowPointLabels(true);
+
+        Axis xAxis = new CategoryAxis("Years");
+        areaModel.getAxes().put(AxisType.X, xAxis);
+        Axis yAxis = areaModel.getAxis(AxisType.Y);
+        yAxis.setLabel("Resources");
+        yAxis.setMin(0);
+
+//        yAxis.setMax(res.stream().mapToInt((Integer i) -> i).reduce(Integer::max));
     }
 
     @FacesConverter(forClass = BookedResource.class)

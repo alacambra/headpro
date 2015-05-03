@@ -24,7 +24,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
     @PersistenceContext(unitName = "rha")
     private EntityManager em;
-
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;
