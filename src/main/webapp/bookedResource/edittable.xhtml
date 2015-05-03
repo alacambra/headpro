@@ -24,6 +24,25 @@
                              >
                     <f:facet name="header">
                         Booked resources for service
+                        <h:commandLink>
+                            <p:graphicImage name="/images/excel.png" width="24"/>
+                            <p:dataExporter type="xls" target="bookings2" fileName="cars" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:graphicImage name="/images/pdf.png" width="24"/>
+                            <p:dataExporter type="pdf" target="bookings2" fileName="cars"/>
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:graphicImage name="/images/csv.png" width="24"/>
+                            <p:dataExporter type="csv" target="bookings2" fileName="cars" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:graphicImage name="/images/xml.png" width="24"/>
+                            <p:dataExporter type="xml" target="bookings2" fileName="cars" />
+                        </h:commandLink>
                     </f:facet>
 
                     <p:ajax event="cellEdit" listener="#{bookedResourceController.onCellEdit}" update=":form:msgs,:graph,:totalBookings" />
