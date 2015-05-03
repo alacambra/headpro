@@ -22,13 +22,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import com.rha.entity.Project;
-import java.io.OptionalDataException;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import javax.inject.Inject;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
@@ -189,10 +185,8 @@ public class BookedResourceController implements Serializable {
         List<Integer> res = getFacade().getTotslBookedResourcesPerProjectForDivision(1);
         IntStream.range(1, 13).forEach(i -> total.set(i, res.get(i - 1)));
 
-        areaModel.addSeries(total);
+//        areaModel.addSeries(total);
         
-        System.out.println(total.getData().size());
-
         Map<Project, List<BookedResource>> bookings = getFacade().getBookedResourcesForDivision(1).stream()
                 .collect(groupingBy(booking -> booking.getProject()));
 
@@ -211,7 +205,6 @@ public class BookedResourceController implements Serializable {
             
             //Shity code to make it works
             if(brc.getData().size() == 12){
-                System.out.println(brc.getData().size());
                 areaModel.addSeries(brc);
             }
         });
