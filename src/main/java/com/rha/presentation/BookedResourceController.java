@@ -2,6 +2,7 @@ package com.rha.presentation;
 
 import com.rha.entity.BookedResource;
 import com.rha.boundary.BookedResourceFacade;
+import com.rha.boundary.DivisionFacade;
 import com.rha.boundary.ProjectFacade;
 
 import java.io.Serializable;
@@ -35,13 +36,9 @@ import org.primefaces.model.chart.LineChartSeries;
 public class BookedResourceController implements Serializable {
 
     private LineChartModel areaModel;
-    Logger logger = Logger.getLogger(this.getClass().getName());
 
     @EJB
     private com.rha.boundary.BookedResourceFacade ejbFacade;
-    private List<BookedResource> items = null;
-    private BookedResource selected;
-
     List<BookingRow> rows;
     List<BookingRow> originalRows;
     List<Integer> totalBooking;
@@ -49,33 +46,19 @@ public class BookedResourceController implements Serializable {
     @Inject
     ProjectFacade projectFacade;
 
+    @Inject
+    DivisionFacade divisionFacade;
+
     Cell selectedCell;
 
     public BookedResourceController() {
     }
 
-    public BookedResource getSelected() {
-        return selected;
-    }
-
-    public void setSelected(BookedResource selected) {
-        this.selected = selected;
-    }
-
     protected void setEmbeddableKeys() {
-    }
-
-    protected void initializeEmbeddableKey() {
     }
 
     private BookedResourceFacade getFacade() {
         return ejbFacade;
-    }
-
-    public BookedResource prepareCreate() {
-        selected = new BookedResource();
-        initializeEmbeddableKey();
-        return selected;
     }
 
     public void onCellEdit(CellEditEvent event) {
@@ -108,16 +91,21 @@ public class BookedResourceController implements Serializable {
     private void loadRows() {
         if (rows == null) {
 
+            List<Project> emptyProjects = projectFacade.getProjectsWithoutBookedResources(1);
+
             Map<Project, List<BookedResource>> bookings = getFacade()
                     .getBookedResourcesForDivision(1).stream()
                     .collect(groupingBy(booking -> booking.getProject()));
+
+            emptyProjects.stream().forEach(pr -> bookings.put(pr, new ArrayList<>()));
 
             rows = bookings.keySet().stream()
                     .map(pr -> new BookingRow(pr,
                                     bookings.get(pr).stream()
                                     .sorted()
-                                    .collect(toList())))
-                    .collect(toList());
+                                    .collect(toList()),
+                                    divisionFacade.find(1))
+                    ).collect(toList());
         }
     }
 

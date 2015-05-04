@@ -25,7 +25,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
     @PersistenceContext(unitName = "rha")
     private EntityManager em;
-    
+
     @Override
     protected EntityManager getEntityManager() {
         return em;
@@ -52,7 +52,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
         return bookedResources;
     }
-    
+
     public List<Integer> getTotalBookedResourcesPerProjectForDivision(int divisionId) {
 
         List<Integer> bookedResources
@@ -73,8 +73,11 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                 LocalDate.now().plusYears(1), Step.MONTH)
                 .getEntries();
     }
-    
-    public void updateOrCreateBookings(Collection<BookedResource> resources){
-        resources.stream().forEach(r -> em.merge(r));
+
+    public void updateOrCreateBookings(Collection<BookedResource> resources) {
+        resources.stream().filter(r -> r.getId() != null || r.getBooked() != 0)
+                .forEach(r -> {
+                    em.merge(r);
+                });
     }
 }

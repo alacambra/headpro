@@ -6,6 +6,7 @@
 package com.rha.boundary;
 
 import com.rha.entity.Project;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,6 +17,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class ProjectFacade extends AbstractFacade<Project> {
+
     @PersistenceContext(unitName = "rha")
     private EntityManager em;
 
@@ -24,8 +26,16 @@ public class ProjectFacade extends AbstractFacade<Project> {
         return em;
     }
 
+    public List<Project> getProjectsWithoutBookedResources(int did) {
+        List<Project> emptyProjects = em
+                .createNamedQuery(Project.emptyProjects, Project.class)
+                .getResultList();
+
+        return emptyProjects;
+    }
+
     public ProjectFacade() {
         super(Project.class);
     }
-    
+
 }

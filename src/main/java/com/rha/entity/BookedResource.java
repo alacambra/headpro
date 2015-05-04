@@ -26,7 +26,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @Entity
 @NamedQueries({
     @NamedQuery(name = BookedResource.bookedResourceByProjectAndDivision, 
-            query = "SELECT br FROM BookedResource br JOIN br.project p JOIN br.division d "
+            query = "SELECT br FROM BookedResource br LEFT JOIN br.project p LEFT JOIN br.division d "
                     + "WHERE p.id=:pid and d.id=:did"),
     
     @NamedQuery(name = BookedResource.bookedTotalProjectResourcesByDivision, 

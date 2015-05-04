@@ -5,8 +5,8 @@
  */
 package com.rha.presentation;
 
-import com.rha.entity.AvailableResource;
 import com.rha.entity.BookedResource;
+import com.rha.entity.Division;
 import com.rha.entity.Project;
 import java.io.Serializable;
 import java.util.List;
@@ -22,11 +22,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class BookingRow implements Serializable{
 
     Project project;
+    Division division;
     List<BookedResource> resources;
 
-    public BookingRow(Project project, List<BookedResource> resources) {
+    public BookingRow(Project project, List<BookedResource> resources, Division division) {
         this.project = project;
         this.resources = resources;
+        this.division = division;
         roundResources();
     }
 
@@ -36,11 +38,17 @@ public class BookingRow implements Serializable{
 
     private void roundResources() {
 
-        BookedResource dummyResource = new BookedResource();
-        dummyResource.setBooked(0);
-        dummyResource.setId(-1);
+        //TODO: position is buggy
+        int i = resources.size();
+        
         while (resources.size() < 13) {
+            BookedResource dummyResource = new BookedResource();
+            dummyResource.setBooked(0);
+            dummyResource.setPosition(i);
+            dummyResource.setProject(project);
+            dummyResource.setDivision(division);
             resources.add(dummyResource);
+            i++;
         }
     }
 

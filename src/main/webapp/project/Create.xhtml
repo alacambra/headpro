@@ -12,14 +12,12 @@
             <h:form id="ProjectCreateForm">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{projectController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateProjectLabel_name}" for="name" />
+                        <p:inputText id="name" value="#{projectController.selected.name}" title="#{bundle.CreateProjectTitle_name}" />
                         <p:outputLabel value="#{bundle.CreateProjectLabel_step}" for="step" />
                         <p:inputText id="step" value="#{projectController.selected.step}" title="#{bundle.CreateProjectTitle_step}" />
                         <p:outputLabel value="#{bundle.CreateProjectLabel_probability}" for="probability" />
                         <p:inputText id="probability" value="#{projectController.selected.probability}" title="#{bundle.CreateProjectTitle_probability}" />
-                        <p:outputLabel value="#{bundle.CreateProjectLabel_name}" for="name" />
-                        <p:inputText id="name" value="#{projectController.selected.name}" title="#{bundle.CreateProjectTitle_name}" />
-                        <p:outputLabel value="#{bundle.CreateProjectLabel_id}" for="id" />
-                        <p:inputText id="id" value="#{projectController.selected.id}" title="#{bundle.CreateProjectTitle_id}" />
                         <p:outputLabel value="#{bundle.CreateProjectLabel_abscence}" for="abscence" />
                         <p:inputText id="abscence" value="#{projectController.selected.abscence}" title="#{bundle.CreateProjectTitle_abscence}" />
                     </p:panelGrid>

@@ -7,19 +7,26 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @Entity
+@NamedQueries({
+    @NamedQuery(name = Project.emptyProjects, 
+            query = "SELECT pr FROM Project pr LEFT JOIN pr.bookedResources br "
+                    + "GROUP BY pr HAVING count(br) = 0")
+})
 public class Project implements Serializable {
 
+    public static final String emptyProjects = "com.rha.entity.Project.emptyProjects";
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
-
+    
     @OneToMany(mappedBy = "project")
     List<BookedResource> bookedResources;
 
     String name;
-    Integer probability;
-    Integer abscence;
-    Step step;
+    Integer probability = 100;
+    Integer abscence = 0;
+    Step step = Step.MONTH;
 
     public Step getStep() {
         return step;
