@@ -67,12 +67,12 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         super(BookedResource.class);
     }
 
-    public List<StepPeriod> getPeriods() {
-        return new CalendarGenerator(
-                LocalDate.now(),
-                LocalDate.now().plusYears(1), Step.MONTH)
-                .getEntries();
-    }
+//    public List<StepPeriod> getPeriods() {
+//        return new CalendarGenerator(
+//                LocalDate.now(),
+//                LocalDate.now().plusYears(1), Step.MONTH)
+//                .getEntries();
+//    }
 
     public void updateOrCreateBookings(Collection<BookedResource> resources) {
         resources.stream().filter(r -> r.getId() != null || r.getBooked() != 0)

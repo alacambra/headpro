@@ -19,6 +19,16 @@ public class StepPeriod {
     Integer position;
     Step stepType;
 
+    public StepPeriod(LocalDate startLocalDate, LocalDate endLocalDate, Integer position, Step stepType) {
+        this.startLocalDate = startLocalDate;
+        this.endLocalDate = endLocalDate;
+        this.position = position;
+        this.stepType = stepType;
+    }
+
+    public StepPeriod() {
+    }
+    
     public LocalDate getStartLocalDate() {
         return startLocalDate;
     }
