@@ -111,7 +111,7 @@ public class BookedResourceController implements Serializable {
 
     public List<BookingRow> getBookings() {
         loadRows();
-        return rows;
+        return rows.subList(0, 4);
     }
 
     public List<Project> getProjects() {

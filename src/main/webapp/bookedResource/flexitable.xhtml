@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListBookedResourceTitle}"></h:outputText>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form id="form">
+                <p:growl id="msgs" showDetail="true"/>
+
+                <p:dataTable id="bookings2" 
+                             var="booking" 
+                             value="#{bookedResourceController.bookings}" 
+                             editable="true"
+                             editMode="cell" 
+                             widgetVar="booking">
+                    <p:growl id="msgs" showDetail="true"/>
+                    <p:column headerText="project name">
+                        <h:outputText value="#{booking.project.name}"></h:outputText>
+                    </p:column>
+
+                    <p:ajax event="cellEdit" listener="#{bookedResourceController.onCellEdit}" update=":form:msgs,:graph" />
+
+
+                    <c:forEach items="${dummyController.columns}" var="item" varStatus="counter">
+                        <p:column headerText="${counter.count}">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{booking.resources.get(counter.index).booked}"/></f:facet>
+                                <f:facet name="input"><p:inputText value="#{booking.resources.get(counter.index).booked}" style="width:96%" label="Year"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+            </h:form>
+            <p:chart id="graph" widgetVar="chart" type="line" model="#{bookedResourceController.areaModel}" style="height:300px" />
+        </ui:define>
+    </ui:composition>
+</html>
