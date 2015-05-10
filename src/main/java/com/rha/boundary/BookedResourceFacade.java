@@ -5,11 +5,7 @@
  */
 package com.rha.boundary;
 
-import com.rha.control.CalendarGenerator;
 import com.rha.entity.BookedResource;
-import com.rha.entity.Step;
-import com.rha.entity.StepPeriod;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import javax.ejb.Stateless;

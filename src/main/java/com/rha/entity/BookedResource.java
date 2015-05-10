@@ -6,6 +6,7 @@
 package com.rha.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -58,13 +60,26 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
     Project project;
 
     @Temporal(TemporalType.DATE)
-    Date startDate;
+    LocalDate startDate;
     
     @Temporal(TemporalType.DATE)
-    Date endDate;
+    LocalDate endDate;
+    
     Integer booked;
     
-    Integer position;
+    @Transient
+    Integer position = 0;
+    
+    @Transient
+    private boolean persisted = true;
+
+    public boolean isPersisted() {
+        return persisted;
+    }
+
+    public void setPersisted(boolean persisted) {
+        this.persisted = persisted;
+    }
 
     public Integer getId() {
         return id;
@@ -90,19 +105,19 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
         this.project = project;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
