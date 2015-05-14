@@ -3,8 +3,11 @@ package com.rha.control;
 import com.rha.entity.BookedResource;
 import com.rha.entity.Step;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -54,9 +57,14 @@ public class ResourcesCalendar {
         return this;
     }
 
-    public List<BookedResource> getCalenderEntries() {
+    public List<BookedResource> getCalendarEntries() {
 
         generateEntries();
+        
+        if(existentResources == null){
+            return calenderEntries;
+        }
+        
         Iterator<BookedResource> it = existentResources.iterator();
         BookedResource pointer;
 
@@ -101,14 +109,34 @@ public class ResourcesCalendar {
 
         if (step == Step.MONTH) {
             if (endDate.getYear() == startDate.getYear()) {
-                totalEntries
-                        = endDate.getMonth().getValue() - startDate.getMonth().getValue() + 1;
+                totalEntries = endDate.getMonth().getValue() - startDate.getMonth().getValue() + 1;
             } else {
                 totalEntries = endDate.getMonth().getValue()
                         + (13 - startDate.getMonth().getValue())
                         + (endDate.getYear() - startDate.getYear() - 1) * 12;
             }
 
+        }else if(step == Step.DAY){
+            
+            if (endDate.getYear() == startDate.getYear()) {
+                totalEntries = endDate.getDayOfYear() - startDate.getDayOfYear() + 1;
+            }else{
+                totalEntries = endDate.getDayOfYear() 
+                        + (startDate.lengthOfYear() - startDate.getDayOfYear() + 1);
+            }
+            
+        }else if(step == Step.WEEK){
+            
+            WeekFields fields = WeekFields.of(Locale.GERMANY);
+            
+            if (endDate.getYear() == startDate.getYear()) {
+                totalEntries = 
+                        endDate.get(fields.weekOfYear()) - startDate.get(fields.weekOfYear()) + 1;
+            }else{
+                totalEntries = endDate.get(fields.weekOfYear())
+                        + (startDate.with(TemporalAdjusters.lastDayOfYear())
+                                .get(fields.weekOfYear()) - startDate.get(fields.weekOfYear()) + 1);
+            }
         }
 
         calenderEntries = IntStream.range(0, totalEntries).boxed().map(i -> {
