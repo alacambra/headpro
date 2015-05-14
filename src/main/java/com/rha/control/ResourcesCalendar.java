@@ -71,7 +71,7 @@ public class ResourcesCalendar {
             BookedResource br = calenderEntries.get(i);
 
             if (pointer != null && areEquals(br.getStartDate(), pointer.getStartDate())) {
-                calenderEntries.add(i, pointer);
+                calenderEntries.set(i, pointer);
 
                 if (it.hasNext()) {
                     pointer = it.next();

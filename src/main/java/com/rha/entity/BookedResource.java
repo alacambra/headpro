@@ -7,7 +7,6 @@ package com.rha.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,27 +26,27 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = BookedResource.bookedResourceByProjectAndDivision, 
+    @NamedQuery(name = BookedResource.bookedResourceByProjectAndDivision,
             query = "SELECT br FROM BookedResource br LEFT JOIN br.project p LEFT JOIN br.division d "
-                    + "WHERE p.id=:pid and d.id=:did"),
-    
-    @NamedQuery(name = BookedResource.bookedTotalProjectResourcesByDivision, 
+            + "WHERE p.id=:pid and d.id=:did"),
+
+    @NamedQuery(name = BookedResource.bookedTotalProjectResourcesByDivision,
             query = "SELECT sum(br.booked) FROM BookedResource br JOIN br.division d "
-                    + "WHERE d.id=:did group by br.position order by br.position"),
-        
-        @NamedQuery(name = BookedResource.bookedProjectResourcesByDivision, 
+            + "WHERE d.id=:did group by br.position order by br.position"),
+
+    @NamedQuery(name = BookedResource.bookedProjectResourcesByDivision,
             query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did")
 })
 public class BookedResource implements Serializable, Comparable<BookedResource> {
-    
-    public static final String bookedResourceByProjectAndDivision = 
-            "com.rha.entity.BookedResource.bookedResourceByProjectAndDivision";
-    
-    public static final String bookedTotalProjectResourcesByDivision = 
-            "com.rha.entity.BookedResource.bookedResourceByDivision";
-    
-    public static final String bookedProjectResourcesByDivision = 
-            "com.rha.entity.BookedResource.bookedProjectResourcesByDivision";
+
+    public static final String bookedResourceByProjectAndDivision
+            = "com.rha.entity.BookedResource.bookedResourceByProjectAndDivision";
+
+    public static final String bookedTotalProjectResourcesByDivision
+            = "com.rha.entity.BookedResource.bookedResourceByDivision";
+
+    public static final String bookedProjectResourcesByDivision
+            = "com.rha.entity.BookedResource.bookedProjectResourcesByDivision";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -55,21 +54,21 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
 
     @ManyToOne
     Division division;
-    
+
     @ManyToOne
     Project project;
 
     @Temporal(TemporalType.DATE)
     LocalDate startDate;
-    
+
     @Temporal(TemporalType.DATE)
     LocalDate endDate;
-    
+
     Integer booked;
-    
+
     @Transient
     Integer position = 0;
-    
+
     @Transient
     private boolean persisted = true;
 
@@ -77,64 +76,72 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
         return persisted;
     }
 
-    public void setPersisted(boolean persisted) {
+    public BookedResource setPersisted(boolean persisted) {
         this.persisted = persisted;
+        return this;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public BookedResource setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     public Division getDivision() {
         return division;
     }
 
-    public void setDivision(Division division) {
+    public BookedResource setDivision(Division division) {
         this.division = division;
+        return this;
     }
 
     public Project getProject() {
         return project;
     }
 
-    public void setProject(Project project) {
+    public BookedResource setProject(Project project) {
         this.project = project;
+        return this;
     }
 
     public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public BookedResource setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+        return this;
     }
 
     public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public BookedResource setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+        return this;
     }
 
     public Integer getBooked() {
         return booked;
     }
 
-    public void setBooked(Integer booked) {
+    public BookedResource setBooked(Integer booked) {
         this.booked = booked;
+        return this;
     }
 
     public Integer getPosition() {
         return position;
     }
 
-    public void setPosition(Integer position) {
+    public BookedResource setPosition(Integer position) {
         this.position = position;
+        return this;
     }
 
     @Override
@@ -146,9 +153,18 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
     public boolean equals(Object obj) {
         if (obj instanceof BookedResource) {
             final BookedResource other = (BookedResource) obj;
-            return new EqualsBuilder()
-                    .append(id, other.getId())
-                    .isEquals();
+            if (null != id && id != -1) {
+
+                return new EqualsBuilder()
+                        .append(id, other.getId())
+                        .isEquals();
+            } else {
+                 return new EqualsBuilder()
+                         .append(startDate, other.getStartDate())
+                         .append(endDate, other.getEndDate())
+                         .isEquals();
+            }
+
         } else {
             return false;
         }
@@ -156,18 +172,18 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
 
     @Override
     public int compareTo(BookedResource o) {
-        
-        if(o.getPosition() == null){
+
+        if (o.getPosition() == null) {
             return 1;
         }
-        
-        if(position > o.getPosition()){
+
+        if (position > o.getPosition()) {
             return 1;
-        }else if(position.equals(o.getPosition())){
+        } else if (position.equals(o.getPosition())) {
             return 0;
-        }else{
+        } else {
             return -1;
         }
     }
-    
+
 }
