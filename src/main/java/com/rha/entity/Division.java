@@ -32,8 +32,9 @@ public class Division implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
+    public Division setName(String name) {
         this.name = name;
+        return this;
     }
 
 //    public List<Project> getProjects() {

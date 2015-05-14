@@ -6,7 +6,10 @@
 package com.rha.entity;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,27 +29,28 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = BookedResource.bookedResourceByProjectAndDivision,
+    @NamedQuery(name = BookedResource.byProjectAndDivision,
             query = "SELECT br FROM BookedResource br LEFT JOIN br.project p LEFT JOIN br.division d "
             + "WHERE p.id=:pid and d.id=:did"),
 
-    @NamedQuery(name = BookedResource.bookedTotalProjectResourcesByDivision,
+    @NamedQuery(name = BookedResource.totalByDivision,
             query = "SELECT sum(br.booked) FROM BookedResource br JOIN br.division d "
-            + "WHERE d.id=:did group by br.position order by br.position"),
+            + "WHERE d.id=:did group by br.startDate order by br.startDate"),
 
-    @NamedQuery(name = BookedResource.bookedProjectResourcesByDivision,
-            query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did")
+    @NamedQuery(name = BookedResource.byDivision,
+            query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did"),
+    
+    @NamedQuery(name = BookedResource.byDivisionForPeriod,
+            query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did "
+                    + "AND br.startDate>=:startDate AND br.endDate<=:endDate")
 })
 public class BookedResource implements Serializable, Comparable<BookedResource> {
 
-    public static final String bookedResourceByProjectAndDivision
-            = "com.rha.entity.BookedResource.bookedResourceByProjectAndDivision";
-
-    public static final String bookedTotalProjectResourcesByDivision
-            = "com.rha.entity.BookedResource.bookedResourceByDivision";
-
-    public static final String bookedProjectResourcesByDivision
-            = "com.rha.entity.BookedResource.bookedProjectResourcesByDivision";
+    private static final String prefix = "com.rha.entity.BookedResource.";
+    public static final String byProjectAndDivision = prefix + "byProjectAndDivision";
+    public static final String totalByDivision = prefix + "totalByDivision";
+    public static final String byDivision = prefix + "byDivision";
+    public static final String byDivisionForPeriod = prefix + "byDivisionForPeriod";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,10 +63,10 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
     Project project;
 
     @Temporal(TemporalType.DATE)
-    LocalDate startDate;
+    Date startDate;
 
     @Temporal(TemporalType.DATE)
-    LocalDate endDate;
+    Date endDate;
 
     Integer booked;
 
@@ -109,20 +113,24 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
     }
 
     public LocalDate getStartDate() {
-        return startDate;
+        return startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
+    
+    
 
     public BookedResource setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+        Instant instant = startDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        this.startDate = Date.from(instant);
         return this;
     }
 
     public LocalDate getEndDate() {
-        return endDate;
+        return endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     public BookedResource setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+        Instant instant = endDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        this.endDate = Date.from(instant);
         return this;
     }
 

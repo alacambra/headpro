@@ -1,2 +1,8 @@
 target
 nb-configuration.xml
+integration-test
+derby.log
+.DS_Store
+src/main/.DS_Store
+.DS_Store
+src/main/.DS_Store

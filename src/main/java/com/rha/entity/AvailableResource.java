@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -28,7 +29,8 @@ public class AvailableResource implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
-    @ManyToOne
+//    @ManyToOne
+    @Transient
     Division division;
 
     @Temporal(TemporalType.DATE)

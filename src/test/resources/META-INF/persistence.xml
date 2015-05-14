@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-  <persistence-unit name="rha" transaction-type="JTA">
-    <jta-data-source>jdbc/rha</jta-data-source>
-    <properties>
-      <property name="javax.persistence.schema-generation.database.action" value="none"/>
-    </properties>
-  </persistence-unit>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+    <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
+        <class>com.rha.entity.BookedResource</class>
+        <class>com.rha.entity.Division</class>
+        <class>com.rha.entity.Project</class>
+        <class>com.rha.entity.AvailableResource</class>
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="jdbc:derby:./integration-test;create=true"/>
+            <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+        </properties>
+    </persistence-unit>
 </persistence>
