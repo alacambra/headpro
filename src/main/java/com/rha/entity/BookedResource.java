@@ -163,7 +163,9 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
 
     @Override
     public boolean equals(Object obj) {
+        
         if(obj == this) return true;
+        
         if (obj instanceof BookedResource) {
             final BookedResource other = (BookedResource) obj;
             if (null != id && id != -1) {

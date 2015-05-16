@@ -7,8 +7,8 @@ package com.rha.presentation;
 
 import com.rha.control.ResourcesCalendar;
 import com.rha.boundary.BookedResourceFacade;
+import com.rha.boundary.DivisionFacade;
 import com.rha.entity.BookedResource;
-import com.rha.entity.Division;
 import com.rha.entity.Project;
 import com.rha.entity.Step;
 import java.io.Serializable;
@@ -36,23 +36,38 @@ public class BookedResourceController2 implements Serializable {
     @Inject
     BookedResourceFacade bookedResourceFacade;
 
+    @Inject
+    DivisionFacade divisionFacade;
+
     ResourcesCalendar resourcesCalendar = new ResourcesCalendar();
 
     public void loadBookedResourcesForPeriod() {
 
-//        if (bookedResources == null) {
-//            bookedResourceFacade.getBookedResourcesForDivision(
-//                    1, LocalDate.of(2012, Month.JANUARY, 1), LocalDate.now());
-//        }
+        List<BookedResource> bookedResources = bookedResourceFacade.getBookedResourcesForDivision(
+                1, LocalDate.of(2014, Month.JANUARY, 1), LocalDate.now());
+
+        final Map<Project, List<BookedResource>> resourcesByProject
+                = bookedResources.stream().collect(groupingBy(br -> br.getProject()));
+
         bookingRow = new ArrayList<>();
-        
-        for(int i = 0; i < 20; i++)
-        bookingRow.add(new BookingRow(
-                new Project().setName("someName: " + i).setId(-1),
-                resourcesCalendar
-                .setStartDate(LocalDate.of(2012, Month.JANUARY, 1))
-                .setEndDate(LocalDate.of(2015, Month.JANUARY, 1)).setStep(Step.WEEK).getCalendarEntries(),
-                new Division().setName("java").setId(-1)));
+
+        resourcesByProject.keySet().stream().forEach(project -> {
+            bookingRow.add(new BookingRow(
+                    project,
+                    resourcesCalendar
+                    .setStartDate(LocalDate.of(2012, Month.JANUARY, 1))
+                    .setEndDate(LocalDate.of(2015, Month.JANUARY, 1)).setStep(Step.DAY).getCalendarEntries(),
+                    divisionFacade.find(1)));
+        });
+
+//        for (int i = 0; i < 20; i++) {
+//            bookingRow.add(new BookingRow(
+//                    new Project().setName("someName: " + i).setId(-1),
+//                    resourcesCalendar
+//                    .setStartDate(LocalDate.of(2012, Month.JANUARY, 1))
+//                    .setEndDate(LocalDate.of(2015, Month.JANUARY, 1)).setStep(Step.WEEK).getCalendarEntries(),
+//                    new Division().setName("java").setId(-1)));
+//        }
     }
 
     public List<BookingRow> getBookingRow() {

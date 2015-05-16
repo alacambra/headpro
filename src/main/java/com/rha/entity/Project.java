@@ -78,6 +78,11 @@ public class Project implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
+        
+        if(obj == this){
+            return true;
+        }
+        
         if (obj instanceof Project) {
             final Project other = (Project) obj;
             return new EqualsBuilder()

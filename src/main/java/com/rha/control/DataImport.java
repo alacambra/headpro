@@ -12,6 +12,10 @@ import com.rha.entity.Step;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -28,16 +32,16 @@ public class DataImport {
     EntityManager em;
 
     Division d;
-    
+
     public void loadData() {
-        
+
         d = new Division();
         d.setName("java");
         em.persist(d);
 
         try {
             Stream<String> lines = Files.lines(
-                    Paths.get("/Users/albertlacambra1/git/rha/src/main/resources/", 
+                    Paths.get("/Users/albertlacambra1/git/rha/src/main/resources/",
                             "servicedata.csv"));
 
             lines.map(l -> l.split(",")).forEach(this::insertRow);
@@ -48,25 +52,32 @@ public class DataImport {
     }
 
     void insertRow(String... row) {
-        
+
+        LocalDate currentDate = LocalDate.of(2015, Month.JANUARY, 7);
+
         String projectName = row[0];
         Project p = new Project();
-        
+
         p.setAbscence(10);
         p.setName(projectName);
         p.setProbability(90);
-        p.setStep(Step.MONTH);
-        
+        p.setStep(Step.WEEK);
+
         em.persist(p);
 
-        for (int i = 0; i < row.length - 1 ; i++) {
-             BookedResource br = new BookedResource();
-             String v = "".equals(row[i+1]) ? "0" : row[i+1];
-             br.setBooked(Math.round(Float.parseFloat(v)));
-             br.setDivision(d);
-             br.setProject(p);
-             br.setPosition(i);
-             em.persist(br);
+        for (int i = 0; i < row.length - 1; i++) {
+
+            LocalDate startPeriodDate = currentDate;
+            LocalDate endPeriodDate = currentDate.plusWeeks(1);
+            currentDate = endPeriodDate;
+
+            BookedResource br = new BookedResource();
+            String v = "".equals(row[i + 1]) ? "0" : row[i + 1];
+            br.setBooked(Math.round(Float.parseFloat(v)));
+            br.setDivision(d);
+            br.setProject(p);
+            br.setStartDate(startPeriodDate).setEndDate(endPeriodDate);
+            em.persist(br);
         }
     }
 }
