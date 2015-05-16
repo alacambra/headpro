@@ -24,8 +24,9 @@ public class Division implements Serializable {
         return id;
     }
 
-    public void setId(Integer id) {
+    public Division setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {

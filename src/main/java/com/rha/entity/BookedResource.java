@@ -113,7 +113,9 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
     }
 
     public LocalDate getStartDate() {
-        return startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if(startDate != null)
+            return startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        else return null;
     }
     
     
@@ -125,7 +127,9 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
     }
 
     public LocalDate getEndDate() {
-        return endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if(endDate != null)
+            return endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        else return null;
     }
 
     public BookedResource setEndDate(LocalDate endDate) {

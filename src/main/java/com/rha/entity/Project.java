@@ -58,8 +58,9 @@ public class Project implements Serializable {
         return id;
     }
 
-    public void setId(Integer id) {
+    public Project setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     public Integer getAbscence() {
