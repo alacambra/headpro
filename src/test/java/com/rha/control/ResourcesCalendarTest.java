@@ -14,6 +14,7 @@ import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.IntStream;
 import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
@@ -54,6 +55,19 @@ public class ResourcesCalendarTest {
         cut.setStep(Step.DAY);
         
         assertThat(cut.getCalendarEntries().size(), Is.is(2 * cut.getStartDate().lengthOfYear()));
+        
+        setUp();
+        
+        int expected = IntStream.rangeClosed(2012, 2016).boxed()
+                    .map(year -> LocalDate.ofYearDay(year, 1).lengthOfYear())
+                    .reduce(Integer::sum).get();
+        
+        cut.setStartDate(LocalDate.of(2012, Month.JANUARY, 1))
+                .setEndDate(LocalDate.of(2016, Month.DECEMBER, 31));
+        
+        cut.setStep(Step.DAY);
+        
+        assertThat(cut.getCalendarEntries().size(), Is.is(expected));
         
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
@@ -150,8 +164,8 @@ public class ResourcesCalendarTest {
 
         List<BookedResource> result = cut.getCalendarEntries();
         assertEquals(12, result.size());
-//        assertEquals(existentResources.get(0), result.get(0));
-//        assertEquals(existentResources.get(1), result.get(5));
+        assertEquals(existentResources.get(0), result.get(0));
+        assertEquals(existentResources.get(1), result.get(5));
     }
     
     @Test
@@ -169,8 +183,8 @@ public class ResourcesCalendarTest {
 
         List<BookedResource> result = cut.getCalendarEntries();
         assertEquals(7, result.size());
-//        assertTrue(result.contains(existentResources.get(0)));
-//        assertEquals(existentResources.get(0), result.get(4));
+        assertTrue(result.contains(existentResources.get(0)));
+        assertEquals(existentResources.get(0), result.get(4));
     }
     
     @Test
@@ -191,8 +205,8 @@ public class ResourcesCalendarTest {
 
         List<BookedResource> result = cut.getCalendarEntries();
         assertEquals(12, result.size());
-//        assertEquals(existentResources.get(0), result.get(0));
-//        assertEquals(existentResources.get(1), result.get(5));
+        assertEquals(existentResources.get(0), result.get(0));
+        assertEquals(existentResources.get(1), result.get(5));
     }
     
     @Test
