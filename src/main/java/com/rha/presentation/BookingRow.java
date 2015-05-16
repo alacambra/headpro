@@ -38,18 +38,18 @@ public class BookingRow implements Serializable{
 
     private void roundResources() {
 
-        //TODO: position is buggy
-        int i = resources.size();
-        
-        while (resources.size() < 13) {
-            BookedResource dummyResource = new BookedResource();
-            dummyResource.setBooked(0);
-            dummyResource.setPosition(i);
-            dummyResource.setProject(project);
-            dummyResource.setDivision(division);
-            resources.add(dummyResource);
-            i++;
-        }
+//        //TODO: position is buggy
+//        int i = resources.size();
+//        
+//        while (resources.size() < 13) {
+//            BookedResource dummyResource = new BookedResource();
+//            dummyResource.setBooked(0);
+//            dummyResource.setPosition(i);
+//            dummyResource.setProject(project);
+//            dummyResource.setDivision(division);
+//            resources.add(dummyResource);
+//            i++;
+//        }
     }
 
     public void setProject(Project project) {

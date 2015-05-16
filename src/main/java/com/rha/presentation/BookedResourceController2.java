@@ -14,7 +14,7 @@ import com.rha.entity.Step;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.*;
@@ -30,9 +30,8 @@ import javax.inject.Named;
 @Named("brc")
 public class BookedResourceController2 implements Serializable {
 
-    List<BookedResource> bookedResources;
     Map<LocalDate, List<LocalDate[]>> periods;
-    BookingRow bookingRow;
+    List<BookingRow> bookingRow;
 
     @Inject
     BookedResourceFacade bookedResourceFacade;
@@ -45,40 +44,39 @@ public class BookedResourceController2 implements Serializable {
 //            bookedResourceFacade.getBookedResourcesForDivision(
 //                    1, LocalDate.of(2012, Month.JANUARY, 1), LocalDate.now());
 //        }
+        bookingRow = new ArrayList<>();
         
-        bookedResources = resourcesCalendar
+        for(int i = 0; i < 20; i++)
+        bookingRow.add(new BookingRow(
+                new Project().setName("someName: " + i).setId(-1),
+                resourcesCalendar
                 .setStartDate(LocalDate.of(2012, Month.JANUARY, 1))
-                .setEndDate(LocalDate.now()).setStep(Step.MONTH).getCalendarEntries();
-        
-        bookingRow = new BookingRow(
-                new Project().setName("someName").setId(-1), 
-                bookedResources, 
-                new Division().setName("java").setId(-1));
+                .setEndDate(LocalDate.of(2015, Month.JANUARY, 1)).setStep(Step.WEEK).getCalendarEntries(),
+                new Division().setName("java").setId(-1)));
     }
 
     public List<BookingRow> getBookingRow() {
-        if(bookingRow == null)
+        if (bookingRow == null) {
             loadBookedResourcesForPeriod();
-        
-        return Arrays.asList(bookingRow);
+        }
+
+        return bookingRow;
     }
-    
 
     public List<LocalDate> getPeriods() {
-        
-        if(periods == null){
+
+        if (periods == null) {
             loadBookedResourcesForPeriod();
-            periods = bookedResources.stream()
-                .map(br -> new LocalDate[]{br.getStartDate(), br.getEndDate()})
-                .collect(groupingBy(period -> period[0]));
+            periods = bookingRow.get(0).getResources().stream()
+                    .map(br -> new LocalDate[]{br.getStartDate(), br.getEndDate()})
+                    .collect(groupingBy(period -> period[0]));
         }
-        
+
         return periods.keySet().stream().sorted().collect(toList());
     }
-    
-    private LocalDate getDate(BookedResource br){
+
+    private LocalDate getDate(BookedResource br) {
         return br.getStartDate();
     }
-    
-    
+
 }

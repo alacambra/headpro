@@ -55,11 +55,11 @@ public class ResourcesCalendar {
     public List<BookedResource> getCalendarEntries() {
 
         generateEntries();
-        
-        if(existentResources == null){
+
+        if (existentResources == null) {
             return calenderEntries;
         }
-        
+
         Iterator<BookedResource> it = existentResources.iterator();
         BookedResource pointer;
 
@@ -97,6 +97,48 @@ public class ResourcesCalendar {
         return this;
     }
 
+    private int getDaysBetweenYears(int startYear, int endYear) {
+        startYear += 1;
+        endYear -= 1;
+
+        if (startYear > endYear) {
+            return 0;
+        } else if (startYear == endYear) {
+            return LocalDate.ofYearDay(startYear, 1).lengthOfYear();
+        } else {
+
+            final int sy = startYear;
+            final int ey = endYear;
+
+            return IntStream.rangeClosed(sy, ey).boxed()
+                    .map(year -> LocalDate.ofYearDay(year, 1).lengthOfYear())
+                    .reduce(Integer::sum).orElse(0);
+        }
+
+    }
+
+    private int getWeeksBetweenYears(int startYear, int endYear, WeekFields weekFields) {
+        startYear += 1;
+        endYear -= 1;
+
+        if (startYear > endYear) {
+            return 0;
+        } else if (startYear == endYear) {
+            return LocalDate.ofYearDay(startYear, 1).get(weekFields.weekOfYear());
+        } else {
+
+            final int sy = startYear;
+            final int ey = endYear;
+
+            return IntStream.rangeClosed(sy, ey).boxed()
+                    .map(year -> LocalDate.ofYearDay(year, 1)
+                            .with(TemporalAdjusters.lastDayOfYear())
+                            .get(weekFields.weekOfYear()))
+                    .reduce(Integer::sum).orElse(0);
+        }
+
+    }
+
     private void generateEntries() {
 
         int totalEntries = 0;
@@ -111,26 +153,29 @@ public class ResourcesCalendar {
                         + (endDate.getYear() - startDate.getYear() - 1) * 12;
             }
 
-        }else if(step == Step.DAY){
-            
+        } else if (step == Step.DAY) {
+
             if (endDate.getYear() == startDate.getYear()) {
                 totalEntries = endDate.getDayOfYear() - startDate.getDayOfYear() + 1;
-            }else{
-                totalEntries = endDate.getDayOfYear() 
+            } else {
+                totalEntries = endDate.getDayOfYear()
+                        + getDaysBetweenYears(startDate.getYear(), endDate.getYear())
                         + (startDate.lengthOfYear() - startDate.getDayOfYear() + 1);
             }
-            
-        }else if(step == Step.WEEK){
-            
-            WeekFields fields = WeekFields.of(Locale.GERMANY);
-            
+
+        } else if (step == Step.WEEK) {
+
+            WeekFields weekFields = WeekFields.of(Locale.GERMANY);
+
             if (endDate.getYear() == startDate.getYear()) {
-                totalEntries = 
-                        endDate.get(fields.weekOfYear()) - startDate.get(fields.weekOfYear()) + 1;
-            }else{
-                totalEntries = endDate.get(fields.weekOfYear())
+                totalEntries
+                        = endDate.get(weekFields.weekOfYear()) - startDate.get(weekFields.weekOfYear()) + 1;
+            } else {
+                totalEntries = endDate.get(weekFields.weekOfYear())
+                        + getWeeksBetweenYears(startDate.getYear(), endDate.getYear(), weekFields)
                         + (startDate.with(TemporalAdjusters.lastDayOfYear())
-                                .get(fields.weekOfYear()) - startDate.get(fields.weekOfYear()) + 1);
+                        .get(weekFields.weekOfYear())
+                        - startDate.get(weekFields.weekOfYear()) + 1);
             }
         }
 

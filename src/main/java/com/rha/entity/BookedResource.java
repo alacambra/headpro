@@ -163,6 +163,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
 
     @Override
     public boolean equals(Object obj) {
+        if(obj == this) return true;
         if (obj instanceof BookedResource) {
             final BookedResource other = (BookedResource) obj;
             if (null != id && id != -1) {
@@ -172,8 +173,8 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
                         .isEquals();
             } else {
                  return new EqualsBuilder()
-                         .append(startDate, other.getStartDate())
-                         .append(endDate, other.getEndDate())
+                         .append(getStartDate(), other.getStartDate())
+                         .append(getEndDate(), other.getEndDate())
                          .isEquals();
             }
 
