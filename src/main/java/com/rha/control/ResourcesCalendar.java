@@ -142,7 +142,6 @@ public class ResourcesCalendar {
     private void generateEntries() {
 
         int totalEntries = 0;
-        currentDate = startDate;
 
         if (step == Step.MONTH) {
             if (endDate.getYear() == startDate.getYear()) {
@@ -179,22 +178,55 @@ public class ResourcesCalendar {
             }
         } else if (step == Step.BIWEEK) {
 
-            startDate = startDate.getDayOfMonth() > 15
-                    ? LocalDate.of(startDate.getYear(), startDate.getMonth(), 16)
-                    : LocalDate.of(startDate.getYear(), startDate.getMonth(), 1);
+            int starDateOffset = 0;
+            int endDateOffset = 0;
 
-            endDate = endDate.getDayOfMonth() <= 15
-                    ? LocalDate.of(startDate.getYear(), startDate.getMonth(), 15)
-                    : LocalDate.of(startDate.getYear(), startDate.getMonth(),
-                            startDate.getMonth().length(startDate.isLeapYear()));
+            if (startDate.getDayOfMonth() > 15) {
+                startDate = LocalDate.of(startDate.getYear(), startDate.getMonth(), 16);
+                starDateOffset = 1;
+            } else {
+                startDate = LocalDate.of(startDate.getYear(), startDate.getMonth(), 1);
+                starDateOffset = 2;
+            }
+
+            if (endDate.getDayOfMonth() > 15) {
+                endDate = LocalDate.of(endDate.getYear(), endDate.getMonth(),
+                        endDate.getMonth().length(endDate.isLeapYear()));
+                endDateOffset = 2;
+            } else {
+                endDate = LocalDate.of(endDate.getYear(), endDate.getMonth(), 15);
+                endDateOffset = 1;
+            }
 
             if (endDate.getYear() == startDate.getYear()) {
-                
-                
 
+                int totalMiddleMonths = endDate.getMonthValue() - startDate.getMonthValue() - 1;
+                if (totalMiddleMonths < 0) {
+                    
+                    totalMiddleMonths = 0;
+                    totalEntries = starDateOffset == 1 || endDateOffset == 1 ? 1 : 2;
+                    
+                } else {
+
+                    totalEntries = starDateOffset + endDateOffset + totalMiddleMonths * 2;
+                }
+
+            } else {
+
+                int stepsUntilYearEnd = (12 - startDate.getMonthValue()) * 2 + starDateOffset;
+                int stepUntilYearBegin = (endDate.getMonthValue() - 1) * 2 + endDateOffset;
+                int totalMiddleYears = (endDate.getYear() - 1) - (startDate.getYear() + 1);
+
+                if (totalMiddleYears < 0) {
+                    totalMiddleYears = 0;
+                }
+
+                totalEntries = stepUntilYearBegin + stepsUntilYearEnd + totalMiddleYears * 2 * 12;
             }
 
         }
+
+        currentDate = startDate;
 
         calenderEntries = IntStream.range(0, totalEntries).boxed().map(i -> {
 
@@ -213,10 +245,8 @@ public class ResourcesCalendar {
 
     private LocalDate[] supplyNextPeriod() {
 
-        currentDate = currentDate.plusDays(1);
-
         if (step == Step.DAY) {
-
+            currentDate = currentDate.plusDays(1);
             return new LocalDate[]{currentDate, currentDate};
 
         } else if (step == Step.WEEK) {
@@ -224,6 +254,7 @@ public class ResourcesCalendar {
             LocalDate startPeriodDate = currentDate;
             LocalDate endPeriodDate = currentDate.plusWeeks(1);
             currentDate = endPeriodDate;
+            currentDate = currentDate.plusDays(1);
             return new LocalDate[]{startPeriodDate, endPeriodDate};
 
         } else if (step == Step.MONTH) {
@@ -231,6 +262,34 @@ public class ResourcesCalendar {
             LocalDate startPeriodDate = currentDate;
             LocalDate endPeriodDate = currentDate.plusMonths(1).minusDays(1);
             currentDate = endPeriodDate;
+            currentDate = currentDate.plusDays(1);
+            return new LocalDate[]{startPeriodDate, endPeriodDate};
+
+        } else if (step == Step.BIWEEK) {
+
+            LocalDate startPeriodDate = currentDate;
+            LocalDate endPeriodDate = null;
+
+            if (startPeriodDate.getDayOfMonth() == 1) {
+
+                endPeriodDate = LocalDate.of(
+                        startPeriodDate.getYear(),
+                        startPeriodDate.getMonth(),
+                        15);
+
+            } else if (startPeriodDate.getDayOfMonth() == 16) {
+
+                endPeriodDate = LocalDate.of(
+                        startPeriodDate.getYear(),
+                        startPeriodDate.getMonth(),
+                        startPeriodDate.getMonth().length(startPeriodDate.isLeapYear()));
+
+            } else {
+                throw new RuntimeException("Invalid start period day for biweekly step");
+            }
+
+            currentDate = endPeriodDate;
+            currentDate = currentDate.plusDays(1);
             return new LocalDate[]{startPeriodDate, endPeriodDate};
 
         }
