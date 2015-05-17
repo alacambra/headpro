@@ -14,8 +14,11 @@ import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.*;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -26,20 +29,19 @@ import javax.inject.Named;
 public class BookedResourceController2 implements Serializable {
 
     Map<LocalDate, List<LocalDate[]>> periods;
-    List<BookingRow> bookingRow;
+    List<BookingRow> bookingRows;
 
     @Inject
     BookedResourceFacade bookedResourceFacade;
 
     @Inject
     DivisionFacade divisionFacade;
-
+    List<Integer> totalBooking;
     ResourcesCalendar resourcesCalendar = new ResourcesCalendar();
+    LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
+    LocalDate endDate = LocalDate.of(2016, Month.JANUARY, 1);
 
     public void loadBookedResourcesForPeriod() {
-        
-        LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
-        LocalDate endDate = LocalDate.of(2016, Month.JANUARY, 1);
 
         List<BookedResource> bookedResources = bookedResourceFacade.getBookedResourcesForDivision(
                 1, startDate, endDate);
@@ -47,43 +49,93 @@ public class BookedResourceController2 implements Serializable {
         final Map<Project, List<BookedResource>> resourcesByProject
                 = bookedResources.stream().collect(groupingBy(br -> br.getProject()));
 
-        bookingRow = new ArrayList<>();
+        bookingRows = new ArrayList<>();
 
         resourcesByProject.keySet().stream().forEach(project -> {
-            bookingRow.add(new BookingRow(
+            bookingRows.add(new BookingRow(
                     project,
                     resourcesCalendar
                     .setStartDate(startDate)
                     .setEndDate(endDate)
-                            .setExistentResources(resourcesByProject.get(project))
-                            .setStep(Step.BIWEEK)
-                            .getCalendarEntries(),
+                    .setExistentResources(resourcesByProject.get(project))
+                    .setStep(Step.BIWEEK)
+                    .getCalendarEntries().parallelStream()
+                    .map(br -> {
+                        br.setProject(project);
+                        return br;
+                    })
+                    .collect(toList()),
                     divisionFacade.find(1)));
         });
+
+        resourcesByProject.keySet().stream().map(pr -> pr.getId() + ":" + resourcesByProject.get(pr).size()).forEach(System.out::println);
+        System.out.println("....");
+        bookingRows.stream().map(br -> br.project.getId() + ":" + br.resources.size()).forEach(System.out::println);
+
+    }
+
+    private void resetValues() {
+        bookingRows = null;
+        periods = null;
     }
 
     public List<BookingRow> getBookingRow() {
-//        if (bookingRow == null) {
+        if (bookingRows == null) {
             loadBookedResourcesForPeriod();
-//        }
+        }
 
-        return bookingRow;
+        return bookingRows;
     }
 
     public List<LocalDate> getPeriods() {
 
-//        if (periods == null) {
-            loadBookedResourcesForPeriod();
-            periods = bookingRow.get(0).getResources().stream()
+        if (periods == null) {
+            periods = getBookingRow().get(0).getResources().stream()
                     .map(br -> new LocalDate[]{br.getStartDate(), br.getEndDate()})
                     .collect(groupingBy(period -> period[0]));
-//        }
+        }
 
         return periods.keySet().stream().sorted().collect(toList());
     }
 
     private LocalDate getDate(BookedResource br) {
         return br.getStartDate();
+    }
+
+    public void onCellEdit(CellEditEvent event) {
+
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+
+        FacesContext context = FacesContext.getCurrentInstance();
+        BookingRow entity = context.getApplication().evaluateExpressionGet(context, "#{booking}", BookingRow.class);
+
+        if (newValue != null && !newValue.equals(oldValue)) {
+
+            bookedResourceFacade.updateOrCreateBookings(entity.getResources());
+            
+
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+
+//            areaModel = null;
+//            totalBooking = null;
+        } else {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cell not changed", "Old: " + oldValue + ", New:" + newValue);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
+    }
+
+    public List<List<Integer>> getTotalBooking() {
+
+        if (totalBooking == null) {
+            totalBooking = bookedResourceFacade
+                    .getTotalBookedResourcesByDivisionForPeriod(1, startDate, endDate);
+        }
+
+        List<List<Integer>> r = new ArrayList();
+        r.add(totalBooking);
+        return r;
     }
 
 }

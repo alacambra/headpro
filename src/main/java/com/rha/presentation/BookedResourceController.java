@@ -40,7 +40,6 @@ public class BookedResourceController implements Serializable {
     @EJB
     private com.rha.boundary.BookedResourceFacade ejbFacade;
     List<BookingRow> rows;
-    List<BookingRow> originalRows;
     List<Integer> totalBooking;
 
     @Inject
@@ -48,8 +47,6 @@ public class BookedResourceController implements Serializable {
 
     @Inject
     DivisionFacade divisionFacade;
-
-    Cell selectedCell;
 
     public BookedResourceController() {
     }

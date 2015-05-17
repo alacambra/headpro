@@ -44,6 +44,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
             query = "SELECT br FROM BookedResource br WHERE "
                     + "br.startDate>=:startDate AND br.endDate<=:endDate"),
     
+    @NamedQuery(name = BookedResource.totalByDivisionForPeriod,
+            query = "SELECT  sum(br.booked) FROM BookedResource br "
+                    + "WHERE "
+                    + "br.startDate>=:startDate AND br.endDate<=:endDate "
+                    + "group by br.startDate order by br.startDate"),
+    
     @NamedQuery(name = "back-up",
             query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did "
                     + "AND br.startDate>=:startDate AND br.endDate<=:endDate")
@@ -53,6 +59,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
     private static final String prefix = "com.rha.entity.BookedResource.";
     public static final String byProjectAndDivision = prefix + "byProjectAndDivision";
     public static final String totalByDivision = prefix + "totalByDivision";
+    public static final String totalByDivisionForPeriod = prefix + "totalByDivisionForPeriod";
     public static final String byDivision = prefix + "byDivision";
     public static final String byDivisionForPeriod = prefix + "byDivisionForPeriod";
 
@@ -84,36 +91,36 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
         return persisted;
     }
 
-    public BookedResource setPersisted(boolean persisted) {
+    public void setPersisted(boolean persisted) {
         this.persisted = persisted;
-        return this;
+        
     }
 
     public Integer getId() {
         return id;
     }
 
-    public BookedResource setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
-        return this;
+        
     }
 
     public Division getDivision() {
         return division;
     }
 
-    public BookedResource setDivision(Division division) {
+    public void setDivision(Division division) {
         this.division = division;
-        return this;
+        
     }
 
     public Project getProject() {
         return project;
     }
 
-    public BookedResource setProject(Project project) {
+    public void setProject(Project project) {
         this.project = project;
-        return this;
+        
     }
 
     public LocalDate getStartDate() {
@@ -122,10 +129,10 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
         else return null;
     }
     
-    public BookedResource setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDate startDate) {
         Instant instant = startDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         this.startDate = Date.from(instant);
-        return this;
+        
     }
 
     public LocalDate getEndDate() {
@@ -134,28 +141,28 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
         else return null;
     }
 
-    public BookedResource setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDate endDate) {
         Instant instant = endDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         this.endDate = Date.from(instant);
-        return this;
+        
     }
 
     public Integer getBooked() {
         return booked;
     }
 
-    public BookedResource setBooked(Integer booked) {
+    public void setBooked(Integer booked) {
         this.booked = booked;
-        return this;
+        
     }
 
     public Integer getPosition() {
         return position;
     }
 
-    public BookedResource setPosition(Integer position) {
+    public void setPosition(Integer position) {
         this.position = position;
-        return this;
+        
     }
 
     @Override

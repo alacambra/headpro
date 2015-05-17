@@ -221,11 +221,15 @@ public class ResourcesCalendarTest {
 
         List<BookedResource> existentResources = new ArrayList<>();
 
-        existentResources.add(new BookedResource()
-                .setStartDate(LocalDate.of(2015, Month.JANUARY, 1)));
+        BookedResource br = new BookedResource();
+        br.setStartDate(LocalDate.of(2015, Month.JANUARY, 1));
+        
+        existentResources.add(br);
 
-        existentResources.add(new BookedResource()
-                .setStartDate(LocalDate.of(2015, Month.JUNE, 1)));
+        br = new BookedResource();
+        br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
+        
+        existentResources.add(br);
 
         cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2015, Month.DECEMBER, 31))
@@ -243,8 +247,10 @@ public class ResourcesCalendarTest {
 
         List<BookedResource> existentResources = new ArrayList<>();
 
-        existentResources.add(new BookedResource()
-                .setStartDate(LocalDate.of(2015, Month.JUNE, 1)));
+        BookedResource br = new BookedResource();
+        br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
+        
+        existentResources.add(br);
 
         cut.setStartDate(LocalDate.of(2015, Month.FEBRUARY, 1))
                 .setEndDate(LocalDate.of(2015, Month.AUGUST, 31))
@@ -262,11 +268,15 @@ public class ResourcesCalendarTest {
 
         List<BookedResource> existentResources = new ArrayList<>();
 
-        existentResources.add(new BookedResource()
-                .setStartDate(LocalDate.of(2015, Month.FEBRUARY, 1)));
+        BookedResource br = new BookedResource();
+        br.setStartDate(LocalDate.of(2015, Month.FEBRUARY, 1));
+        
+        existentResources.add(br);
+        
+        br = new BookedResource();
+        br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
 
-        existentResources.add(new BookedResource()
-                .setStartDate(LocalDate.of(2015, Month.JUNE, 1)));
+        existentResources.add(br);
 
         cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2015, Month.DECEMBER, 31))

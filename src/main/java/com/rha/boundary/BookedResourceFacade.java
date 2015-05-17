@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rha.boundary;
 
 import com.rha.control.LocalDateConverter;
@@ -55,7 +50,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
         List<BookedResource> bookedResources
                 = em.createNamedQuery(BookedResource.byDivisionForPeriod)
-//                .setParameter("did", divisionId)
+                //                .setParameter("did", divisionId)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
@@ -72,13 +67,14 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
         return bookedResources;
     }
-
-    public List<Integer> getTotalBookedResourcesPerProjectForDivision(
+    
+    public List<Integer> getTotalBookedResourcesByDivisionForPeriod(
             int divisionId, LocalDate startDate, LocalDate endDate) {
 
         List<Integer> bookedResources
-                = em.createNamedQuery(BookedResource.totalByDivision)
-                .setParameter("did", divisionId)
+                = em.createNamedQuery(BookedResource.totalByDivisionForPeriod)
+                .setParameter("startDate", LocalDateConverter.toDate(startDate))
+                .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
 
         return bookedResources;
@@ -88,16 +84,9 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         super(BookedResource.class);
     }
 
-//    public List<StepPeriod> getPeriods() {
-//        return new CalendarGenerator(
-//                LocalDate.now(),
-//                LocalDate.now().plusYears(1), Step.MONTH)
-//                .getEntries();
-//    }
     public void updateOrCreateBookings(Collection<BookedResource> resources) {
-        resources.stream().filter(r -> r.getId() != null || r.getBooked() != 0)
-                .forEach(r -> {
-                    em.merge(r);
-                });
+        resources.stream()
+                .filter(r -> r.isPersisted() || r.getBooked() != 0)
+                .forEach(r -> em.merge(r));
     }
 }

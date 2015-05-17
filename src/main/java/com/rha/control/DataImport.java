@@ -78,7 +78,8 @@ public class DataImport {
             br.setBooked(Math.round(Float.parseFloat(v)));
             br.setDivision(d);
             br.setProject(p);
-            br.setStartDate(startPeriodDate).setEndDate(endPeriodDate);
+            br.setStartDate(startPeriodDate);
+            br.setEndDate(endPeriodDate);
             em.persist(br);
         }
     }

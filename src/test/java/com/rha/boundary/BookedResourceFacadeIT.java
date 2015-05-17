@@ -61,16 +61,24 @@ public class BookedResourceFacadeIT {
     public void testGetBookedResourcesForDivision_3args() throws Exception {
         Division d = em.merge(new Division().setName("testDivision"));
         Project p = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
-
-        cut.create(new BookedResource().setBooked(10).setDivision(d)
-                .setStartDate(LocalDate.of(2015, Month.MARCH, 1))
-                .setEndDate(LocalDate.of(2015, Month.MARCH, 30))
-                .setProject(p));
         
-        cut.create(new BookedResource().setBooked(10).setDivision(d)
-                .setStartDate(LocalDate.of(2015, Month.JUNE, 1))
-                .setEndDate(LocalDate.of(2015, Month.JUNE, 30))
-                .setProject(p));
+        BookedResource br = new BookedResource();
+        br.setBooked(10);
+        br.setDivision(d);
+        br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
+        br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
+        br.setProject(p);
+
+        cut.create(br);
+        
+        br = new BookedResource();
+        br.setBooked(10);
+        br.setDivision(d);
+        br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
+        br.setEndDate(LocalDate.of(2015, Month.JULY, 30));
+        br.setProject(p);
+        
+        cut.create(br);
         
         List<BookedResource> r = cut.getBookedResourcesForDivision(1,
                 LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.DECEMBER, 31));

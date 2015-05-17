@@ -23,6 +23,9 @@
                              editMode="cell" 
                              widgetVar="booking">
                     <p:growl id="msgs" showDetail="true"/>
+
+                    <p:ajax event="cellEdit" listener="#{brc.onCellEdit}" update=":form:msgs" />
+
                     <p:column headerText="project name" width="100">
                         <h:outputText value="#{booking.project.name}"></h:outputText>
                     </p:column>
@@ -37,6 +40,7 @@
                     </c:forEach>
                 </p:dataTable>
             </h:form>
+            
         </ui:define>
     </ui:composition>
 </html>
