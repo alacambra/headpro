@@ -53,7 +53,7 @@ public class DataImport {
 
     void insertRow(String... row) {
 
-        LocalDate currentDate = LocalDate.of(2015, Month.JANUARY, 7);
+        LocalDate currentDate = LocalDate.of(2015, Month.JANUARY, 1);
 
         String projectName = row[0];
         Project p = new Project();
@@ -67,9 +67,11 @@ public class DataImport {
 
         for (int i = 0; i < row.length - 1; i++) {
 
-            LocalDate startPeriodDate = currentDate;
-            LocalDate endPeriodDate = currentDate.plusWeeks(1);
-            currentDate = endPeriodDate;
+            LocalDate[] period = supplyNextPeriod(currentDate);
+            
+            LocalDate startPeriodDate = period[0];
+            LocalDate endPeriodDate = period[1];
+            currentDate = period[2];
 
             BookedResource br = new BookedResource();
             String v = "".equals(row[i + 1]) ? "0" : row[i + 1];
@@ -79,5 +81,33 @@ public class DataImport {
             br.setStartDate(startPeriodDate).setEndDate(endPeriodDate);
             em.persist(br);
         }
+    }
+
+    private LocalDate[] supplyNextPeriod(LocalDate currentDate) {
+        LocalDate startPeriodDate = currentDate;
+        LocalDate endPeriodDate = null;
+
+        if (startPeriodDate.getDayOfMonth() == 1) {
+
+            endPeriodDate = LocalDate.of(
+                    startPeriodDate.getYear(),
+                    startPeriodDate.getMonth(),
+                    15);
+
+        } else if (startPeriodDate.getDayOfMonth() == 16) {
+
+            endPeriodDate = LocalDate.of(
+                    startPeriodDate.getYear(),
+                    startPeriodDate.getMonth(),
+                    startPeriodDate.getMonth().length(startPeriodDate.isLeapYear()));
+
+        } else {
+            throw new RuntimeException("Invalid start period day for biweekly step " + startPeriodDate);
+        }
+
+        currentDate = endPeriodDate;
+        currentDate = currentDate.plusDays(1);
+        return new LocalDate[]{startPeriodDate, endPeriodDate, currentDate};
+
     }
 }

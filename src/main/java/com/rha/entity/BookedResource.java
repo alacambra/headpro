@@ -41,6 +41,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
             query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did"),
     
     @NamedQuery(name = BookedResource.byDivisionForPeriod,
+            query = "SELECT br FROM BookedResource br WHERE "
+                    + "br.startDate>=:startDate AND br.endDate<=:endDate"),
+    
+    @NamedQuery(name = "back-up",
             query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did "
                     + "AND br.startDate>=:startDate AND br.endDate<=:endDate")
 })
@@ -118,8 +122,6 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
         else return null;
     }
     
-    
-
     public BookedResource setStartDate(LocalDate startDate) {
         Instant instant = startDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         this.startDate = Date.from(instant);

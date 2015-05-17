@@ -138,6 +138,14 @@ public class ResourcesCalendarTest {
         cut.setStep(Step.BIWEEK);
 
         assertThat(cut.getCalendarEntries().size(), Is.is(1));
+        
+        setUp();
+        cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
+                .setEndDate(LocalDate.of(2016, Month.JANUARY, 1));
+
+        cut.setStep(Step.BIWEEK);
+
+        assertThat(cut.getCalendarEntries().size(), Is.is(2 * 2 * 12 +  1));
     }
 
     @Test

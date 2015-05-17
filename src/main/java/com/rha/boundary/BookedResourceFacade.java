@@ -55,7 +55,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
         List<BookedResource> bookedResources
                 = em.createNamedQuery(BookedResource.byDivisionForPeriod)
-                .setParameter("did", divisionId)
+//                .setParameter("did", divisionId)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();

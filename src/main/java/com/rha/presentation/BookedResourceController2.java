@@ -42,9 +42,12 @@ public class BookedResourceController2 implements Serializable {
     ResourcesCalendar resourcesCalendar = new ResourcesCalendar();
 
     public void loadBookedResourcesForPeriod() {
+        
+        LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
+        LocalDate endDate = LocalDate.of(2016, Month.JANUARY, 1);
 
         List<BookedResource> bookedResources = bookedResourceFacade.getBookedResourcesForDivision(
-                1, LocalDate.of(2014, Month.JANUARY, 1), LocalDate.now());
+                1, startDate, endDate);
 
         final Map<Project, List<BookedResource>> resourcesByProject
                 = bookedResources.stream().collect(groupingBy(br -> br.getProject()));
@@ -55,8 +58,11 @@ public class BookedResourceController2 implements Serializable {
             bookingRow.add(new BookingRow(
                     project,
                     resourcesCalendar
-                    .setStartDate(LocalDate.of(2012, Month.JANUARY, 1))
-                    .setEndDate(LocalDate.of(2015, Month.JANUARY, 1)).setStep(Step.DAY).getCalendarEntries(),
+                    .setStartDate(startDate)
+                    .setEndDate(endDate)
+                            .setExistentResources(resourcesByProject.get(project))
+                            .setStep(Step.BIWEEK)
+                            .getCalendarEntries(),
                     divisionFacade.find(1)));
         });
 
@@ -71,21 +77,21 @@ public class BookedResourceController2 implements Serializable {
     }
 
     public List<BookingRow> getBookingRow() {
-        if (bookingRow == null) {
+//        if (bookingRow == null) {
             loadBookedResourcesForPeriod();
-        }
+//        }
 
         return bookingRow;
     }
 
     public List<LocalDate> getPeriods() {
 
-        if (periods == null) {
+//        if (periods == null) {
             loadBookedResourcesForPeriod();
             periods = bookingRow.get(0).getResources().stream()
                     .map(br -> new LocalDate[]{br.getStartDate(), br.getEndDate()})
                     .collect(groupingBy(period -> period[0]));
-        }
+//        }
 
         return periods.keySet().stream().sorted().collect(toList());
     }

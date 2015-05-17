@@ -215,7 +215,7 @@ public class ResourcesCalendar {
 
                 int stepsUntilYearEnd = (12 - startDate.getMonthValue()) * 2 + starDateOffset;
                 int stepUntilYearBegin = (endDate.getMonthValue() - 1) * 2 + endDateOffset;
-                int totalMiddleYears = (endDate.getYear() - 1) - (startDate.getYear() + 1);
+                int totalMiddleYears = endDate.getYear() - startDate.getYear() - 1;
 
                 if (totalMiddleYears < 0) {
                     totalMiddleYears = 0;
