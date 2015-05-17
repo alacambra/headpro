@@ -177,6 +177,23 @@ public class ResourcesCalendar {
                         .get(weekFields.weekOfYear())
                         - startDate.get(weekFields.weekOfYear()) + 1);
             }
+        } else if (step == Step.BIWEEK) {
+
+            startDate = startDate.getDayOfMonth() > 15
+                    ? LocalDate.of(startDate.getYear(), startDate.getMonth(), 16)
+                    : LocalDate.of(startDate.getYear(), startDate.getMonth(), 1);
+
+            endDate = endDate.getDayOfMonth() <= 15
+                    ? LocalDate.of(startDate.getYear(), startDate.getMonth(), 15)
+                    : LocalDate.of(startDate.getYear(), startDate.getMonth(),
+                            startDate.getMonth().length(startDate.isLeapYear()));
+
+            if (endDate.getYear() == startDate.getYear()) {
+                
+                
+
+            }
+
         }
 
         calenderEntries = IntStream.range(0, totalEntries).boxed().map(i -> {

@@ -10,5 +10,5 @@ package com.rha.entity;
  * @author alacambra
  */
 public enum Step {
-    DAY, WEEK, MONTH
+    DAY, WEEK, BIWEEK, MONTH
 }
