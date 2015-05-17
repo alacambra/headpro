@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rha.presentation;
 
 import com.rha.control.ResourcesCalendar;
@@ -65,15 +60,6 @@ public class BookedResourceController2 implements Serializable {
                             .getCalendarEntries(),
                     divisionFacade.find(1)));
         });
-
-//        for (int i = 0; i < 20; i++) {
-//            bookingRow.add(new BookingRow(
-//                    new Project().setName("someName: " + i).setId(-1),
-//                    resourcesCalendar
-//                    .setStartDate(LocalDate.of(2012, Month.JANUARY, 1))
-//                    .setEndDate(LocalDate.of(2015, Month.JANUARY, 1)).setStep(Step.WEEK).getCalendarEntries(),
-//                    new Division().setName("java").setId(-1)));
-//        }
     }
 
     public List<BookingRow> getBookingRow() {
