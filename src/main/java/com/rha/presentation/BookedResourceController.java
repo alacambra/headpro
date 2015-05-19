@@ -62,7 +62,7 @@ public class BookedResourceController implements Serializable {
 
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
-
+        
         FacesContext context = FacesContext.getCurrentInstance();
         BookingRow entity = context.getApplication().evaluateExpressionGet(context, "#{booking}", BookingRow.class);
 

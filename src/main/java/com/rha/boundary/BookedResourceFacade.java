@@ -18,7 +18,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
     @PersistenceContext(unitName = "rha")
     EntityManager em;
-
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;
@@ -54,7 +54,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
-
+        
         return bookedResources;
     }
 
@@ -67,7 +67,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
         return bookedResources;
     }
-    
+
     public List<Integer> getTotalBookedResourcesByDivisionForPeriod(
             int divisionId, LocalDate startDate, LocalDate endDate) {
 

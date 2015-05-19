@@ -197,13 +197,13 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
     @Override
     public int compareTo(BookedResource o) {
 
-        if (o.getPosition() == null) {
+        if (o.getStartDate() == null) {
             return 1;
         }
 
-        if (position > o.getPosition()) {
+        if (getStartDate().isAfter(o.getStartDate())) {
             return 1;
-        } else if (position.equals(o.getPosition())) {
+        } else if (getStartDate().isEqual(o.getStartDate())) {
             return 0;
         } else {
             return -1;

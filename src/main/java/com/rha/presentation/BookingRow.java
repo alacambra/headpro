@@ -10,7 +10,9 @@ import com.rha.entity.Division;
 import com.rha.entity.Project;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -24,32 +26,18 @@ public class BookingRow implements Serializable{
     Project project;
     Division division;
     List<BookedResource> resources;
+    
+    @Inject
+    Logger logger;
 
     public BookingRow(Project project, List<BookedResource> resources, Division division) {
         this.project = project;
         this.resources = resources;
         this.division = division;
-        roundResources();
     }
 
     public Project getProject() {
         return project;
-    }
-
-    private void roundResources() {
-
-//        //TODO: position is buggy
-//        int i = resources.size();
-//        
-//        while (resources.size() < 13) {
-//            BookedResource dummyResource = new BookedResource();
-//            dummyResource.setBooked(0);
-//            dummyResource.setPosition(i);
-//            dummyResource.setProject(project);
-//            dummyResource.setDivision(division);
-//            resources.add(dummyResource);
-//            i++;
-//        }
     }
 
     public void setProject(Project project) {
@@ -62,7 +50,6 @@ public class BookingRow implements Serializable{
 
     public void setResources(List<BookedResource> resources) {
         this.resources = resources;
-        roundResources();
     }
 
     @Override

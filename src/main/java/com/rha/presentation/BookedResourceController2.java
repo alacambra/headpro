@@ -12,6 +12,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import static java.util.stream.Collectors.*;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
@@ -28,6 +29,9 @@ import org.primefaces.event.CellEditEvent;
 @Named("brc")
 public class BookedResourceController2 implements Serializable {
 
+    @Inject
+    transient Logger logger;
+
     Map<LocalDate, List<LocalDate[]>> periods;
     List<BookingRow> bookingRows;
 
@@ -40,6 +44,7 @@ public class BookedResourceController2 implements Serializable {
     ResourcesCalendar resourcesCalendar = new ResourcesCalendar();
     LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
     LocalDate endDate = LocalDate.of(2016, Month.JANUARY, 1);
+    
 
     public void loadBookedResourcesForPeriod() {
 
@@ -67,11 +72,6 @@ public class BookedResourceController2 implements Serializable {
                     .collect(toList()),
                     divisionFacade.find(1)));
         });
-
-        resourcesByProject.keySet().stream().map(pr -> pr.getId() + ":" + resourcesByProject.get(pr).size()).forEach(System.out::println);
-        System.out.println("....");
-        bookingRows.stream().map(br -> br.project.getId() + ":" + br.resources.size()).forEach(System.out::println);
-
     }
 
     private void resetValues() {
@@ -113,7 +113,6 @@ public class BookedResourceController2 implements Serializable {
         if (newValue != null && !newValue.equals(oldValue)) {
 
             bookedResourceFacade.updateOrCreateBookings(entity.getResources());
-            
 
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
             FacesContext.getCurrentInstance().addMessage(null, msg);
