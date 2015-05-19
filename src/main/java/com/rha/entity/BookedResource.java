@@ -54,7 +54,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
             query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did "
                     + "AND br.startDate>=:startDate AND br.endDate<=:endDate")
 })
-public class BookedResource implements Serializable, Comparable<BookedResource> {
+public class BookedResource implements Serializable, Comparable<BookedResource>, PeriodWithValue{
 
     private static final String prefix = "com.rha.entity.BookedResource.";
     public static final String byProjectAndDivision = prefix + "byProjectAndDivision";
@@ -79,7 +79,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
     @Temporal(TemporalType.DATE)
     Date endDate;
 
-    Integer booked;
+    Integer booked = 0;
 
     @Transient
     Integer position = 0;
@@ -160,7 +160,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
         return position;
     }
 
-    public void setPosition(Integer position) {
+    public void setPosition(int position) {
         this.position = position;
         
     }
@@ -208,6 +208,17 @@ public class BookedResource implements Serializable, Comparable<BookedResource> 
         } else {
             return -1;
         }
+    }
+
+    @Override
+    public void setValue(Object o) {
+        setBooked((Integer) o);
+    }
+
+    @Override
+    public void setPeriod(LocalDate[] period) {
+        setStartDate(period[0]);
+        setEndDate(period[1]);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.rha.control;
 
 import com.rha.entity.BookedResource;
+import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Step;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -8,51 +9,66 @@ import java.time.temporal.WeekFields;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
  *
  * @author alacambra
+ * @param <T>
  */
-public class ResourcesCalendar {
+public class ResourcesCalendar<T extends PeriodWithValue> {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<BookedResource> existentResources;
-    private List<BookedResource> calenderEntries;
+    private List<T> existentResources;
+    private List<T> calenderEntries;
+    private Supplier<T> supplier;
     private Step step;
 
     private LocalDate currentDate;
+
+    public ResourcesCalendar() {
+        this.supplier = () -> {
+            BookedResource br = new BookedResource();
+            br.setPersisted(false);
+            return (T)br;
+        };
+    }
 
     public LocalDate getStartDate() {
         return startDate;
     }
 
-    public ResourcesCalendar setStartDate(LocalDate startDate) {
+    public ResourcesCalendar<T> setStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
+    }
+
+    public void setSupplier(Supplier<T> supplier) {
+        this.supplier = supplier;
     }
 
     public LocalDate getEndDate() {
         return endDate;
     }
 
-    public ResourcesCalendar setEndDate(LocalDate endDate) {
+    public ResourcesCalendar<T> setEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
     }
 
-    public List<BookedResource> getExistentResources() {
+    public List<T> getExistentResources() {
         return existentResources;
     }
 
-    public ResourcesCalendar setExistentResources(List<BookedResource> existentResources) {
+    public ResourcesCalendar<T> setExistentResources(List<T> existentResources) {
         this.existentResources = existentResources.stream().sorted().collect(Collectors.toList());
         return this;
     }
 
-    public List<BookedResource> getCalendarEntries() {
+    public List<T> getCalendarEntries() {
 
         generateEntries();
 
@@ -60,8 +76,8 @@ public class ResourcesCalendar {
             return calenderEntries;
         }
 
-        Iterator<BookedResource> it = existentResources.iterator();
-        BookedResource pointer;
+        Iterator<T> it = existentResources.iterator();
+        T pointer;
 
         if (it.hasNext()) {
             pointer = it.next();
@@ -71,7 +87,7 @@ public class ResourcesCalendar {
 
         for (int i = 0; i < calenderEntries.size(); i++) {
 
-            BookedResource br = calenderEntries.get(i);
+            T br = calenderEntries.get(i);
 
             if (pointer != null && areEquals(br.getStartDate(), pointer.getStartDate())) {
                 calenderEntries.set(i, pointer);
@@ -92,7 +108,7 @@ public class ResourcesCalendar {
         return step;
     }
 
-    public ResourcesCalendar setStep(Step step) {
+    public ResourcesCalendar<T> setStep(Step step) {
         this.step = step;
         return this;
     }
@@ -202,10 +218,10 @@ public class ResourcesCalendar {
 
                 int totalMiddleMonths = endDate.getMonthValue() - startDate.getMonthValue() - 1;
                 if (totalMiddleMonths < 0) {
-                    
+
                     totalMiddleMonths = 0;
                     totalEntries = starDateOffset == 1 || endDateOffset == 1 ? 1 : 2;
-                    
+
                 } else {
 
                     totalEntries = starDateOffset + endDateOffset + totalMiddleMonths * 2;
@@ -231,11 +247,9 @@ public class ResourcesCalendar {
         calenderEntries = IntStream.range(0, totalEntries).boxed().map(i -> {
 
             LocalDate[] newPeriod = supplyNextPeriod();
-            BookedResource b = new BookedResource();
-            b.setStartDate(newPeriod[0]);
-            b.setEndDate(newPeriod[1]);
-            b.setPersisted(false);
-            b.setBooked(0);
+            T b = supplier.get();
+            b.setPeriod(newPeriod);
+            b.setValue(0);
             b.setPosition(i);
 
             return b;

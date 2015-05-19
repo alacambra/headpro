@@ -41,10 +41,9 @@ public class BookedResourceController2 implements Serializable {
     @Inject
     DivisionFacade divisionFacade;
     List<Integer> totalBooking;
-    ResourcesCalendar resourcesCalendar = new ResourcesCalendar();
+    ResourcesCalendar<BookedResource> resourcesCalendar = new ResourcesCalendar<>();
     LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
     LocalDate endDate = LocalDate.of(2016, Month.JANUARY, 1);
-    
 
     public void loadBookedResourcesForPeriod() {
 
@@ -64,7 +63,8 @@ public class BookedResourceController2 implements Serializable {
                     .setEndDate(endDate)
                     .setExistentResources(resourcesByProject.get(project))
                     .setStep(Step.BIWEEK)
-                    .getCalendarEntries().parallelStream()
+                    .getCalendarEntries()
+                    .parallelStream()
                     .map(br -> {
                         br.setProject(project);
                         return br;
