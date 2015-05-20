@@ -27,11 +27,11 @@ import static org.junit.Assert.*;
  */
 public class ResourcesCalendarTest {
 
-    ResourcesCalendar cut;
+    CalendarPeriodsGenerator cut;
 
     @Before
     public void setUp() {
-        cut = new ResourcesCalendar();
+        cut = new CalendarPeriodsGenerator();
 
     }
 
@@ -46,7 +46,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.DAY);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(cut.getStartDate().lengthOfYear()));
+        assertThat(cut.generatePeriods().size(), Is.is(cut.getStartDate().lengthOfYear()));
 
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
@@ -54,7 +54,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.DAY);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2 * cut.getStartDate().lengthOfYear()));
+        assertThat(cut.generatePeriods().size(), Is.is(2 * cut.getStartDate().lengthOfYear()));
 
         setUp();
 
@@ -67,7 +67,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.DAY);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(expected));
+        assertThat(cut.generatePeriods().size(), Is.is(expected));
 
     }
 
@@ -77,75 +77,75 @@ public class ResourcesCalendarTest {
                 .setEndDate(LocalDate.of(2015, Month.DECEMBER, 31))
                 .setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(12 * 2));
+        assertThat(cut.generatePeriods().size(), Is.is(12 * 2));
 
         setUp();
         cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2016, Month.DECEMBER, 31))
                 .setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2 * 12 * 2));
+        assertThat(cut.generatePeriods().size(), Is.is(2 * 12 * 2));
 
         setUp();
         cut.setStartDate(LocalDate.of(2015, Month.MARCH, 1))
                 .setEndDate(LocalDate.of(2016, Month.MARCH, 31))
                 .setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2 + 12 * 2));
+        assertThat(cut.generatePeriods().size(), Is.is(2 + 12 * 2));
 
         setUp();
         cut.setStartDate(LocalDate.of(2015, Month.MARCH, 12))
                 .setEndDate(LocalDate.of(2016, Month.MARCH, 18))
                 .setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2 + 12 * 2));
-        
+        assertThat(cut.generatePeriods().size(), Is.is(2 + 12 * 2));
+
         setUp();
         cut.setStartDate(LocalDate.of(2016, Month.MARCH, 12))
                 .setEndDate(LocalDate.of(2016, Month.MARCH, 18))
                 .setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2));
-        
+        assertThat(cut.generatePeriods().size(), Is.is(2));
+
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2014, Month.JANUARY, 4));
 
         cut.setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(1));
-        
+        assertThat(cut.generatePeriods().size(), Is.is(1));
+
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2014, Month.JANUARY, 17));
 
         cut.setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2));
-        
+        assertThat(cut.generatePeriods().size(), Is.is(2));
+
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 15))
                 .setEndDate(LocalDate.of(2014, Month.JANUARY, 17));
 
         cut.setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2));
-        
+        assertThat(cut.generatePeriods().size(), Is.is(2));
+
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 19))
                 .setEndDate(LocalDate.of(2014, Month.JANUARY, 20));
 
         cut.setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(1));
-        
+        assertThat(cut.generatePeriods().size(), Is.is(1));
+
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2016, Month.JANUARY, 1));
 
         cut.setStep(Step.BIWEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2 * 2 * 12 +  1));
+        assertThat(cut.generatePeriods().size(), Is.is(2 * 2 * 12 + 1));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.WEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(53));
+        assertThat(cut.generatePeriods().size(), Is.is(53));
 
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
@@ -163,7 +163,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.WEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2 * 53));
+        assertThat(cut.generatePeriods().size(), Is.is(2 * 53));
 
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
@@ -171,7 +171,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.WEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(1));
+        assertThat(cut.generatePeriods().size(), Is.is(1));
 
         setUp();
         cut.setStartDate(LocalDate.of(2015, Month.MARCH, 1))
@@ -179,7 +179,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.WEEK);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(19));
+        assertThat(cut.generatePeriods().size(), Is.is(19));
     }
 
     @Test
@@ -189,7 +189,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.MONTH);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(12));
+        assertThat(cut.generatePeriods().size(), Is.is(12));
 
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
@@ -197,7 +197,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.MONTH);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(2 * 12));
+        assertThat(cut.generatePeriods().size(), Is.is(2 * 12));
 
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
@@ -205,7 +205,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.MONTH);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(1));
+        assertThat(cut.generatePeriods().size(), Is.is(1));
 
         setUp();
         cut.setStartDate(LocalDate.of(2015, Month.MARCH, 1))
@@ -213,7 +213,7 @@ public class ResourcesCalendarTest {
 
         cut.setStep(Step.MONTH);
 
-        assertThat(cut.getCalendarEntries().size(), Is.is(4));
+        assertThat(cut.generatePeriods().size(), Is.is(4));
     }
 
     @Test
@@ -223,20 +223,27 @@ public class ResourcesCalendarTest {
 
         BookedResource br = new BookedResource();
         br.setStartDate(LocalDate.of(2015, Month.JANUARY, 1));
-        
+
         existentResources.add(br);
 
         br = new BookedResource();
         br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
-        
+
         existentResources.add(br);
 
-        cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
+        List<LocalDate[]> periods = cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2015, Month.DECEMBER, 31))
                 .setStep(Step.MONTH)
-                .setExistentResources(existentResources);
+                .generatePeriods();
 
-        List<BookedResource> result = cut.getCalendarEntries();
+        CalendarEntriesGenerator<BookedResource> entriesGenerator = new CalendarEntriesGenerator<>();
+        List<BookedResource> result = entriesGenerator.getCalendarEntries(
+                existentResources, periods, () -> {
+                    BookedResource res = new BookedResource();
+                    res.setPersisted(false);
+                    return res;
+                });
+
         assertEquals(12, result.size());
         assertEquals(existentResources.get(0), result.get(0));
         assertEquals(existentResources.get(1), result.get(5));
@@ -249,15 +256,22 @@ public class ResourcesCalendarTest {
 
         BookedResource br = new BookedResource();
         br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
-        
+
         existentResources.add(br);
 
-        cut.setStartDate(LocalDate.of(2015, Month.FEBRUARY, 1))
+        List<LocalDate[]> periods = cut.setStartDate(LocalDate.of(2015, Month.FEBRUARY, 1))
                 .setEndDate(LocalDate.of(2015, Month.AUGUST, 31))
                 .setStep(Step.MONTH)
-                .setExistentResources(existentResources);
+                .generatePeriods();
 
-        List<BookedResource> result = cut.getCalendarEntries();
+        CalendarEntriesGenerator<BookedResource> entriesGenerator = new CalendarEntriesGenerator<>();
+        List<BookedResource> result = entriesGenerator.getCalendarEntries(
+                existentResources, periods, () -> {
+                    BookedResource res = new BookedResource();
+                    res.setPersisted(false);
+                    return res;
+                });
+        
         assertEquals(7, result.size());
         assertTrue(result.contains(existentResources.get(0)));
         assertEquals(existentResources.get(0), result.get(4));
@@ -270,20 +284,27 @@ public class ResourcesCalendarTest {
 
         BookedResource br = new BookedResource();
         br.setStartDate(LocalDate.of(2015, Month.FEBRUARY, 1));
-        
+
         existentResources.add(br);
-        
+
         br = new BookedResource();
         br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
 
         existentResources.add(br);
 
-        cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
+        List<LocalDate[]> periods = cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2015, Month.DECEMBER, 31))
                 .setStep(Step.MONTH)
-                .setExistentResources(existentResources);
+                .generatePeriods();
 
-        List<BookedResource> result = cut.getCalendarEntries();
+        CalendarEntriesGenerator<BookedResource> entriesGenerator = new CalendarEntriesGenerator<>();
+        List<BookedResource> result = entriesGenerator.getCalendarEntries(
+                existentResources, periods, () -> {
+                    BookedResource res = new BookedResource();
+                    res.setPersisted(false);
+                    return res;
+                });
+        
         assertEquals(12, result.size());
 //        assertEquals(existentResources.get(0), result.get(0));
         assertEquals(existentResources.get(1), result.get(5));

@@ -1,6 +1,7 @@
 package com.rha.presentation;
 
-import com.rha.control.ResourcesCalendar;
+import com.rha.control.CalendarEntriesGenerator;
+import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.boundary.BookedResourceFacade;
 import com.rha.boundary.DivisionFacade;
 import com.rha.entity.BookedResource;
@@ -12,6 +13,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.*;
 import javax.enterprise.context.SessionScoped;
@@ -32,7 +34,8 @@ public class BookedResourceController2 implements Serializable {
     @Inject
     transient Logger logger;
 
-    Map<LocalDate, List<LocalDate[]>> periods;
+    List<LocalDate[]> periods;
+
     List<BookingRow> bookingRows;
 
     @Inject
@@ -41,37 +44,55 @@ public class BookedResourceController2 implements Serializable {
     @Inject
     DivisionFacade divisionFacade;
     List<Integer> totalBooking;
-    ResourcesCalendar<BookedResource> resourcesCalendar = new ResourcesCalendar<>();
+
+    @Inject
+    CalendarPeriodsGenerator calendarPeriodsGenerator;
+
+    @Inject
+    CalendarEntriesGenerator<BookedResource> calendarEntriesGenerator;
+
     LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
     LocalDate endDate = LocalDate.of(2016, Month.JANUARY, 1);
 
     public void loadBookedResourcesForPeriod() {
 
-        List<BookedResource> bookedResources = bookedResourceFacade.getBookedResourcesForDivision(
-                1, startDate, endDate);
+        List<BookedResource> bookedResources 
+                = bookedResourceFacade.getBookedResourcesForDivision(1, startDate, endDate);
 
         final Map<Project, List<BookedResource>> resourcesByProject
                 = bookedResources.stream().collect(groupingBy(br -> br.getProject()));
 
         bookingRows = new ArrayList<>();
 
+        if (periods == null) {
+            loadPeriods();
+        }
+
         resourcesByProject.keySet().stream().forEach(project -> {
+
+            Supplier<BookedResource> supplier = () -> {
+                BookedResource br = new BookedResource();
+                br.setPersisted(false);
+                br.setProject(project);
+                return br;
+            };
+
+            List<BookedResource> resources = calendarEntriesGenerator
+                    .getCalendarEntries(resourcesByProject.get(project), periods, supplier);
+
             bookingRows.add(new BookingRow(
                     project,
-                    resourcesCalendar
-                    .setStartDate(startDate)
-                    .setEndDate(endDate)
-                    .setExistentResources(resourcesByProject.get(project))
-                    .setStep(Step.BIWEEK)
-                    .getCalendarEntries()
-                    .parallelStream()
-                    .map(br -> {
-                        br.setProject(project);
-                        return br;
-                    })
-                    .collect(toList()),
+                    resources,
                     divisionFacade.find(1)));
         });
+    }
+
+    private void loadPeriods() {
+        periods = calendarPeriodsGenerator
+                .setStartDate(startDate)
+                .setEndDate(endDate)
+                .setStep(Step.BIWEEK)
+                .generatePeriods();
     }
 
     private void resetValues() {
@@ -90,12 +111,10 @@ public class BookedResourceController2 implements Serializable {
     public List<LocalDate> getPeriods() {
 
         if (periods == null) {
-            periods = getBookingRow().get(0).getResources().stream()
-                    .map(br -> new LocalDate[]{br.getStartDate(), br.getEndDate()})
-                    .collect(groupingBy(period -> period[0]));
+            loadPeriods();
         }
 
-        return periods.keySet().stream().sorted().collect(toList());
+        return periods.stream().sorted().map(period -> period[0]).collect(toList());
     }
 
     private LocalDate getDate(BookedResource br) {

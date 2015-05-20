@@ -14,17 +14,11 @@ import java.time.LocalDate;
 public interface PeriodWithValue {
 
     Integer getPosition();
-    void setPosition(int position);
-
     LocalDate getStartDate();
-    void setStartDate(LocalDate date);
-
     LocalDate getEndDate();
-    void setEndDate(LocalDate date);
     
+    void setPosition(int position);
     void setValue(Object o);
-    
     void setPeriod(LocalDate[] period);
 
-//    Step getStep();
 }
