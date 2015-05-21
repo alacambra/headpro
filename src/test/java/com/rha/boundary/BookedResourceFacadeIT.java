@@ -12,6 +12,8 @@ import com.rha.entity.Step;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
@@ -93,6 +95,44 @@ public class BookedResourceFacadeIT {
 
     @Test
     public void testGetTotalBookedResourcesPerProjectForDivision_int() throws Exception {
+        Division d = em.merge(new Division().setName("testDivision"));
+        Project p = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
+        Project p2 = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
+        
+        BookedResource br = new BookedResource();
+        br.setBooked(10);
+        br.setDivision(d);
+        br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
+        br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
+        br.setProject(p);
+
+        cut.create(br);
+        
+        br = new BookedResource();
+        br.setBooked(15);
+        br.setDivision(d);
+        br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
+        br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
+        br.setProject(p2);
+
+        cut.create(br);
+        
+        
+        br = new BookedResource();
+        br.setBooked(30);
+        br.setDivision(d);
+        br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
+        br.setEndDate(LocalDate.of(2015, Month.JULY, 30));
+        br.setProject(p);
+        
+        cut.create(br);
+        
+        Map<LocalDate, Optional<Long>> r = cut.getTotalBookedResourcesByDivisionForPeriod(1,
+                LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.DECEMBER, 31));
+        
+        assertThat(r.size(), Is.is(2));
+        assertThat(r.get(LocalDate.of(2015, Month.MARCH, 1)).get(), Is.is(25L));
+        assertThat(r.get(LocalDate.of(2015, Month.JULY, 1)).get(), Is.is(30L));
     }
 
     @Test
