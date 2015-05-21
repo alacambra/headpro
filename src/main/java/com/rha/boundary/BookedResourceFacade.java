@@ -2,9 +2,16 @@ package com.rha.boundary;
 
 import com.rha.control.LocalDateConverter;
 import com.rha.entity.BookedResource;
+import com.rha.entity.PeriodTotal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import static java.util.stream.Collectors.*;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,7 +25,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
     @PersistenceContext(unitName = "rha")
     EntityManager em;
-    
+
     @Override
     protected EntityManager getEntityManager() {
         return em;
@@ -54,7 +61,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
-        
+
         return bookedResources;
     }
 
@@ -68,16 +75,20 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         return bookedResources;
     }
 
-    public List<Integer> getTotalBookedResourcesByDivisionForPeriod(
+    public Map<LocalDate, Optional<Long>> getTotalBookedResourcesByDivisionForPeriod(
             int divisionId, LocalDate startDate, LocalDate endDate) {
 
-        List<Integer> bookedResources
-                = em.createNamedQuery(BookedResource.totalByDivisionForPeriod)
+        List<PeriodTotal> bookedResources
+                = em.createNamedQuery(BookedResource.totalByDivisionForPeriod, PeriodTotal.class)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
+        
+        Map<LocalDate, Optional<Long>> r = bookedResources.stream()
+                .collect(groupingBy(PeriodTotal::getDate,
+                                mapping(PeriodTotal::getTotal, reducing(Long::sum))));
 
-        return bookedResources;
+        return r;
     }
 
     public BookedResourceFacade() {

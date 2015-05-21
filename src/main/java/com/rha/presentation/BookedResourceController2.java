@@ -43,7 +43,7 @@ public class BookedResourceController2 implements Serializable {
 
     @Inject
     DivisionFacade divisionFacade;
-    List<Integer> totalBooking;
+    List<Long> totalBooking;
 
     @Inject
     CalendarPeriodsGenerator calendarPeriodsGenerator;

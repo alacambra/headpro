@@ -45,7 +45,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
                     + "br.startDate>=:startDate AND br.endDate<=:endDate"),
     
     @NamedQuery(name = BookedResource.totalByDivisionForPeriod,
-            query = "SELECT  sum(br.booked) FROM BookedResource br "
+            query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, sum(br.booked))"
+                    + " FROM BookedResource br "
                     + "WHERE "
                     + "br.startDate>=:startDate AND br.endDate<=:endDate "
                     + "group by br.startDate order by br.startDate"),
