@@ -17,11 +17,19 @@ import java.util.Date;
 public class LocalDateConverter {
     
     public static Date toDate(LocalDate date){
-        Instant instant = date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        return toDate(date, ZoneId.systemDefault());
+    }
+    
+    public static Date toDate(LocalDate date, ZoneId zoneId){
+        Instant instant = date.atStartOfDay().atZone(zoneId).toInstant();
         return Date.from(instant);
     }
     
     public static LocalDate toLocalDate(Date date){
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return toLocalDate(date, ZoneId.systemDefault());
+    }
+    
+    public static LocalDate toLocalDate(Date date, ZoneId zoneId){
+        return date.toInstant().atZone(zoneId).toLocalDate();
     }
 }

@@ -5,6 +5,7 @@ import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.boundary.BookedResourceFacade;
 import com.rha.boundary.DivisionFacade;
 import com.rha.entity.BookedResource;
+import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
 import com.rha.entity.Step;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.*;
@@ -43,13 +45,13 @@ public class BookedResourceController2 implements Serializable {
 
     @Inject
     DivisionFacade divisionFacade;
-    List<Long> totalBooking;
+    List<PeriodTotal> totalBooking;
 
     @Inject
     CalendarPeriodsGenerator calendarPeriodsGenerator;
 
     @Inject
-    CalendarEntriesGenerator<BookedResource> calendarEntriesGenerator;
+    CalendarEntriesGenerator calendarEntriesGenerator;
 
     LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
     LocalDate endDate = LocalDate.of(2016, Month.JANUARY, 1);
@@ -144,15 +146,19 @@ public class BookedResourceController2 implements Serializable {
         }
     }
 
-    public List<List<Integer>> getTotalBooking() {
+    public List<List<PeriodTotal>> getTotalBooking() {
 
         if (totalBooking == null) {
-            totalBooking = bookedResourceFacade
-                    .getTotalBookedResourcesByDivisionForPeriod(1, startDate, endDate);
+            List<PeriodTotal> values 
+                    = bookedResourceFacade.getTotalBookedResourcesByDivisionForPeriod(1, startDate, endDate);
+            
+            totalBooking = calendarEntriesGenerator
+                    .getCalendarEntries(values, periods, PeriodTotal::new);
+            
+            
         }
 
-        List<List<Integer>> r = new ArrayList();
-        r.add(totalBooking);
+        List<List<PeriodTotal>> r = new ArrayList(totalBooking);
         return r;
     }
 

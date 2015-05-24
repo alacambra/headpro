@@ -5,7 +5,6 @@
  */
 package com.rha.control;
 
-import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.entity.PeriodWithValue;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,17 +12,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
-import javax.inject.Inject;
 
-public class CalendarEntriesGenerator<T extends PeriodWithValue> {
-
-    @Inject
-    CalendarPeriodsGenerator resourcesCalendar;
+public class CalendarEntriesGenerator {
 
     public CalendarEntriesGenerator() {
     }
 
-    public List<T> getCalendarEntries(
+    public <T extends PeriodWithValue> List<T> getCalendarEntries(
             List<T> periodicEntities, List<LocalDate[]> periods, Supplier<T> supplier) {
 
         List<T> generatedEntries = new ArrayList<>();

@@ -7,6 +7,7 @@ package com.rha.boundary;
 
 import com.rha.entity.BookedResource;
 import com.rha.entity.Division;
+import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
 import com.rha.entity.Step;
 import java.time.LocalDate;
@@ -127,12 +128,14 @@ public class BookedResourceFacadeIT {
         
         cut.create(br);
         
-        Map<LocalDate, Optional<Long>> r = cut.getTotalBookedResourcesByDivisionForPeriod(1,
+        List<PeriodTotal> r = cut.getTotalBookedResourcesByDivisionForPeriod(1,
                 LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.DECEMBER, 31));
         
         assertThat(r.size(), Is.is(2));
-        assertThat(r.get(LocalDate.of(2015, Month.MARCH, 1)).get(), Is.is(25L));
-        assertThat(r.get(LocalDate.of(2015, Month.JULY, 1)).get(), Is.is(30L));
+        assertThat(r.get(0).getTotal(), Is.is(25L));
+        assertThat(r.get(0).getStartDate(), Is.is(LocalDate.of(2015, Month.MARCH, 1)));
+        assertThat(r.get(1).getTotal(), Is.is(30L));
+        assertThat(r.get(1).getStartDate(), Is.is(LocalDate.of(2015, Month.JULY, 1)));
     }
 
     @Test

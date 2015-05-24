@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +22,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  *
@@ -39,23 +39,23 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
     @NamedQuery(name = BookedResource.byDivision,
             query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did"),
-    
+
     @NamedQuery(name = BookedResource.byDivisionForPeriod,
             query = "SELECT br FROM BookedResource br WHERE "
-                    + "br.startDate>=:startDate AND br.endDate<=:endDate"),
-    
+            + "br.startDate>=:startDate AND br.endDate<=:endDate"),
+
     @NamedQuery(name = BookedResource.totalByDivisionForPeriod,
-            query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, sum(br.booked))"
-                    + " FROM BookedResource br "
-                    + "WHERE "
-                    + "br.startDate>=:startDate AND br.endDate<=:endDate "
-                    + "group by br.startDate order by br.startDate"),
-    
+            query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked))"
+            + " FROM BookedResource br "
+            + "WHERE "
+            + "br.startDate>=:startDate AND br.endDate<=:endDate "
+            + "group by br.startDate, br.endDate order by br.startDate"),
+
     @NamedQuery(name = "back-up",
             query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did "
-                    + "AND br.startDate>=:startDate AND br.endDate<=:endDate")
+            + "AND br.startDate>=:startDate AND br.endDate<=:endDate")
 })
-public class BookedResource implements Serializable, Comparable<BookedResource>, PeriodWithValue{
+public class BookedResource implements Serializable, Comparable<BookedResource>, PeriodWithValue {
 
     private static final String prefix = "com.rha.entity.BookedResource.";
     public static final String byProjectAndDivision = prefix + "byProjectAndDivision";
@@ -94,7 +94,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     public void setPersisted(boolean persisted) {
         this.persisted = persisted;
-        
+
     }
 
     public Integer getId() {
@@ -103,7 +103,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     public void setId(Integer id) {
         this.id = id;
-        
+
     }
 
     public Division getDivision() {
@@ -112,7 +112,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     public void setDivision(Division division) {
         this.division = division;
-        
+
     }
 
     public Project getProject() {
@@ -121,31 +121,35 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     public void setProject(Project project) {
         this.project = project;
-        
+
     }
 
     public LocalDate getStartDate() {
-        if(startDate != null)
+        if (startDate != null) {
             return startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        else return null;
+        } else {
+            return null;
+        }
     }
-    
+
     public void setStartDate(LocalDate startDate) {
         Instant instant = startDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         this.startDate = Date.from(instant);
-        
+
     }
 
     public LocalDate getEndDate() {
-        if(endDate != null)
+        if (endDate != null) {
             return endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        else return null;
+        } else {
+            return null;
+        }
     }
 
     public void setEndDate(LocalDate endDate) {
         Instant instant = endDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         this.endDate = Date.from(instant);
-        
+
     }
 
     public Integer getBooked() {
@@ -154,7 +158,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     public void setBooked(Integer booked) {
         this.booked = booked;
-        
+
     }
 
     public Integer getPosition() {
@@ -163,36 +167,70 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     public void setPosition(int position) {
         this.position = position;
-        
+
     }
 
+//    @Override
+//    public boolean equals(Object obj) {
+//
+//        if (obj == this) {
+//            return true;
+//        }
+//
+//        if (obj instanceof BookedResource) {
+//            final BookedResource other = (BookedResource) obj;
+//            if (null != id && id != -1) {
+//
+//                return new EqualsBuilder()
+//                        .append(id, other.getId())
+//                        .isEquals();
+//            } else {
+//                return new EqualsBuilder()
+//                        .append(getStartDate(), other.getStartDate())
+//                        .append(getEndDate(), other.getEndDate())
+//                        .isEquals();
+//            }
+//
+//        } else {
+//            return false;
+//        }
+//    }
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).toHashCode();
+        int hash = 7;
+
+        if (null != id && id != -1) {
+            hash = 29 * hash + Objects.hashCode(this.id);
+        } else {
+            hash = 29 * hash + Objects.hashCode(this.startDate);
+            hash = 29 * hash + Objects.hashCode(this.endDate);
+        }
+
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        
-        if(obj == this) return true;
-        
-        if (obj instanceof BookedResource) {
-            final BookedResource other = (BookedResource) obj;
-            if (null != id && id != -1) {
-
-                return new EqualsBuilder()
-                        .append(id, other.getId())
-                        .isEquals();
-            } else {
-                 return new EqualsBuilder()
-                         .append(getStartDate(), other.getStartDate())
-                         .append(getEndDate(), other.getEndDate())
-                         .isEquals();
-            }
-
-        } else {
+        if (obj == null) {
             return false;
         }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BookedResource other = (BookedResource) obj;
+        if (null != id && id != -1) {
+            if (!Objects.equals(this.id, other.id)) {
+                return false;
+            }
+        } else {
+            if (!Objects.equals(this.startDate, other.startDate)) {
+                return false;
+            }
+            if (!Objects.equals(this.endDate, other.endDate)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

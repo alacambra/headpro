@@ -75,7 +75,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         return bookedResources;
     }
 
-    public Map<LocalDate, Optional<Long>> getTotalBookedResourcesByDivisionForPeriod(
+    public List<PeriodTotal> getTotalBookedResourcesByDivisionForPeriod(
             int divisionId, LocalDate startDate, LocalDate endDate) {
 
         List<PeriodTotal> bookedResources
@@ -84,11 +84,11 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
         
-        Map<LocalDate, Optional<Long>> r = bookedResources.stream()
-                .collect(groupingBy(PeriodTotal::getDate,
-                                mapping(PeriodTotal::getTotal, reducing(Long::sum))));
+//        Map<LocalDate, Optional<Long>> r = bookedResources.stream()
+//                .collect(groupingBy(PeriodTotal::getDate,
+//                                mapping(PeriodTotal::getTotal, reducing(Long::sum))));
 
-        return r;
+        return bookedResources;
     }
 
     public BookedResourceFacade() {

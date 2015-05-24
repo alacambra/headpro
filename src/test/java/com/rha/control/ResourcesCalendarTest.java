@@ -236,7 +236,7 @@ public class ResourcesCalendarTest {
                 .setStep(Step.MONTH)
                 .generatePeriods();
 
-        CalendarEntriesGenerator<BookedResource> entriesGenerator = new CalendarEntriesGenerator<>();
+        CalendarEntriesGenerator entriesGenerator = new CalendarEntriesGenerator();
         List<BookedResource> result = entriesGenerator.getCalendarEntries(
                 existentResources, periods, () -> {
                     BookedResource res = new BookedResource();
@@ -264,7 +264,7 @@ public class ResourcesCalendarTest {
                 .setStep(Step.MONTH)
                 .generatePeriods();
 
-        CalendarEntriesGenerator<BookedResource> entriesGenerator = new CalendarEntriesGenerator<>();
+        CalendarEntriesGenerator entriesGenerator = new CalendarEntriesGenerator();
         List<BookedResource> result = entriesGenerator.getCalendarEntries(
                 existentResources, periods, () -> {
                     BookedResource res = new BookedResource();
@@ -292,12 +292,13 @@ public class ResourcesCalendarTest {
 
         existentResources.add(br);
 
-        List<LocalDate[]> periods = cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
+        List<LocalDate[]> periods 
+                = cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2015, Month.DECEMBER, 31))
                 .setStep(Step.MONTH)
                 .generatePeriods();
 
-        CalendarEntriesGenerator<BookedResource> entriesGenerator = new CalendarEntriesGenerator<>();
+        CalendarEntriesGenerator entriesGenerator = new CalendarEntriesGenerator();
         List<BookedResource> result = entriesGenerator.getCalendarEntries(
                 existentResources, periods, () -> {
                     BookedResource res = new BookedResource();
