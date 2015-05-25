@@ -18,7 +18,7 @@ public interface PeriodWithValue {
     LocalDate getEndDate();
     
     void setPosition(int position);
-    void setValue(Object o);
+    void setValue(Long o);
     void setPeriod(LocalDate[] period);
 
 }

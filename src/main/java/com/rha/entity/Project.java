@@ -3,8 +3,7 @@ package com.rha.entity;
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import java.util.Objects;
 
 @Entity
 @NamedQueries({
@@ -72,25 +71,26 @@ public class Project implements Serializable {
     }
     
     @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(id).toHashCode();
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Project other = (Project) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        
-        if(obj == this){
-            return true;
-        }
-        
-        if (obj instanceof Project) {
-            final Project other = (Project) obj;
-            return new EqualsBuilder()
-                    .append(id, other.getId())
-                    .isEquals();
-        } else {
-            return false;
-        }
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + Objects.hashCode(this.id);
+        return hash;
     }
+
 
 }

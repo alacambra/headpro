@@ -4,6 +4,7 @@ import com.rha.control.CalendarEntriesGenerator;
 import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.boundary.BookedResourceFacade;
 import com.rha.boundary.DivisionFacade;
+import com.rha.boundary.ProjectFacade;
 import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
@@ -14,8 +15,8 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.*;
 import javax.enterprise.context.SessionScoped;
@@ -42,6 +43,9 @@ public class BookedResourceController2 implements Serializable {
 
     @Inject
     BookedResourceFacade bookedResourceFacade;
+    
+    @Inject
+    ProjectFacade projectFacade;
 
     @Inject
     DivisionFacade divisionFacade;
@@ -51,18 +55,24 @@ public class BookedResourceController2 implements Serializable {
     CalendarPeriodsGenerator calendarPeriodsGenerator;
 
     @Inject
-    CalendarEntriesGenerator calendarEntriesGenerator;
+    transient CalendarEntriesGenerator calendarEntriesGenerator;
 
     LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
-    LocalDate endDate = LocalDate.of(2016, Month.JANUARY, 1);
+    LocalDate endDate = LocalDate.of(2014, Month.MARCH, 1);
 
     public void loadBookedResourcesForPeriod() {
 
         List<BookedResource> bookedResources 
                 = bookedResourceFacade.getBookedResourcesForDivision(1, startDate, endDate);
 
+        List<Project> emptyProjects = projectFacade.findAll();
+        
         final Map<Project, List<BookedResource>> resourcesByProject
                 = bookedResources.stream().collect(groupingBy(br -> br.getProject()));
+        
+        emptyProjects.stream().forEach(pr -> {
+            resourcesByProject.putIfAbsent(pr, new ArrayList<>());
+        });
 
         bookingRows = new ArrayList<>();
 
@@ -81,7 +91,7 @@ public class BookedResourceController2 implements Serializable {
 
             List<BookedResource> resources = calendarEntriesGenerator
                     .getCalendarEntries(resourcesByProject.get(project), periods, supplier);
-
+            
             bookingRows.add(new BookingRow(
                     project,
                     resources,
@@ -116,7 +126,7 @@ public class BookedResourceController2 implements Serializable {
             loadPeriods();
         }
 
-        return periods.stream().sorted().map(period -> period[0]).collect(toList());
+        return periods.stream().map(period -> period[0]).collect(toList());
     }
 
     private LocalDate getDate(BookedResource br) {
@@ -139,7 +149,7 @@ public class BookedResourceController2 implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msg);
 
 //            areaModel = null;
-//            totalBooking = null;
+            totalBooking = null;
         } else {
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cell not changed", "Old: " + oldValue + ", New:" + newValue);
             FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -158,7 +168,10 @@ public class BookedResourceController2 implements Serializable {
             
         }
 
-        List<List<PeriodTotal>> r = new ArrayList(totalBooking);
+        List<List<PeriodTotal>> r = new ArrayList();
+        r.add(totalBooking);
+        logger.log(Level.FINE, totalBooking.toString());
+                
         return r;
     }
 

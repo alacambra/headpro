@@ -14,8 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.temporal.WeekFields;
-import java.util.Locale;
 import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -75,7 +73,7 @@ public class DataImport {
 
             BookedResource br = new BookedResource();
             String v = "".equals(row[i + 1]) ? "0" : row[i + 1];
-            br.setBooked(Math.round(Float.parseFloat(v)));
+            br.setBooked(Math.round(Double.parseDouble(v)));
             br.setDivision(d);
             br.setProject(p);
             br.setStartDate(startPeriodDate);

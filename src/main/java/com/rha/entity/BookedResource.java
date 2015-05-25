@@ -21,7 +21,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**
  *
@@ -42,7 +41,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
     @NamedQuery(name = BookedResource.byDivisionForPeriod,
             query = "SELECT br FROM BookedResource br WHERE "
-            + "br.startDate>=:startDate AND br.endDate<=:endDate"),
+            + "br.startDate>=:startDate AND br.endDate<=:endDate order by br.startDate"),
 
     @NamedQuery(name = BookedResource.totalByDivisionForPeriod,
             query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked))"
@@ -80,7 +79,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     @Temporal(TemporalType.DATE)
     Date endDate;
 
-    Integer booked = 0;
+    Long booked = 0L;
 
     @Transient
     Integer position = 0;
@@ -99,11 +98,6 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-
     }
 
     public Division getDivision() {
@@ -152,11 +146,11 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     }
 
-    public Integer getBooked() {
+    public Long getBooked() {
         return booked;
     }
 
-    public void setBooked(Integer booked) {
+    public void setBooked(Long booked) {
         this.booked = booked;
 
     }
@@ -199,12 +193,8 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     public int hashCode() {
         int hash = 7;
 
-        if (null != id && id != -1) {
-            hash = 29 * hash + Objects.hashCode(this.id);
-        } else {
-            hash = 29 * hash + Objects.hashCode(this.startDate);
-            hash = 29 * hash + Objects.hashCode(this.endDate);
-        }
+        hash = 29 * hash + Objects.hashCode(this.startDate);
+        hash = 29 * hash + Objects.hashCode(this.endDate);
 
         return hash;
     }
@@ -218,18 +208,13 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
             return false;
         }
         final BookedResource other = (BookedResource) obj;
-        if (null != id && id != -1) {
-            if (!Objects.equals(this.id, other.id)) {
-                return false;
-            }
-        } else {
-            if (!Objects.equals(this.startDate, other.startDate)) {
-                return false;
-            }
-            if (!Objects.equals(this.endDate, other.endDate)) {
-                return false;
-            }
+        if (!Objects.equals(this.startDate, other.startDate)) {
+            return false;
         }
+        if (!Objects.equals(this.endDate, other.endDate)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -250,8 +235,8 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     }
 
     @Override
-    public void setValue(Object o) {
-        setBooked((Integer) o);
+    public void setValue(Long o) {
+        setBooked(o);
     }
 
     @Override

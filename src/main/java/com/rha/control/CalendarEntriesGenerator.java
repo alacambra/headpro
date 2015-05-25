@@ -13,10 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class CalendarEntriesGenerator {
-
-    public CalendarEntriesGenerator() {
-    }
+public class CalendarEntriesGenerator{
 
     public <T extends PeriodWithValue> List<T> getCalendarEntries(
             List<T> periodicEntities, List<LocalDate[]> periods, Supplier<T> supplier) {
@@ -24,12 +21,10 @@ public class CalendarEntriesGenerator {
         List<T> generatedEntries = new ArrayList<>();
 
         Iterator<T> it = periodicEntities.iterator();
-        T pointer;
+        T pointer = null;
 
         if (it.hasNext()) {
             pointer = it.next();
-        } else {
-            return generatedEntries;
         }
 
         int i = 0;
@@ -50,7 +45,7 @@ public class CalendarEntriesGenerator {
                 T entity = supplier.get();
                 entity.setPeriod(period);
                 entity.setPosition(i);
-                entity.setValue(0);
+                entity.setValue(0L);
                 
                 generatedEntries.add(entity);
             }
@@ -58,7 +53,7 @@ public class CalendarEntriesGenerator {
             i++;
         }
 
-        return Collections.unmodifiableList(generatedEntries);
+        return generatedEntries;
 
     }
 

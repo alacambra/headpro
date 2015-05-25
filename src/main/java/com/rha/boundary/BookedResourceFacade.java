@@ -83,11 +83,10 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
-        
+
 //        Map<LocalDate, Optional<Long>> r = bookedResources.stream()
 //                .collect(groupingBy(PeriodTotal::getDate,
 //                                mapping(PeriodTotal::getTotal, reducing(Long::sum))));
-
         return bookedResources;
     }
 
@@ -95,9 +94,28 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         super(BookedResource.class);
     }
 
-    public void updateOrCreateBookings(Collection<BookedResource> resources) {
-        resources.stream()
-                .filter(r -> r.isPersisted() || r.getBooked() != 0)
-                .forEach(r -> em.merge(r));
+    public void updateOrCreateBookings(List<BookedResource> resources) {
+        
+        for(int i = 0; i < resources.size(); i++){
+            if(resources.get(i).isPersisted() || resources.get(i).getBooked() != 0){
+                BookedResource br = resources.get(i);
+                if(br.getId() == null){
+                    em.persist(br);
+                }else{
+                    em.merge(br);
+                }
+//                em.merge(br);
+//                resources.set(i, br);
+            }
+        }
+        
+//        resources.stream()
+//                .filter(r -> r.isPersisted() || r.getBooked() != 0)
+//                .forEach(r -> {
+//                    System.out.println("before: " + r.getId() + ":" + r.isPersisted() + ":" + r.getBooked() + ":" + r.hashCode());
+//                    r = em.merge(r);
+//                    r.setPersisted(true);
+//                    System.out.println("after: " + r.getId() + ":" + r.isPersisted() + ":" + r.getBooked() + ":" + r.hashCode());
+//                });
     }
 }

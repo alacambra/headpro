@@ -1,6 +1,7 @@
 package com.rha.control;
 
 import com.rha.entity.Step;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
 
-public class CalendarPeriodsGenerator{
+public class CalendarPeriodsGenerator implements Serializable{
 
     private LocalDate startDate;
     private LocalDate endDate;

@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author alacambra
- */
+*/
 public class ResourcesCalendarTest {
 
     CalendarPeriodsGenerator cut;

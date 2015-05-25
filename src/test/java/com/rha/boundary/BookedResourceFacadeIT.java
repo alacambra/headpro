@@ -13,8 +13,6 @@ import com.rha.entity.Step;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
@@ -66,7 +64,7 @@ public class BookedResourceFacadeIT {
         Project p = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
         
         BookedResource br = new BookedResource();
-        br.setBooked(10);
+        br.setBooked(10L);
         br.setDivision(d);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
@@ -75,7 +73,7 @@ public class BookedResourceFacadeIT {
         cut.create(br);
         
         br = new BookedResource();
-        br.setBooked(10);
+        br.setBooked(10L);
         br.setDivision(d);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
         br.setEndDate(LocalDate.of(2015, Month.JULY, 30));
@@ -101,7 +99,7 @@ public class BookedResourceFacadeIT {
         Project p2 = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
         
         BookedResource br = new BookedResource();
-        br.setBooked(10);
+        br.setBooked(10L);
         br.setDivision(d);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
@@ -110,7 +108,7 @@ public class BookedResourceFacadeIT {
         cut.create(br);
         
         br = new BookedResource();
-        br.setBooked(15);
+        br.setBooked(15L);
         br.setDivision(d);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
@@ -120,7 +118,7 @@ public class BookedResourceFacadeIT {
         
         
         br = new BookedResource();
-        br.setBooked(30);
+        br.setBooked(30L);
         br.setDivision(d);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
         br.setEndDate(LocalDate.of(2015, Month.JULY, 30));

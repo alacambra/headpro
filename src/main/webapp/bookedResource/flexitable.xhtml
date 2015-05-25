@@ -24,7 +24,7 @@
                              widgetVar="booking">
                     <p:growl id="msgs" showDetail="true"/>
 
-                    <p:ajax event="cellEdit" listener="#{brc.onCellEdit}" update=":form:msgs" />
+                    <p:ajax event="cellEdit" listener="#{brc.onCellEdit}" update=":form:msgs,:totalBookings" />
 
                     <p:column headerText="project name" width="100">
                         <h:outputText value="#{booking.project.name}"></h:outputText>
@@ -40,7 +40,24 @@
                     </c:forEach>
                 </p:dataTable>
             </h:form>
-            
+            <p:dataTable id="totalBookings" 
+                             var="totalBooking" 
+                             value="#{brc.totalBooking}" 
+                             editable="true"
+                             editMode="cell" 
+                             widgetVar="totalBooking">
+                    <p:growl id="msgs" showDetail="true"/>
+
+                    <p:column width="100">
+                        <h:outputText value="total"></h:outputText>
+                    </p:column>
+
+                    <c:forEach items="${brc.periods}" var="item" varStatus="counter">
+                        <p:column headerText="${item.toString()}" width="70">
+                                <h:outputText value="${totalBooking.get(counter.index).total}"/>
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
         </ui:define>
     </ui:composition>
 </html>

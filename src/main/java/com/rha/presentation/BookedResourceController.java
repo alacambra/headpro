@@ -142,7 +142,7 @@ public class BookedResourceController implements Serializable {
 
             row.getResources().stream().forEach(b -> {
                 int position = Optional.ofNullable(b.getPosition()).orElse(brc.getData().size());
-                int booked = Optional.ofNullable(b.getBooked()).orElse(0);
+                long booked = Optional.ofNullable(b.getBooked()).orElse(0L);
                 if (brc.getData().size() < 12) {
                     brc.set(position + 1, booked);
                 }

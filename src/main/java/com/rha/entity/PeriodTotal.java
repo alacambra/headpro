@@ -73,8 +73,8 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal>{
     }
 
     @Override
-    public void setValue(Object o) {
-        setTotal((Long)o);
+    public void setValue(Long o) {
+        setTotal(o);
     }
 
     @Override
@@ -125,4 +125,12 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal>{
             return -1;
         }
     }
+
+    @Override
+    public String toString() {
+        
+        return new StringBuilder(startDate.toString()).append(":").append(endDate).append(" = ").append(total).toString();
+    }
+    
+    
 }
