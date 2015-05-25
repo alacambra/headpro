@@ -31,6 +31,7 @@ public class CalendarEntriesGenerator{
 
             if (pointer != null && areEquals(period[0], pointer.getStartDate())) {
                 
+                pointer.setPosition(i);
                 generatedEntries.add(pointer);
 
                 if (it.hasNext()) {
