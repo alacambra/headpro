@@ -13,6 +13,32 @@
         </ui:define>
 
         <ui:define name="body">
+            <h:form>
+                <table>
+                    <tr>
+                        <td>
+                            <p:outputLabel for="startDate" value="Start Date" />
+                            <p:calendar id="startDate" value="#{brc.startDate}" mode="inline" />
+                        </td>
+                        <td>
+                            <p:outputLabel for="endDate" value="End Date" />
+                            <p:calendar id="endDate" value="#{brc.endDate}" mode="inline" />
+                        </td>
+                        <td>
+                            <p:selectOneMenu id="step" value="#{brc.step}" >
+                            <f:selectItem itemLabel="Step"/>
+                            <f:selectItems value="#{brc.steps}"
+                                           var="step"
+                                           itemValue="#{step}"/>
+                        </p:selectOneMenu>
+                        </td>
+                    </tr>
+                </table>
+
+
+                <p:commandButton value="Submit" update=":form,:totalBookings,:graph" 
+                                 actionListener="#{brc.dateChanged}" icon="ui-icon-check" />
+            </h:form>
             <h:form id="form">
                 <p:growl id="msgs" showDetail="true"/>
 
@@ -41,23 +67,23 @@
                 </p:dataTable>
             </h:form>
             <p:dataTable id="totalBookings" 
-                             var="totalBooking" 
-                             value="#{brc.totalBooking}" 
-                             editable="true"
-                             editMode="cell" 
-                             widgetVar="totalBooking">
-                    <p:growl id="msgs" showDetail="true"/>
+                         var="totalBooking" 
+                         value="#{brc.totalBooking}" 
+                         editable="true"
+                         editMode="cell" 
+                         widgetVar="totalBooking">
+                <p:growl id="msgs" showDetail="true"/>
 
-                    <p:column width="100">
-                        <h:outputText value="total"></h:outputText>
+                <p:column width="100">
+                    <h:outputText value="total"></h:outputText>
+                </p:column>
+
+                <c:forEach items="${brc.periods}" var="item" varStatus="counter">
+                    <p:column headerText="${item.toString()}" width="70">
+                        <h:outputText value="${totalBooking.get(counter.index).total}"/>
                     </p:column>
-
-                    <c:forEach items="${brc.periods}" var="item" varStatus="counter">
-                        <p:column headerText="${item.toString()}" width="70">
-                                <h:outputText value="${totalBooking.get(counter.index).total}"/>
-                        </p:column>
-                    </c:forEach>
-                </p:dataTable>
+                </c:forEach>
+            </p:dataTable>
             <p:chart id="graph" widgetVar="chart" type="bar" model="#{brc.areaModel}" style="height:300px" />
             <h:form>
                 <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>

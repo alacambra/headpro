@@ -5,14 +5,16 @@ import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.boundary.BookedResourceFacade;
 import com.rha.boundary.DivisionFacade;
 import com.rha.boundary.ProjectFacade;
+import com.rha.control.LocalDateConverter;
 import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
 import com.rha.entity.Step;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,10 +45,6 @@ public class BookedResourceController implements Serializable {
     @Inject
     transient Logger logger;
 
-    List<LocalDate[]> periods;
-
-    List<BookingRow> bookingRows;
-
     @Inject
     BookedResourceFacade bookedResourceFacade;
 
@@ -55,19 +53,20 @@ public class BookedResourceController implements Serializable {
 
     @Inject
     DivisionFacade divisionFacade;
-    List<PeriodTotal> totalBooking;
 
     @Inject
     CalendarPeriodsGenerator calendarPeriodsGenerator;
 
     @Inject
     transient CalendarEntriesGenerator calendarEntriesGenerator;
-
-    private BarChartModel barModel = null;
-
-    LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
-    LocalDate endDate = LocalDate.of(2016, Month.MARCH, 1);
-    Step step = Step.WEEK;
+    
+    List<LocalDate[]> periods;
+    List<BookingRow> bookingRows;
+    List<PeriodTotal> totalBooking;
+    BarChartModel barModel;
+    LocalDate startDate = LocalDate.now();
+    LocalDate endDate = LocalDate.now().plusMonths(3);
+    Step step = Step.BIWEEK;
 
     public void loadBookedResourcesForPeriod() {
 
@@ -119,6 +118,8 @@ public class BookedResourceController implements Serializable {
     private void resetValues() {
         bookingRows = null;
         periods = null;
+        totalBooking = null;
+        barModel = null;
     }
 
     public List<BookingRow> getBookingRow() {
@@ -240,4 +241,35 @@ public class BookedResourceController implements Serializable {
         return r;
     }
 
+    public Date getStartDate() {
+        return LocalDateConverter.toDate(startDate);
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = LocalDateConverter.toLocalDate(startDate);
+    }
+
+    public Date getEndDate() {
+        return LocalDateConverter.toDate(endDate);
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = LocalDateConverter.toLocalDate(endDate);
+    }
+    
+    public void dateChanged() {
+        resetValues();
+    }
+
+    public Step getStep() {
+        return step;
+    }
+
+    public void setStep(Step step) {
+        this.step = step;
+    }
+    
+    public List<Step> getSteps(){
+        return Arrays.asList(Step.values());
+    }
 }

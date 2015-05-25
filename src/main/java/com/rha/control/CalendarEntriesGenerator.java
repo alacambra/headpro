@@ -14,6 +14,14 @@ import java.util.function.Supplier;
 
 public class CalendarEntriesGenerator{
 
+    /**
+     * 
+     * @param <T>
+     * @param periodicEntities: entities loaded from db
+     * @param periods: periods to load
+     * @param supplier: supplier to build the new desired objects
+     * @return 
+     */
     public <T extends PeriodWithValue> List<T> getCalendarEntries(
             List<T> periodicEntities, List<LocalDate[]> periods, Supplier<T> supplier) {
 
