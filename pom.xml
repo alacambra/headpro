@@ -81,4 +81,7 @@
         </dependency>
 
     </dependencies>
+    <build>
+        <finalName>rha</finalName>
+    </build>
 </project>

@@ -4,7 +4,8 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:composition template="/template.xhtml">
         <ui:define name="title">
@@ -17,165 +18,47 @@
 
                 <p:dataTable id="bookings2" 
                              var="booking" 
-                             value="#{bookedResourceController.bookings}" 
+                             value="#{brc.bookingRow}" 
                              editable="true"
                              editMode="cell" 
-                             widgetVar="booking"
-                             >
-                    <f:facet name="header">
-                        Booked resources for service
-                        <h:commandLink>
-                            <p:graphicImage name="/images/excel.png" width="24"/>
-                            <p:dataExporter type="xls" target="bookings2" fileName="cars" />
-                        </h:commandLink>
+                             widgetVar="booking">
+                    <p:growl id="msgs" showDetail="true"/>
 
-                        <h:commandLink>
-                            <p:graphicImage name="/images/pdf.png" width="24"/>
-                            <p:dataExporter type="pdf" target="bookings2" fileName="cars"/>
-                        </h:commandLink>
+                    <p:ajax event="cellEdit" listener="#{brc.onCellEdit}" update=":form:msgs,:totalBookings,:graph" />
 
-                        <h:commandLink>
-                            <p:graphicImage name="/images/csv.png" width="24"/>
-                            <p:dataExporter type="csv" target="bookings2" fileName="cars" />
-                        </h:commandLink>
-
-                        <h:commandLink>
-                            <p:graphicImage name="/images/xml.png" width="24"/>
-                            <p:dataExporter type="xml" target="bookings2" fileName="cars" />
-                        </h:commandLink>
-                    </f:facet>
-
-                    <p:ajax event="cellEdit" listener="#{bookedResourceController.onCellEdit}" update=":form:msgs,:graph,:totalBookings" />
-
-                    <p:column headerText="project name">
+                    <p:column headerText="project name" width="100">
                         <h:outputText value="#{booking.project.name}"></h:outputText>
                     </p:column>
 
-                    <p:column headerText="Gener">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(0).booked}"/></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(0).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Febrer">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(1).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(1).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Març">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(2).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(2).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Abril">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(3).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(3).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Maig">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(4).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(4).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Juny">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(5).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(5).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Juliol">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(6).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(6).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Agost">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(7).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(7).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Setembre">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(8).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(8).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Octubre">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(9).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(9).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Novembre">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(10).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(10).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Desembre">
-                        <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{booking.resources.get(11).booked}" /></f:facet>
-                            <f:facet name="input"><p:inputText value="#{booking.resources.get(11).booked}" style="width:96%" label="Year"/></f:facet>
-                        </p:cellEditor>
-                    </p:column>
+                    <c:forEach items="${brc.periods}" var="item" varStatus="counter">
+                        <p:column headerText="${item.toString()}" width="70" >
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{booking.resources.get(counter.index).booked}"/></f:facet>
+                                <f:facet name="input"><p:inputText value="#{booking.resources.get(counter.index).booked}" style="width:96%" label="Year"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                    </c:forEach>
                 </p:dataTable>
             </h:form>
             <p:dataTable id="totalBookings" 
-                         var="booking" 
-                         value="#{bookedResourceController.totalBooking}" 
-                         widgetVar="totalBooking"
-                         >
-                <f:facet name="header">
-                    Total booked resources for service X
-                </f:facet>
+                             var="totalBooking" 
+                             value="#{brc.totalBooking}" 
+                             editable="true"
+                             editMode="cell" 
+                             widgetVar="totalBooking">
+                    <p:growl id="msgs" showDetail="true"/>
 
-                <p:column headerText="project name">
-                    <h:outputText value="total"></h:outputText>
-                </p:column>
+                    <p:column width="100">
+                        <h:outputText value="total"></h:outputText>
+                    </p:column>
 
-                <p:column headerText="Gener">
-                    <h:outputText value="#{booking.get(0)}"/>
-                </p:column>
-                <p:column headerText="Febrer">
-                    <h:outputText value="#{booking.get(1)}" />
-                </p:column>
-                <p:column headerText="Març">
-                    <h:outputText value="#{booking.get(2)}" />
-                </p:column>
-                <p:column headerText="Abril">
-                    <h:outputText value="#{booking.get(3)}" />
-                </p:column>
-                <p:column headerText="Maig">
-                    <h:outputText value="#{booking.get(4)}" />
-                </p:column>
-                <p:column headerText="Juny">
-                    <h:outputText value="#{booking.get(5)}" />
-                </p:column>
-                <p:column headerText="Juliol">
-                    <h:outputText value="#{booking.get(6)}" />
-                </p:column>
-                <p:column headerText="Agost">
-                    <h:outputText value="#{booking.get(7)}" />
-                </p:column>
-                <p:column headerText="Setembre">
-                    <h:outputText value="#{booking.get(8)}" />
-                </p:column>
-                <p:column headerText="Octubre">
-                    <h:outputText value="#{booking.get(9)}" />
-                </p:column>
-                <p:column headerText="Novembre">
-                    <h:outputText value="#{booking.get(10)}" />
-                </p:column>
-                <p:column headerText="Desembre">
-                    <h:outputText value="#{booking.get(11)}" />
-                </p:column>
-            </p:dataTable>
-            <p:chart id="graph" widgetVar="chart" type="line" model="#{bookedResourceController.areaModel}" style="height:300px" />
+                    <c:forEach items="${brc.periods}" var="item" varStatus="counter">
+                        <p:column headerText="${item.toString()}" width="70">
+                                <h:outputText value="${totalBooking.get(counter.index).total}"/>
+                        </p:column>
+                    </c:forEach>
+                </p:dataTable>
+            <p:chart id="graph" widgetVar="chart" type="bar" model="#{brc.areaModel}" style="height:300px" />
             <h:form>
                 <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
             </h:form>

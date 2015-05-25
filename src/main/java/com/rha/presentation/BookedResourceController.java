@@ -1,218 +1,243 @@
 package com.rha.presentation;
 
-import com.rha.entity.BookedResource;
+import com.rha.control.CalendarEntriesGenerator;
+import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.boundary.BookedResourceFacade;
 import com.rha.boundary.DivisionFacade;
 import com.rha.boundary.ProjectFacade;
-
+import com.rha.entity.BookedResource;
+import com.rha.entity.PeriodTotal;
+import com.rha.entity.Project;
+import com.rha.entity.Step;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.*;
-import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
-import com.rha.entity.Project;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
-import javafx.scene.control.Cell;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.CategoryAxis;
-import org.primefaces.model.chart.LineChartModel;
-import org.primefaces.model.chart.LineChartSeries;
+import org.primefaces.model.chart.ChartSeries;
 
-@Named("bookedResourceController")
+/**
+ *
+ * @author alacambra
+ */
 @SessionScoped
+@Named("brc")
 public class BookedResourceController implements Serializable {
 
-    private LineChartModel areaModel;
+    @Inject
+    transient Logger logger;
 
-    @EJB
-    private com.rha.boundary.BookedResourceFacade ejbFacade;
-    List<BookingRow> rows;
-    List<Integer> totalBooking;
+    List<LocalDate[]> periods;
+
+    List<BookingRow> bookingRows;
+
+    @Inject
+    BookedResourceFacade bookedResourceFacade;
 
     @Inject
     ProjectFacade projectFacade;
 
     @Inject
     DivisionFacade divisionFacade;
+    List<PeriodTotal> totalBooking;
 
-    public BookedResourceController() {
+    @Inject
+    CalendarPeriodsGenerator calendarPeriodsGenerator;
+
+    @Inject
+    transient CalendarEntriesGenerator calendarEntriesGenerator;
+
+    private BarChartModel barModel = null;
+
+    LocalDate startDate = LocalDate.of(2014, Month.JANUARY, 1);
+    LocalDate endDate = LocalDate.of(2016, Month.MARCH, 1);
+    Step step = Step.WEEK;
+
+    public void loadBookedResourcesForPeriod() {
+
+        List<BookedResource> bookedResources
+                = bookedResourceFacade.getBookedResourcesForDivision(1, startDate, endDate);
+
+        List<Project> emptyProjects = projectFacade.findAll();
+
+        final Map<Project, List<BookedResource>> resourcesByProject
+                = bookedResources.stream().collect(groupingBy(br -> br.getProject()));
+
+        emptyProjects.stream().forEach(pr -> {
+            resourcesByProject.putIfAbsent(pr, new ArrayList<>());
+        });
+
+        bookingRows = new ArrayList<>();
+
+        if (periods == null) {
+            loadPeriods();
+        }
+
+        for (Project project : resourcesByProject.keySet()) {
+
+            Supplier<BookedResource> supplier = () -> {
+                BookedResource br = new BookedResource();
+                br.setPersisted(false);
+                br.setProject(project);
+                return br;
+            };
+
+            List<BookedResource> resources = calendarEntriesGenerator
+                    .getCalendarEntries(resourcesByProject.get(project), periods, supplier);
+
+            bookingRows.add(new BookingRow(
+                    project,
+                    resources,
+                    divisionFacade.find(1)));
+        }
     }
 
-    protected void setEmbeddableKeys() {
+    private void loadPeriods() {
+        periods = calendarPeriodsGenerator
+                .setStartDate(startDate)
+                .setEndDate(endDate)
+                .setStep(Step.BIWEEK)
+                .generatePeriods();
     }
 
-    private BookedResourceFacade getFacade() {
-        return ejbFacade;
+    private void resetValues() {
+        bookingRows = null;
+        periods = null;
+    }
+
+    public List<BookingRow> getBookingRow() {
+        if (bookingRows == null) {
+            loadBookedResourcesForPeriod();
+        }
+
+        return bookingRows;
+    }
+
+    public List<LocalDate> getPeriods() {
+
+        if (periods == null) {
+            loadPeriods();
+        }
+
+        return periods.stream().map(period -> period[0]).collect(toList());
+    }
+
+    private LocalDate getDate(BookedResource br) {
+        return br.getStartDate();
     }
 
     public void onCellEdit(CellEditEvent event) {
 
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
-        
+
         FacesContext context = FacesContext.getCurrentInstance();
         BookingRow entity = context.getApplication().evaluateExpressionGet(context, "#{booking}", BookingRow.class);
 
         if (newValue != null && !newValue.equals(oldValue)) {
 
-            getFacade().updateOrCreateBookings(entity.getResources());
+            bookedResourceFacade.updateOrCreateBookings(entity.getResources());
 
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
             FacesContext.getCurrentInstance().addMessage(null, msg);
 
-            areaModel = null;
+            barModel = null;
             totalBooking = null;
-
         } else {
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cell not changed", "Old: " + oldValue + ", New:" + newValue);
             FacesContext.getCurrentInstance().addMessage(null, msg);
         }
     }
 
-//    public List<StepPeriod> getPeriods() {
-//        return getFacade().getPeriods();
-//    }
-    private void loadRows() {
-        if (rows == null) {
+    public BarChartModel getAreaModel() {
 
-            List<Project> emptyProjects = projectFacade.getProjectsWithoutBookedResources(1);
-
-            Map<Project, List<BookedResource>> bookings = getFacade()
-                    .getBookedResourcesForDivision(1).stream()
-                    .collect(groupingBy(booking -> booking.getProject()));
-
-            emptyProjects.stream().forEach(pr -> bookings.put(pr, new ArrayList<>()));
-
-            rows = bookings.keySet().stream()
-                    .map(pr -> new BookingRow(pr,
-                                    bookings.get(pr).stream()
-                                    .sorted()
-                                    .collect(toList()),
-                                    divisionFacade.find(1))
-                    ).collect(toList());
-        }
-    }
-
-    public List<BookingRow> getBookings() {
-        loadRows();
-        return rows;
-    }
-
-    public List<Project> getProjects() {
-        return projectFacade.findAll();
-    }
-
-    public BookedResource getBookedResource(java.lang.Integer id) {
-        return getFacade().find(id);
-    }
-
-    public LineChartModel getAreaModel() {
-
-        if (areaModel == null) {
+        if (barModel == null) {
             createAreaModel();
         }
 
-        return areaModel;
+        return barModel;
     }
 
     private void createAreaModel() {
-        areaModel = new LineChartModel();
-        LineChartSeries total = new LineChartSeries();
-        total.setFill(true);
+        barModel = new BarChartModel();
+        ChartSeries total = new ChartSeries();
         total.setLabel("Estimation of required work resources");
 
-        rows.stream().forEach(row -> {
+        int size = bookingRows.size() * periods.size();
 
-            LineChartSeries brc = new LineChartSeries();
-            brc.setFill(true);
-            brc.setLabel(row.getProject().getName());
+        if (size < 120) {
 
-            row.getResources().stream().forEach(b -> {
-                int position = Optional.ofNullable(b.getPosition()).orElse(brc.getData().size());
-                long booked = Optional.ofNullable(b.getBooked()).orElse(0L);
-                if (brc.getData().size() < 12) {
-                    brc.set(position + 1, booked);
-                }
+            bookingRows.stream().forEach(row -> {
+
+                ChartSeries chartSerie = new ChartSeries();
+                chartSerie.setLabel(row.getProject().getName());
+
+                row.getResources().stream().forEach(b -> {
+                    int position = Optional.ofNullable(b.getPosition()).orElse(chartSerie.getData().size());
+                    long booked = Optional.ofNullable(b.getBooked()).orElse(0L);
+                    chartSerie.set(position + 1, booked);
+                });
+
+                barModel.addSeries(chartSerie);
             });
-            areaModel.addSeries(brc);
-        });
+        } else {
+            ChartSeries chartSerie = new ChartSeries();
+            chartSerie.setLabel("total");
 
-        areaModel.setTitle("Resources booked for service X");
-        areaModel.setLegendPosition("ne");
-        areaModel.setStacked(true);
-        areaModel.setShowPointLabels(true);
-        areaModel.setZoom(true);
+            int i = 0;
+            for (PeriodTotal value : totalBooking) {
+                chartSerie.set(value.getStartDate(), value.getTotal());
+            }
+            barModel.addSeries(chartSerie);
+        }
+
+        barModel.setTitle("Resources booked for service X");
+        barModel.setLegendPosition("ne");
+        barModel.setStacked(true);
+        barModel.setShowPointLabels(true);
+        barModel.setZoom(true);
 
         Axis xAxis = new CategoryAxis("Month");
+        xAxis.setTickAngle(90);
 
-        areaModel.getAxes().put(AxisType.X, xAxis);
-        Axis yAxis = areaModel.getAxis(AxisType.Y);
+        barModel.getAxes().put(AxisType.X, xAxis);
+        Axis yAxis = barModel.getAxis(AxisType.Y);
 
         yAxis.setLabel("Resources");
         yAxis.setMin(0);
     }
 
-    @FacesConverter(forClass = BookedResource.class)
-    public static class BookedResourceControllerConverter implements Converter {
-
-        @Override
-        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
-            if (value == null || value.length() == 0) {
-                return null;
-            }
-            BookedResourceController controller = (BookedResourceController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "bookedResourceController");
-            return controller.getBookedResource(getKey(value));
-        }
-
-        java.lang.Integer getKey(String value) {
-            java.lang.Integer key;
-            key = Integer.valueOf(value);
-            return key;
-        }
-
-        String getStringKey(java.lang.Integer value) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(value);
-            return sb.toString();
-        }
-
-        @Override
-        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
-            if (object == null) {
-                return null;
-            }
-            if (object instanceof BookedResource) {
-                BookedResource o = (BookedResource) object;
-                return getStringKey(o.getId());
-            } else {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "object {0} is of type {1}; expected type: {2}", new Object[]{object, object.getClass().getName(), BookedResource.class.getName()});
-                return null;
-            }
-        }
-    }
-
-    public List<List<Integer>> getTotalBooking() {
+    public List<List<PeriodTotal>> getTotalBooking() {
 
         if (totalBooking == null) {
-            totalBooking = getFacade().getTotalBookedResourcesPerProjectForDivision(1);
+            List<PeriodTotal> values
+                    = bookedResourceFacade.getTotalBookedResourcesByDivisionForPeriod(1, startDate, endDate);
+
+            totalBooking = calendarEntriesGenerator.getCalendarEntries(values, periods, PeriodTotal::new);
+
         }
 
-        List<List<Integer>> r = new ArrayList();
+        List<List<PeriodTotal>> r = new ArrayList();
         r.add(totalBooking);
+        logger.log(Level.FINE, totalBooking.toString());
+
         return r;
     }
+
 }
