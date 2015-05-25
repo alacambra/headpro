@@ -8,7 +8,6 @@ package com.rha.control;
 import com.rha.entity.PeriodWithValue;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
@@ -59,7 +58,7 @@ public class CalendarEntriesGenerator{
 
     private Boolean areEquals(LocalDate d1, LocalDate d2) {
 
-        return d1.getDayOfMonth() == d1.getDayOfMonth()
+        return d1.getDayOfMonth() == d2.getDayOfMonth()
                 && d1.getMonth() == d2.getMonth()
                 && d1.getYear() == d2.getYear();
     }
