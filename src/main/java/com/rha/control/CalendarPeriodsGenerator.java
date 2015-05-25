@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
 
-public class CalendarPeriodsGenerator implements Serializable{
+public class CalendarPeriodsGenerator implements Serializable {
 
     private LocalDate startDate;
     private LocalDate endDate;
@@ -37,7 +37,7 @@ public class CalendarPeriodsGenerator implements Serializable{
     public LocalDate getEndDate() {
         return endDate;
     }
-    
+
     public CalendarPeriodsGenerator setEndDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
@@ -79,15 +79,15 @@ public class CalendarPeriodsGenerator implements Serializable{
         if (startYear > endYear) {
             return 0;
         } else if (startYear == endYear) {
-            return LocalDate.ofYearDay(startYear, 1).get(weekFields.weekOfYear());
+            return LocalDate.ofYearDay(startYear, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear());
         } else {
 
             final int sy = startYear;
             final int ey = endYear;
 
             return IntStream.rangeClosed(sy, ey).boxed()
-                    .map(year -> LocalDate.ofYearDay(year, 1)
-                            .with(TemporalAdjusters.lastDayOfYear())
+                    .map(year
+                            -> LocalDate.ofYearDay(year, 1).with(TemporalAdjusters.lastDayOfYear())
                             .get(weekFields.weekOfYear()))
                     .reduce(Integer::sum).orElse(0);
         }
@@ -127,8 +127,7 @@ public class CalendarPeriodsGenerator implements Serializable{
             } else {
                 totalEntries = endDate.get(weekFields.weekOfYear())
                         + getWeeksBetweenYears(startDate.getYear(), endDate.getYear(), weekFields)
-                        + (startDate.with(TemporalAdjusters.lastDayOfYear())
-                        .get(weekFields.weekOfYear())
+                        + (startDate.with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear())
                         - startDate.get(weekFields.weekOfYear()) + 1);
             }
         } else if (step == Step.BIWEEK) {
@@ -158,7 +157,6 @@ public class CalendarPeriodsGenerator implements Serializable{
                 int totalMiddleMonths = endDate.getMonthValue() - startDate.getMonthValue() - 1;
                 if (totalMiddleMonths < 0) {
 
-                    totalMiddleMonths = 0;
                     totalEntries = starDateOffset == 1 || endDateOffset == 1 ? 1 : 2;
 
                 } else {
@@ -184,9 +182,9 @@ public class CalendarPeriodsGenerator implements Serializable{
         List<LocalDate[]> generatedPeriods = new ArrayList<>();
 
         for (int i = 0; i < totalEntries; i++) {
-              generatedPeriods.add(supplyNextPeriod());  
+            generatedPeriods.add(supplyNextPeriod());
         }
-        
+
         return generatedPeriods;
     }
 

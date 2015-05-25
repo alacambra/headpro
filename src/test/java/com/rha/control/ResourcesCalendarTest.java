@@ -180,6 +180,20 @@ public class ResourcesCalendarTest {
         cut.setStep(Step.WEEK);
 
         assertThat(cut.generatePeriods().size(), Is.is(19));
+        
+        setUp();
+        cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
+                .setEndDate(LocalDate.of(2016, Month.DECEMBER, 31));
+
+        cut.setStep(Step.WEEK);
+        
+        WeekFields weekFields = WeekFields.of(Locale.GERMANY);       
+
+        int total = (LocalDate.ofYearDay(2014, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear())) +
+                (LocalDate.ofYearDay(2015, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear())) +
+                (LocalDate.ofYearDay(2016, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear()));
+
+        assertThat(cut.generatePeriods().size(), Is.is(total));
     }
 
     @Test

@@ -164,31 +164,6 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//
-//        if (obj == this) {
-//            return true;
-//        }
-//
-//        if (obj instanceof BookedResource) {
-//            final BookedResource other = (BookedResource) obj;
-//            if (null != id && id != -1) {
-//
-//                return new EqualsBuilder()
-//                        .append(id, other.getId())
-//                        .isEquals();
-//            } else {
-//                return new EqualsBuilder()
-//                        .append(getStartDate(), other.getStartDate())
-//                        .append(getEndDate(), other.getEndDate())
-//                        .isEquals();
-//            }
-//
-//        } else {
-//            return false;
-//        }
-//    }
     @Override
     public int hashCode() {
         int hash = 7;

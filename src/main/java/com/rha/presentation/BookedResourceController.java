@@ -112,7 +112,7 @@ public class BookedResourceController implements Serializable {
         periods = calendarPeriodsGenerator
                 .setStartDate(startDate)
                 .setEndDate(endDate)
-                .setStep(Step.BIWEEK)
+                .setStep(step)
                 .generatePeriods();
     }
 
@@ -181,7 +181,7 @@ public class BookedResourceController implements Serializable {
 
         int size = bookingRows.size() * periods.size();
 
-        if (size < 120) {
+        if (size < 1200) {
 
             bookingRows.stream().forEach(row -> {
 
