@@ -68,7 +68,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     Integer id;
 
     @ManyToOne
-    Division division;
+    Service division;
 
     @ManyToOne
     Project project;
@@ -100,11 +100,11 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
         return id;
     }
 
-    public Division getDivision() {
+    public Service getDivision() {
         return division;
     }
 
-    public void setDivision(Division division) {
+    public void setDivision(Service division) {
         this.division = division;
 
     }

@@ -6,7 +6,7 @@
 package com.rha.presentation;
 
 import com.rha.entity.BookedResource;
-import com.rha.entity.Division;
+import com.rha.entity.Service;
 import com.rha.entity.Project;
 import java.io.Serializable;
 import java.util.List;
@@ -24,13 +24,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class BookingRow implements Serializable{
 
     Project project;
-    Division division;
+    Service division;
     List<BookedResource> resources;
     
     @Inject
     Logger logger;
 
-    public BookingRow(Project project, List<BookedResource> resources, Division division) {
+    public BookingRow(Project project, List<BookedResource> resources, Service division) {
         this.project = project;
         this.resources = resources;
         this.division = division;

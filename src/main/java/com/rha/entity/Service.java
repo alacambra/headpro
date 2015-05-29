@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @Entity
-public class Division implements Serializable {
+public class Service implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,7 +24,7 @@ public class Division implements Serializable {
         return id;
     }
 
-    public Division setId(Integer id) {
+    public Service setId(Integer id) {
         this.id = id;
         return this;
     }
@@ -33,7 +33,7 @@ public class Division implements Serializable {
         return name;
     }
 
-    public Division setName(String name) {
+    public Service setName(String name) {
         this.name = name;
         return this;
     }
@@ -53,8 +53,8 @@ public class Division implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Division) {
-            final Division other = (Division) obj;
+        if (obj instanceof Service) {
+            final Service other = (Service) obj;
             return new EqualsBuilder()
                     .append(id, other.getId())
                     .isEquals();

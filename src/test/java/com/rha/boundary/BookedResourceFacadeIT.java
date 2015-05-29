@@ -6,7 +6,7 @@
 package com.rha.boundary;
 
 import com.rha.entity.BookedResource;
-import com.rha.entity.Division;
+import com.rha.entity.Service;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
 import com.rha.entity.Step;
@@ -60,7 +60,7 @@ public class BookedResourceFacadeIT {
 
     @Test
     public void testGetBookedResourcesForDivision_3args() throws Exception {
-        Division d = em.merge(new Division().setName("testDivision"));
+        Service d = em.merge(new Service().setName("testDivision"));
         Project p = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
         
         BookedResource br = new BookedResource();
@@ -94,7 +94,7 @@ public class BookedResourceFacadeIT {
 
     @Test
     public void testGetTotalBookedResourcesPerProjectForDivision_int() throws Exception {
-        Division d = em.merge(new Division().setName("testDivision"));
+        Service d = em.merge(new Service().setName("testDivision"));
         Project p = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
         Project p2 = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
         

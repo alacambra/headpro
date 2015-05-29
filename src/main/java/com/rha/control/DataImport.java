@@ -6,7 +6,7 @@
 package com.rha.control;
 
 import com.rha.entity.BookedResource;
-import com.rha.entity.Division;
+import com.rha.entity.Service;
 import com.rha.entity.Project;
 import com.rha.entity.Step;
 import java.io.IOException;
@@ -29,11 +29,11 @@ public class DataImport {
     @PersistenceContext
     EntityManager em;
 
-    Division d;
+    Service d;
 
     public void loadData() {
 
-        d = new Division();
+        d = new Service();
         d.setName("java");
         em.persist(d);
 

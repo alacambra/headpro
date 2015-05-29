@@ -5,7 +5,7 @@
  */
 package com.rha.boundary;
 
-import com.rha.entity.Division;
+import com.rha.entity.Service;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author alacambra
  */
 @Stateless
-public class DivisionFacade extends AbstractFacade<Division> {
+public class ServiceFacade extends AbstractFacade<Service> {
     @PersistenceContext(unitName = "rha")
     private EntityManager em;
 
@@ -24,8 +24,8 @@ public class DivisionFacade extends AbstractFacade<Division> {
         return em;
     }
 
-    public DivisionFacade() {
-        super(Division.class);
+    public ServiceFacade() {
+        super(Service.class);
     }
     
 }

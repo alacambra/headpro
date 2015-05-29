@@ -3,7 +3,7 @@ package com.rha.presentation;
 import com.rha.control.CalendarEntriesGenerator;
 import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.boundary.BookedResourceFacade;
-import com.rha.boundary.DivisionFacade;
+import com.rha.boundary.ServiceFacade;
 import com.rha.boundary.ProjectFacade;
 import com.rha.control.LocalDateConverter;
 import com.rha.entity.BookedResource;
@@ -52,7 +52,7 @@ public class BookedResourceController implements Serializable {
     ProjectFacade projectFacade;
 
     @Inject
-    DivisionFacade divisionFacade;
+    ServiceFacade divisionFacade;
 
     @Inject
     CalendarPeriodsGenerator calendarPeriodsGenerator;

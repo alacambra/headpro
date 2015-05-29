@@ -1,9 +1,9 @@
 package com.rha.presentation;
 
-import com.rha.entity.Division;
+import com.rha.entity.Service;
 import com.rha.presentation.util.JsfUtil;
 import com.rha.presentation.util.JsfUtil.PersistAction;
-import com.rha.boundary.DivisionFacade;
+import com.rha.boundary.ServiceFacade;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,18 +24,18 @@ import javax.faces.convert.FacesConverter;
 public class DivisionController implements Serializable {
 
     @EJB
-    private com.rha.boundary.DivisionFacade ejbFacade;
-    private List<Division> items = null;
-    private Division selected;
+    private com.rha.boundary.ServiceFacade ejbFacade;
+    private List<Service> items = null;
+    private Service selected;
 
     public DivisionController() {
     }
 
-    public Division getSelected() {
+    public Service getSelected() {
         return selected;
     }
 
-    public void setSelected(Division selected) {
+    public void setSelected(Service selected) {
         this.selected = selected;
     }
 
@@ -45,12 +45,12 @@ public class DivisionController implements Serializable {
     protected void initializeEmbeddableKey() {
     }
 
-    private DivisionFacade getFacade() {
+    private ServiceFacade getFacade() {
         return ejbFacade;
     }
 
-    public Division prepareCreate() {
-        selected = new Division();
+    public Service prepareCreate() {
+        selected = new Service();
         initializeEmbeddableKey();
         return selected;
     }
@@ -74,7 +74,7 @@ public class DivisionController implements Serializable {
         }
     }
 
-    public List<Division> getItems() {
+    public List<Service> getItems() {
         if (items == null) {
             items = getFacade().findAll();
         }
@@ -109,19 +109,19 @@ public class DivisionController implements Serializable {
         }
     }
 
-    public Division getDivision(java.lang.Integer id) {
+    public Service getDivision(java.lang.Integer id) {
         return getFacade().find(id);
     }
 
-    public List<Division> getItemsAvailableSelectMany() {
+    public List<Service> getItemsAvailableSelectMany() {
         return getFacade().findAll();
     }
 
-    public List<Division> getItemsAvailableSelectOne() {
+    public List<Service> getItemsAvailableSelectOne() {
         return getFacade().findAll();
     }
 
-    @FacesConverter(forClass = Division.class)
+    @FacesConverter(forClass = Service.class)
     public static class DivisionControllerConverter implements Converter {
 
         @Override
@@ -151,11 +151,11 @@ public class DivisionController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Division) {
-                Division o = (Division) object;
+            if (object instanceof Service) {
+                Service o = (Service) object;
                 return getStringKey(o.getId());
             } else {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "object {0} is of type {1}; expected type: {2}", new Object[]{object, object.getClass().getName(), Division.class.getName()});
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "object {0} is of type {1}; expected type: {2}", new Object[]{object, object.getClass().getName(), Service.class.getName()});
                 return null;
             }
         }

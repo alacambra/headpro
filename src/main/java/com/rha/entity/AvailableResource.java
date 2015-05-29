@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -31,7 +30,7 @@ public class AvailableResource implements Serializable {
 
 //    @ManyToOne
     @Transient
-    Division division;
+    Service division;
 
     @Temporal(TemporalType.DATE)
     Date startDate;
@@ -49,11 +48,11 @@ public class AvailableResource implements Serializable {
         this.id = id;
     }
 
-    public Division getDivision() {
+    public Service getDivision() {
         return division;
     }
 
-    public void setDivision(Division division) {
+    public void setDivision(Service division) {
         this.division = division;
     }
 
