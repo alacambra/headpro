@@ -12,6 +12,7 @@ import com.rha.entity.Project;
 import com.rha.entity.Step;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -64,8 +65,8 @@ public class BookedResourceController implements Serializable {
     List<BookingRow> bookingRows;
     List<PeriodTotal> totalBooking;
     BarChartModel barModel;
-    LocalDate startDate = LocalDate.now();
-    LocalDate endDate = LocalDate.now().plusMonths(3);
+    LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+    LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Step step = Step.BIWEEK;
 
     public void loadBookedResourcesForPeriod() {
