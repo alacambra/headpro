@@ -59,18 +59,18 @@ public class ServiceController implements Serializable {
     }
 
     public void create() {
-        persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("DivisionCreated"));
+        persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("ServiceCreated"));
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
         }
     }
 
     public void update() {
-        persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("DivisionUpdated"));
+        persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("ServiceUpdated"));
     }
 
     public void destroy() {
-        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("DivisionDeleted"));
+        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("ServiceDeleted"));
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
@@ -112,7 +112,7 @@ public class ServiceController implements Serializable {
         }
     }
 
-    public Service getDivision(java.lang.Integer id) {
+    public Service getService(java.lang.Integer id) {
         return getFacade().find(id);
     }
 
@@ -125,7 +125,7 @@ public class ServiceController implements Serializable {
     }
 
     @FacesConverter(forClass = Service.class)
-    public static class DivisionControllerConverter implements Converter {
+    public static class ServiceControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
@@ -134,7 +134,7 @@ public class ServiceController implements Serializable {
             }
             ServiceController controller = (ServiceController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "divisionController");
-            return controller.getDivision(getKey(value));
+            return controller.getService(getKey(value));
         }
 
         java.lang.Integer getKey(String value) {

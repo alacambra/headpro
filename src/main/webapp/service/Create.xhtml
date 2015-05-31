@@ -12,8 +12,6 @@
             <h:form id="ServiceCreateForm">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{serviceController.selected != null}">
-                        <p:outputLabel value="#{bundle.CreateServiceLabel_id}" for="id" />
-                        <p:inputText id="id" value="#{serviceController.selected.id}" title="#{bundle.CreateServiceTitle_id}" />
                         <p:outputLabel value="#{bundle.CreateServiceLabel_name}" for="name" />
                         <p:inputText id="name" value="#{serviceController.selected.name}" title="#{bundle.CreateServiceTitle_name}" />
                     </p:panelGrid>

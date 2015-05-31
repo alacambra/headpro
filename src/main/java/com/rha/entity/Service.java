@@ -24,18 +24,16 @@ public class Service implements Serializable {
         return id;
     }
 
-    public Service setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
-        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public Service setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
 //    public List<Project> getProjects() {

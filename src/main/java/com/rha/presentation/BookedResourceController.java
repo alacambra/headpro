@@ -75,7 +75,7 @@ public class BookedResourceController implements Serializable {
     
     @PostConstruct
     public void init(){
-        currentService = serviceFacade.findAll().get(0);
+        currentService = serviceFacade.findAll().get(1);
     }
 
     public void loadBookedResourcesForPeriod() {
