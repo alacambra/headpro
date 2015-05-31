@@ -60,12 +60,12 @@ public class BookedResourceFacadeIT {
 
     @Test
     public void testGetBookedResourcesForDivision_3args() throws Exception {
-        Service d = em.merge(new Service().setName("testDivision"));
+        Service s = em.merge(new Service().setName("testDivision"));
         Project p = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
         
         BookedResource br = new BookedResource();
         br.setBooked(10L);
-        br.setDivision(d);
+        br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
         br.setProject(p);
@@ -74,19 +74,19 @@ public class BookedResourceFacadeIT {
         
         br = new BookedResource();
         br.setBooked(10L);
-        br.setDivision(d);
+        br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
         br.setEndDate(LocalDate.of(2015, Month.JULY, 30));
         br.setProject(p);
         
         cut.create(br);
         
-        List<BookedResource> r = cut.getBookedResourcesForDivision(1,
+        List<BookedResource> r = cut.getBookedResourcesForService(s,
                 LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.DECEMBER, 31));
         
         assertThat(r.size(), Is.is(2));
 
-        r = cut.getBookedResourcesForDivision(1,
+        r = cut.getBookedResourcesForService(s,
                 LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.MAY, 31));
         
         assertThat(r.size(), Is.is(1));
@@ -94,13 +94,13 @@ public class BookedResourceFacadeIT {
 
     @Test
     public void testGetTotalBookedResourcesPerProjectForDivision_int() throws Exception {
-        Service d = em.merge(new Service().setName("testDivision"));
+        Service s = em.merge(new Service().setName("testDivision"));
         Project p = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
         Project p2 = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
         
         BookedResource br = new BookedResource();
         br.setBooked(10L);
-        br.setDivision(d);
+        br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
         br.setProject(p);
@@ -109,7 +109,7 @@ public class BookedResourceFacadeIT {
         
         br = new BookedResource();
         br.setBooked(15L);
-        br.setDivision(d);
+        br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
         br.setProject(p2);
@@ -119,14 +119,14 @@ public class BookedResourceFacadeIT {
         
         br = new BookedResource();
         br.setBooked(30L);
-        br.setDivision(d);
+        br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
         br.setEndDate(LocalDate.of(2015, Month.JULY, 30));
         br.setProject(p);
         
         cut.create(br);
         
-        List<PeriodTotal> r = cut.getTotalBookedResourcesByDivisionForPeriod(1,
+        List<PeriodTotal> r = cut.getTotalBookedResourcesByServiceForPeriod(s,
                 LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.DECEMBER, 31));
         
         assertThat(r.size(), Is.is(2));

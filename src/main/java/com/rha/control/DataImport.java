@@ -28,14 +28,14 @@ public class DataImport {
 
     @PersistenceContext
     EntityManager em;
-
-    Service d;
+    
+    Service javaService;
 
     public void loadData() {
 
-        d = new Service();
-        d.setName("java");
-        em.persist(d);
+        javaService = new Service();
+        javaService.setName("java");
+        javaService = em.merge(javaService);
 
         try {
             Stream<String> lines = Files.lines(
@@ -74,7 +74,7 @@ public class DataImport {
             BookedResource br = new BookedResource();
             String v = "".equals(row[i + 1]) ? "0" : row[i + 1];
             br.setBooked(Math.round(Double.parseDouble(v)));
-            br.setDivision(d);
+            br.setService(javaService);
             br.setProject(p);
             br.setStartDate(startPeriodDate);
             br.setEndDate(endPeriodDate);

@@ -30,7 +30,7 @@ public class AvailableResource implements Serializable {
 
 //    @ManyToOne
     @Transient
-    Service division;
+    Service service;
 
     @Temporal(TemporalType.DATE)
     Date startDate;
@@ -48,12 +48,12 @@ public class AvailableResource implements Serializable {
         this.id = id;
     }
 
-    public Service getDivision() {
-        return division;
+    public Service getService() {
+        return service;
     }
 
-    public void setDivision(Service division) {
-        this.division = division;
+    public void setService(Service service) {
+        this.service = service;
     }
 
     public Date getStartDate() {

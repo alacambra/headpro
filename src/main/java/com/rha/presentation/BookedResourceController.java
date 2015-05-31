@@ -9,6 +9,7 @@ import com.rha.control.LocalDateConverter;
 import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
+import com.rha.entity.Service;
 import com.rha.entity.Step;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.*;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -53,7 +55,7 @@ public class BookedResourceController implements Serializable {
     ProjectFacade projectFacade;
 
     @Inject
-    ServiceFacade divisionFacade;
+    ServiceFacade serviceFacade;
 
     @Inject
     CalendarPeriodsGenerator calendarPeriodsGenerator;
@@ -68,11 +70,18 @@ public class BookedResourceController implements Serializable {
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Step step = Step.BIWEEK;
+    
+    Service currentService;
+    
+    @PostConstruct
+    public void init(){
+        currentService = serviceFacade.findAll().get(0);
+    }
 
     public void loadBookedResourcesForPeriod() {
-
+        
         List<BookedResource> bookedResources
-                = bookedResourceFacade.getBookedResourcesForDivision(1, startDate, endDate);
+                = bookedResourceFacade.getBookedResourcesForService(currentService, startDate, endDate);
 
         List<Project> emptyProjects = projectFacade.findAll();
 
@@ -104,7 +113,7 @@ public class BookedResourceController implements Serializable {
             bookingRows.add(new BookingRow(
                     project,
                     resources,
-                    divisionFacade.find(1)));
+                    serviceFacade.find(1)));
         }
     }
 
@@ -229,7 +238,7 @@ public class BookedResourceController implements Serializable {
 
         if (totalBooking == null) {
             List<PeriodTotal> values
-                    = bookedResourceFacade.getTotalBookedResourcesByDivisionForPeriod(1, startDate, endDate);
+                    = bookedResourceFacade.getTotalBookedResourcesByServiceForPeriod(currentService, startDate, endDate);
 
             totalBooking = calendarEntriesGenerator.getCalendarEntries(values, periods, PeriodTotal::new);
 

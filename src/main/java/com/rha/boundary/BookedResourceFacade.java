@@ -3,15 +3,9 @@ package com.rha.boundary;
 import com.rha.control.LocalDateConverter;
 import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
-import java.time.Instant;
+import com.rha.entity.Service;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import static java.util.stream.Collectors.*;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,9 +28,9 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
     public List<BookedResource> getBookedResourcesFor(int projectId, int divisionId) {
 
         List<BookedResource> bookedResources
-                = em.createNamedQuery(BookedResource.byProjectAndDivision, BookedResource.class)
+                = em.createNamedQuery(BookedResource.byProjectAndService, BookedResource.class)
                 .setParameter("pid", projectId)
-                .setParameter("did", divisionId)
+                .setParameter("sid", divisionId)
                 .getResultList();
 
         return bookedResources;
@@ -45,19 +39,19 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
     public List<BookedResource> getBookedResourcesForDivision(int divisionId) {
 
         List<BookedResource> bookedResources
-                = em.createNamedQuery(BookedResource.byDivision)
-                .setParameter("did", divisionId)
+                = em.createNamedQuery(BookedResource.byService)
+                .setParameter("sid", divisionId)
                 .getResultList();
 
         return bookedResources;
     }
 
-    public List<BookedResource> getBookedResourcesForDivision(
-            int divisionId, LocalDate startDate, LocalDate endDate) {
+    public List<BookedResource> getBookedResourcesForService(
+            Service service, LocalDate startDate, LocalDate endDate) {
 
         List<BookedResource> bookedResources
-                = em.createNamedQuery(BookedResource.byDivisionForPeriod)
-                //                .setParameter("did", divisionId)
+                = em.createNamedQuery(BookedResource.byServiceForPeriod)
+                .setParameter("service", service)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
@@ -65,28 +59,26 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         return bookedResources;
     }
 
-    public List<Integer> getTotalBookedResourcesPerProjectForDivision(int divisionId) {
+    public List<Integer> getTotalBookedResourcesPerProjectForDivision(Service service) {
 
         List<Integer> bookedResources
-                = em.createNamedQuery(BookedResource.totalByDivision)
-                .setParameter("did", divisionId)
+                = em.createNamedQuery(BookedResource.totalByService)
+                .setParameter("service", service)
                 .getResultList();
 
         return bookedResources;
     }
 
-    public List<PeriodTotal> getTotalBookedResourcesByDivisionForPeriod(
-            int divisionId, LocalDate startDate, LocalDate endDate) {
+    public List<PeriodTotal> getTotalBookedResourcesByServiceForPeriod(
+            Service service, LocalDate startDate, LocalDate endDate) {
 
         List<PeriodTotal> bookedResources
-                = em.createNamedQuery(BookedResource.totalByDivisionForPeriod, PeriodTotal.class)
+                = em.createNamedQuery(BookedResource.totalByServiceForPeriod, PeriodTotal.class)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
+                .setParameter("service", service)
                 .getResultList();
 
-//        Map<LocalDate, Optional<Long>> r = bookedResources.stream()
-//                .collect(groupingBy(PeriodTotal::getDate,
-//                                mapping(PeriodTotal::getTotal, reducing(Long::sum))));
         return bookedResources;
     }
 
@@ -95,20 +87,20 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
     }
 
     public void updateOrCreateBookings(List<BookedResource> resources) {
-        
-        for(int i = 0; i < resources.size(); i++){
-            if(resources.get(i).isPersisted() || resources.get(i).getBooked() != 0){
+
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).isPersisted() || resources.get(i).getBooked() != 0) {
                 BookedResource br = resources.get(i);
-                if(br.getId() == null){
+                if (br.getId() == null) {
                     em.persist(br);
-                }else{
+                } else {
                     em.merge(br);
                 }
 //                em.merge(br);
 //                resources.set(i, br);
             }
         }
-        
+
 //        resources.stream()
 //                .filter(r -> r.isPersisted() || r.getBooked() != 0)
 //                .forEach(r -> {

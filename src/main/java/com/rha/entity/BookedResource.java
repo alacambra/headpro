@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rha.entity;
 
 import java.io.Serializable;
@@ -33,47 +28,47 @@ import javax.persistence.UniqueConstraint;
     @UniqueConstraint(columnNames = {"startdate", "project"})
 })
 @NamedQueries({
-    @NamedQuery(name = BookedResource.byProjectAndDivision,
-            query = "SELECT br FROM BookedResource br LEFT JOIN br.project p LEFT JOIN br.division d "
+    @NamedQuery(name = BookedResource.byProjectAndService,
+            query = "SELECT br FROM BookedResource br LEFT JOIN br.project p LEFT JOIN br.service d "
             + "WHERE p.id=:pid and d.id=:did"),
 
-    @NamedQuery(name = BookedResource.totalByDivision,
-            query = "SELECT sum(br.booked) FROM BookedResource br JOIN br.division d "
-            + "WHERE d.id=:did group by br.startDate order by br.startDate"),
+    @NamedQuery(name = BookedResource.totalByService,
+            query = "SELECT sum(br.booked) FROM BookedResource br JOIN br.service s "
+            + "WHERE s=:service group by br.startDate order by br.startDate"),
 
-    @NamedQuery(name = BookedResource.byDivision,
-            query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did"),
+    @NamedQuery(name = BookedResource.byService,
+            query = "SELECT br FROM BookedResource br JOIN br.service s WHERE s=:service"),
 
-    @NamedQuery(name = BookedResource.byDivisionForPeriod,
-            query = "SELECT br FROM BookedResource br WHERE "
-            + "br.startDate>=:startDate AND br.endDate<=:endDate order by br.startDate"),
+    @NamedQuery(name = BookedResource.byServiceForPeriod,
+            query = "SELECT br FROM BookedResource br JOIN br.service s WHERE "
+            + "br.startDate>=:startDate AND br.endDate<=:endDate AND s=:service order by br.startDate"),
 
-    @NamedQuery(name = BookedResource.totalByDivisionForPeriod,
+    @NamedQuery(name = BookedResource.totalByServiceForPeriod,
             query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked))"
-            + " FROM BookedResource br "
+            + " FROM BookedResource br JOIN br.service s "
             + "WHERE "
-            + "br.startDate>=:startDate AND br.endDate<=:endDate "
+            + "s=:service AND br.startDate>=:startDate AND br.endDate<=:endDate "
             + "group by br.startDate, br.endDate order by br.startDate"),
 
     @NamedQuery(name = "back-up",
-            query = "SELECT br FROM BookedResource br JOIN br.division d WHERE d.id=:did "
+            query = "SELECT br FROM BookedResource br JOIN br.service d WHERE d.id=:did "
             + "AND br.startDate>=:startDate AND br.endDate<=:endDate")
 })
 public class BookedResource implements Serializable, Comparable<BookedResource>, PeriodWithValue {
 
     private static final String prefix = "com.rha.entity.BookedResource.";
-    public static final String byProjectAndDivision = prefix + "byProjectAndDivision";
-    public static final String totalByDivision = prefix + "totalByDivision";
-    public static final String totalByDivisionForPeriod = prefix + "totalByDivisionForPeriod";
-    public static final String byDivision = prefix + "byDivision";
-    public static final String byDivisionForPeriod = prefix + "byDivisionForPeriod";
+    public static final String byProjectAndService = prefix + "byProjectAndService";
+    public static final String totalByService = prefix + "totalByService";
+    public static final String totalByServiceForPeriod = prefix + "totalByServiceForPeriod";
+    public static final String byService = prefix + "byService";
+    public static final String byServiceForPeriod = prefix + "byServiceForPeriod";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
     @ManyToOne
-    Service division;
+    Service service;
 
     @ManyToOne
     Project project;
@@ -105,13 +100,12 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
         return id;
     }
 
-    public Service getDivision() {
-        return division;
+    public Service getService() {
+        return service;
     }
 
-    public void setDivision(Service division) {
-        this.division = division;
-
+    public void setService(Service service) {
+        this.service = service;
     }
 
     public Project getProject() {
