@@ -19,19 +19,22 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-@Named("divisionController")
+@Named
 @SessionScoped
-public class DivisionController implements Serializable {
+public class ServiceController implements Serializable {
 
     @EJB
     private com.rha.boundary.ServiceFacade ejbFacade;
     private List<Service> items = null;
     private Service selected;
 
-    public DivisionController() {
+    public ServiceController() {
     }
 
     public Service getSelected() {
+        if(selected == null){
+            prepareCreate();
+        }
         return selected;
     }
 
@@ -129,7 +132,7 @@ public class DivisionController implements Serializable {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            DivisionController controller = (DivisionController) facesContext.getApplication().getELResolver().
+            ServiceController controller = (ServiceController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "divisionController");
             return controller.getDivision(getKey(value));
         }

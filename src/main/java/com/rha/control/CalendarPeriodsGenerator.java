@@ -18,11 +18,6 @@ public class CalendarPeriodsGenerator implements Serializable {
     private LocalDate currentDate;
 
     public CalendarPeriodsGenerator() {
-//        this.supplier = () -> {
-//            BookedResource br = new BookedResource();
-//            br.setPersisted(false);
-//            return (T) br;
-//        };
     }
 
     public LocalDate getStartDate() {
@@ -191,9 +186,13 @@ public class CalendarPeriodsGenerator implements Serializable {
     private LocalDate[] supplyNextPeriod() {
 
         if (step == Step.DAY) {
+            
+            LocalDate startPeriodDate = currentDate;
+            LocalDate endPeriodDate = currentDate;
+            currentDate = endPeriodDate;
             currentDate = currentDate.plusDays(1);
-            return new LocalDate[]{currentDate, currentDate};
-
+            return new LocalDate[]{startPeriodDate, endPeriodDate};
+            
         } else if (step == Step.WEEK) {
 
             LocalDate startPeriodDate = currentDate;

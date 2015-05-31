@@ -18,15 +18,20 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author alacambra
  */
 @Entity
+@Table(uniqueConstraints={
+    @UniqueConstraint(columnNames = {"startdate", "project"})
+})
 @NamedQueries({
     @NamedQuery(name = BookedResource.byProjectAndDivision,
             query = "SELECT br FROM BookedResource br LEFT JOIN br.project p LEFT JOIN br.division d "

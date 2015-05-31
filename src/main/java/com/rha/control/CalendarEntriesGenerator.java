@@ -11,11 +11,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 
 public class CalendarEntriesGenerator {
-    
+
     @Inject
     Logger logger;
 
@@ -39,7 +40,11 @@ public class CalendarEntriesGenerator {
             pointer = it.next();
 
             if (pointer.getStartDate().isBefore(periods.get(0)[0])) {
-                throw new RuntimeException("pointer can not be before than first period");
+                logger.log(Level.SEVERE, "pointer can not be before than first period: {0} : {1}", new Object[]
+                {
+                    pointer.getStartDate(), 
+                        periods.get(0)[0]
+                });
             }
         }
 
@@ -47,9 +52,9 @@ public class CalendarEntriesGenerator {
         for (LocalDate[] period : periods) {
 
             if (pointer != null && pointer.getStartDate().isBefore(period[0])) {
-                
+
                 logger.fine("pointer earlier than the period. Synchronising...");
-                
+
                 while (pointer != null && pointer.getStartDate().isBefore(period[0])) {
                     if (it.hasNext()) {
                         pointer = it.next();
