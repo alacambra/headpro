@@ -7,10 +7,10 @@ import com.rha.boundary.ServiceFacade;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -18,13 +18,21 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named
 @SessionScoped
 public class ServiceController implements Serializable {
 
-    @EJB
+    @Inject
     private com.rha.boundary.ServiceFacade ejbFacade;
+    
+    @Inject
+    transient Logger logger;
+    
+    @Inject
+    BookedResourceController bookedResourceController;
+    
     private List<Service> items = null;
     private Service selected;
 
@@ -32,7 +40,7 @@ public class ServiceController implements Serializable {
     }
 
     public Service getSelected() {
-        if(selected == null){
+        if (selected == null) {
             prepareCreate();
         }
         return selected;
@@ -162,7 +170,17 @@ public class ServiceController implements Serializable {
                 return null;
             }
         }
-
     }
 
+    public String parametersAction() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
+        String s = params.get("selectedService");
+        logger.log(Level.FINE, "Service {} selected", new Object[]{s});
+        bookedResourceController.setCurrentService(items.stream()
+                .filter(service -> service.getId() == Integer.parseInt(s))
+                .findFirst().get());
+        
+        return "/bookedResource/edittable";
+    }
 }

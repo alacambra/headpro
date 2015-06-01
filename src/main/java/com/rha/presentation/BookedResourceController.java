@@ -27,6 +27,7 @@ import static java.util.stream.Collectors.*;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -62,7 +63,7 @@ public class BookedResourceController implements Serializable {
 
     @Inject
     transient CalendarEntriesGenerator calendarEntriesGenerator;
-    
+
     List<LocalDate[]> periods;
     List<BookingRow> bookingRows;
     List<PeriodTotal> totalBooking;
@@ -70,16 +71,20 @@ public class BookedResourceController implements Serializable {
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Step step = Step.BIWEEK;
-    
+
+    @ManagedProperty(value = "param.selectedService")
     Service currentService;
-    
+
     @PostConstruct
-    public void init(){
-        currentService = serviceFacade.findAll().get(1);
+    public void init() {
     }
 
     public void loadBookedResourcesForPeriod() {
-        
+
+        if (currentService == null) {
+            throw new RuntimeException("No service given");
+        }
+
         List<BookedResource> bookedResources
                 = bookedResourceFacade.getBookedResourcesForService(currentService, startDate, endDate);
 
@@ -266,7 +271,7 @@ public class BookedResourceController implements Serializable {
     public void setEndDate(Date endDate) {
         this.endDate = LocalDateConverter.toLocalDate(endDate);
     }
-    
+
     public void dateChanged() {
         resetValues();
     }
@@ -278,8 +283,17 @@ public class BookedResourceController implements Serializable {
     public void setStep(Step step) {
         this.step = step;
     }
-    
-    public List<Step> getSteps(){
+
+    public List<Step> getSteps() {
         return Arrays.asList(Step.values());
     }
+
+    public Service getCurrentService() {
+        return currentService;
+    }
+
+    public void setCurrentService(Service currentService) {
+        this.currentService = currentService;
+    }
+    
 }
