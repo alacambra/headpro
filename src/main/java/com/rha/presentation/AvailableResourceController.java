@@ -1,165 +1,306 @@
 package com.rha.presentation;
 
-import com.rha.entity.AvailableResource;
-import com.rha.presentation.util.JsfUtil;
-import com.rha.presentation.util.JsfUtil.PersistAction;
 import com.rha.boundary.AvailableResourceFacade;
-
+import com.rha.boundary.BookedResourceFacade;
+import com.rha.boundary.ProjectFacade;
+import com.rha.boundary.ServiceFacade;
+import com.rha.control.CalendarEntriesGenerator;
+import com.rha.control.CalendarPeriodsGenerator;
+import com.rha.control.LocalDateConverter;
+import com.rha.entity.BookedResource;
+import com.rha.entity.PeriodTotal;
+import com.rha.entity.Project;
+import com.rha.entity.Service;
+import com.rha.entity.Step;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.UIComponent;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
+import org.primefaces.event.CellEditEvent;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.BarChartModel;
+import org.primefaces.model.chart.CategoryAxis;
+import org.primefaces.model.chart.ChartSeries;
 
-@Named("availableResourceController")
+@Named("arc")
 @SessionScoped
 public class AvailableResourceController implements Serializable {
 
-    @EJB
-    private com.rha.boundary.AvailableResourceFacade ejbFacade;
-    private List<AvailableResource> items = null;
-    private AvailableResource selected;
+    @Inject
+    transient Logger logger;
 
-    public AvailableResourceController() {
+    @Inject
+    AvailableResourceFacade availableResourceFacade;
+
+    @Inject
+    BookedResourceFacade bookedResourceFacade;
+
+    @Inject
+    ProjectFacade projectFacade;
+
+    @Inject
+    ServiceFacade serviceFacade;
+
+    @Inject
+    CalendarPeriodsGenerator calendarPeriodsGenerator;
+
+    @Inject
+    transient CalendarEntriesGenerator calendarEntriesGenerator;
+
+    List<LocalDate[]> periods;
+    List<BookingRow> bookingRows;
+    List<PeriodTotal> totalBooking;
+    BarChartModel barModel;
+    LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+    LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
+    Step step = Step.BIWEEK;
+
+    @ManagedProperty(value = "param.selectedService")
+    Service currentService;
+
+    @PostConstruct
+    public void init() {
     }
 
-    public AvailableResource getSelected() {
-        return selected;
-    }
+    public void loadBookedResourcesForPeriod() {
 
-    public void setSelected(AvailableResource selected) {
-        this.selected = selected;
-    }
+        if (currentService == null) {
+            throw new RuntimeException("No service given");
+        }
 
-    protected void setEmbeddableKeys() {
-    }
+        List<BookedResource> bookedResources
+                = bookedResourceFacade.getBookedResourcesForService(currentService, startDate, endDate);
 
-    protected void initializeEmbeddableKey() {
-    }
+        List<Project> emptyProjects = projectFacade.findAll();
 
-    private AvailableResourceFacade getFacade() {
-        return ejbFacade;
-    }
+        final Map<Project, List<BookedResource>> resourcesByProject
+                = bookedResources.stream().collect(groupingBy(br -> br.getProject()));
 
-    public AvailableResource prepareCreate() {
-        selected = new AvailableResource();
-        initializeEmbeddableKey();
-        return selected;
-    }
+        emptyProjects.stream().forEach(pr -> {
+            resourcesByProject.putIfAbsent(pr, new ArrayList<>());
+        });
 
-    public void create() {
-        persist(PersistAction.CREATE, ResourceBundle.getBundle("/Bundle").getString("AvailableResourceCreated"));
-        if (!JsfUtil.isValidationFailed()) {
-            items = null;    // Invalidate list of items to trigger re-query.
+        bookingRows = new ArrayList<>();
+
+        if (periods == null) {
+            loadPeriods();
+        }
+
+        for (Project project : resourcesByProject.keySet()) {
+
+            Supplier<BookedResource> supplier = () -> {
+                BookedResource br = new BookedResource();
+                br.setPersisted(false);
+                br.setProject(project);
+                br.setService(currentService);
+                return br;
+            };
+
+            List<BookedResource> resources = calendarEntriesGenerator
+                    .getCalendarEntries(resourcesByProject.get(project), periods, supplier);
+
+            bookingRows.add(new BookingRow(
+                    project,
+                    resources,
+                    serviceFacade.find(1)));
         }
     }
 
-    public void update() {
-        persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("AvailableResourceUpdated"));
+    private void loadPeriods() {
+        periods = calendarPeriodsGenerator
+                .setStartDate(startDate)
+                .setEndDate(endDate)
+                .setStep(step)
+                .generatePeriods();
     }
 
-    public void destroy() {
-        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("AvailableResourceDeleted"));
-        if (!JsfUtil.isValidationFailed()) {
-            selected = null; // Remove selection
-            items = null;    // Invalidate list of items to trigger re-query.
+    private void resetValues() {
+        bookingRows = null;
+        periods = null;
+        totalBooking = null;
+        barModel = null;
+    }
+
+    public List<BookingRow> getBookingRow() {
+        if (bookingRows == null) {
+            loadBookedResourcesForPeriod();
+        }
+
+        return bookingRows;
+    }
+
+    public List<LocalDate> getPeriods() {
+
+        if (periods == null) {
+            loadPeriods();
+        }
+
+        return periods.stream().map(period -> period[0]).collect(toList());
+    }
+
+    private LocalDate getDate(BookedResource br) {
+        return br.getStartDate();
+    }
+
+    public void onCellEdit(CellEditEvent event) {
+
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+
+        FacesContext context = FacesContext.getCurrentInstance();
+        BookingRow entity = context.getApplication().evaluateExpressionGet(context, "#{booking}", BookingRow.class);
+
+        if (newValue != null && !newValue.equals(oldValue)) {
+
+            bookedResourceFacade.updateOrCreateBookings(entity.getResources());
+
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+
+            barModel = null;
+            totalBooking = null;
+        } else {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cell not changed", "Old: " + oldValue + ", New:" + newValue);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
         }
     }
 
-    public List<AvailableResource> getItems() {
-        if (items == null) {
-            items = getFacade().findAll();
+    public BarChartModel getAreaModel() {
+
+        if (barModel == null) {
+            createAreaModel();
         }
-        return items;
+
+        return barModel;
     }
 
-    private void persist(PersistAction persistAction, String successMessage) {
-        if (selected != null) {
-            setEmbeddableKeys();
-            try {
-                if (persistAction != PersistAction.DELETE) {
-                    getFacade().edit(selected);
-                } else {
-                    getFacade().remove(selected);
-                }
-                JsfUtil.addSuccessMessage(successMessage);
-            } catch (EJBException ex) {
-                String msg = "";
-                Throwable cause = ex.getCause();
-                if (cause != null) {
-                    msg = cause.getLocalizedMessage();
-                }
-                if (msg.length() > 0) {
-                    JsfUtil.addErrorMessage(msg);
-                } else {
-                    JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-                }
-            } catch (Exception ex) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+    private void createAreaModel() {
+        barModel = new BarChartModel();
+        ChartSeries total = new ChartSeries();
+        total.setLabel("Estimation of required work resources");
+
+        int size = bookingRows.size() * periods.size();
+
+        if (size < 1200) {
+
+            bookingRows.stream().forEach(row -> {
+
+                ChartSeries chartSerie = new ChartSeries();
+                chartSerie.setLabel(row.getProject().getName());
+
+                row.getResources().stream().forEach(b -> {
+                    int position = Optional.ofNullable(b.getPosition()).orElse(chartSerie.getData().size());
+                    long booked = Optional.ofNullable(b.getBooked()).orElse(0L);
+                    chartSerie.set(position + 1, booked);
+                });
+
+                barModel.addSeries(chartSerie);
+            });
+        } else {
+            ChartSeries chartSerie = new ChartSeries();
+            chartSerie.setLabel("total");
+
+            int i = 0;
+            for (PeriodTotal value : totalBooking) {
+                chartSerie.set(value.getStartDate(), value.getTotal());
             }
+            barModel.addSeries(chartSerie);
         }
+
+        barModel.setTitle("Resources booked for service " + currentService.getName());
+        barModel.setLegendPosition("ne");
+        barModel.setStacked(true);
+        barModel.setShowPointLabels(true);
+        barModel.setZoom(true);
+
+        Axis xAxis = new CategoryAxis("Month");
+        xAxis.setTickAngle(90);
+
+        barModel.getAxes().put(AxisType.X, xAxis);
+        Axis yAxis = barModel.getAxis(AxisType.Y);
+
+        yAxis.setLabel("Resources");
+        yAxis.setMin(0);
     }
 
-    public AvailableResource getAvailableResource(java.lang.Integer id) {
-        return getFacade().find(id);
+    public List<List<PeriodTotal>> getTotalBooking() {
+
+        if (totalBooking == null) {
+            List<PeriodTotal> values
+                    = bookedResourceFacade.getTotalBookedResourcesByServiceForPeriod(currentService, startDate, endDate);
+
+            totalBooking = calendarEntriesGenerator.getCalendarEntries(values, periods, PeriodTotal::new);
+
+        }
+
+        List<List<PeriodTotal>> r = new ArrayList();
+        r.add(totalBooking);
+        logger.log(Level.FINE, totalBooking.toString());
+
+        return r;
     }
 
-    public List<AvailableResource> getItemsAvailableSelectMany() {
-        return getFacade().findAll();
+    public Date getStartDate() {
+        return LocalDateConverter.toDate(startDate);
     }
 
-    public List<AvailableResource> getItemsAvailableSelectOne() {
-        return getFacade().findAll();
+    public void setStartDate(Date startDate) {
+        this.startDate = LocalDateConverter.toLocalDate(startDate);
     }
 
-    @FacesConverter(forClass = AvailableResource.class)
-    public static class AvailableResourceControllerConverter implements Converter {
+    public Date getEndDate() {
+        return LocalDateConverter.toDate(endDate);
+    }
 
-        @Override
-        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
-            if (value == null || value.length() == 0) {
-                return null;
-            }
-            AvailableResourceController controller = (AvailableResourceController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "availableResourceController");
-            return controller.getAvailableResource(getKey(value));
+    public void setEndDate(Date endDate) {
+        this.endDate = LocalDateConverter.toLocalDate(endDate);
+    }
+
+    public void dateChanged() {
+        resetValues();
+    }
+
+    public Step getStep() {
+        return step;
+    }
+
+    public void setStep(Step step) {
+        this.step = step;
+    }
+
+    public List<Step> getSteps() {
+        return Arrays.asList(Step.values());
+    }
+
+    public Service getCurrentService() {
+        return currentService;
+    }
+
+    public void setCurrentService(Service currentService) {
+        if (currentService.equals(this.currentService)) {
+            return;
         }
 
-        java.lang.Integer getKey(String value) {
-            java.lang.Integer key;
-            key = Integer.valueOf(value);
-            return key;
-        }
-
-        String getStringKey(java.lang.Integer value) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(value);
-            return sb.toString();
-        }
-
-        @Override
-        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
-            if (object == null) {
-                return null;
-            }
-            if (object instanceof AvailableResource) {
-                AvailableResource o = (AvailableResource) object;
-                return getStringKey(o.getId());
-            } else {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "object {0} is of type {1}; expected type: {2}", new Object[]{object, object.getClass().getName(), AvailableResource.class.getName()});
-                return null;
-            }
-        }
-
+        this.currentService = currentService;
+        resetValues();
     }
 
 }

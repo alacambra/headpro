@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -22,7 +24,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author alacambra
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = AvailableResource.availabiltyInPeriod, query = ""),
+    @NamedQuery(name = AvailableResource.totalAvailabiltyInPeriod, query = ""),
+})
 public class AvailableResource implements Serializable {
+
+    private static final String prefix = "com.rha.entity.AvailableResource.";
+    public static final String availabiltyInPeriod = prefix + "availabiltyInPeriod";
+    public static final String totalAvailabiltyInPeriod = prefix + "totalAvailabiltyInPeriod";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
