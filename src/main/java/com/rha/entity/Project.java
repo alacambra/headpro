@@ -31,9 +31,8 @@ public class Project implements Serializable {
         return step;
     }
 
-    public Project setStep(Step step) {
+    public void setStep(Step step) {
         this.step = step;
-        return this;
     }
 
     public Integer getProbability() {
@@ -48,18 +47,16 @@ public class Project implements Serializable {
         return name;
     }
 
-    public Project setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public Project setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
-        return this;
     }
 
     public Integer getAbscence() {
