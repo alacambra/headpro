@@ -63,9 +63,12 @@ public class BookedResourceFacadeIT {
 
         Service s = new Service();
         s.setName("testDivision");
-        em.merge(s);
-        
-        Project p = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
+        s = em.merge(s);
+
+        Project p = new Project();
+        p.setName("testProject");
+        p.setStep(Step.MONTH);
+        p = em.merge(p);
 
         BookedResource br = new BookedResource();
         br.setBooked(10L);
@@ -100,9 +103,17 @@ public class BookedResourceFacadeIT {
     public void testGetTotalBookedResourcesPerProjectForDivision_int() throws Exception {
         Service s = new Service();
         s.setName("testDivision");
-        em.merge(s);
-        Project p = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
-        Project p2 = em.merge(new Project().setName("testProject").setStep(Step.MONTH));
+        s = em.merge(s);
+
+        Project p = new Project();
+        p.setName("testProject");
+        p.setStep(Step.MONTH);
+        p = em.merge(p);
+
+        Project p2 = new Project();
+        p2.setName("testProject");
+        p2.setStep(Step.MONTH);
+        p2 = em.merge(p2);
 
         BookedResource br = new BookedResource();
         br.setBooked(10L);
