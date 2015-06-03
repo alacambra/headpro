@@ -109,6 +109,7 @@ public class BookedResourceController implements Serializable {
                 BookedResource br = new BookedResource();
                 br.setPersisted(false);
                 br.setProject(project);
+                br.setService(currentService);
                 return br;
             };
 
@@ -223,7 +224,7 @@ public class BookedResourceController implements Serializable {
             barModel.addSeries(chartSerie);
         }
 
-        barModel.setTitle("Resources booked for service X");
+        barModel.setTitle("Resources booked for service " + currentService.getName());
         barModel.setLegendPosition("ne");
         barModel.setStacked(true);
         barModel.setShowPointLabels(true);
@@ -293,7 +294,12 @@ public class BookedResourceController implements Serializable {
     }
 
     public void setCurrentService(Service currentService) {
+        if(currentService.equals(this.currentService)){
+            return;
+        }
+        
         this.currentService = currentService;
+        resetValues();
     }
     
 }
