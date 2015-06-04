@@ -5,12 +5,15 @@
  */
 package com.rha.entity;
 
+import com.rha.control.LocalDateConverter;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
@@ -19,15 +22,18 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-/**
- *
- * @author alacambra
- */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = AvailableResource.availabiltyInPeriod, query = ""),
-    @NamedQuery(name = AvailableResource.totalAvailabiltyInPeriod, query = ""),
-})
+    @NamedQuery(name = AvailableResource.availabiltyInPeriod, query
+            = "SELECT ar FROM AvailableResource ar "
+            + "WHERE ar.startDate>=:startDate AND ar.endDate<=:endDate order by ar.startDate"),
+    @NamedQuery(name = AvailableResource.totalAvailabiltyInPeriod, query
+            = "SELECT new com.rha.entity.PeriodTotal(ar.startDate, ar.endDate, sum(ar.available))"
+            + "FROM AvailableResource ar "
+            + "WHERE "
+            + "ar.startDate>=:startDate AND ar.endDate<=:endDate "
+            + "group by ar.startDate, ar.endDate order by ar.startDate"),})
+
 public class AvailableResource implements Serializable {
 
     private static final String prefix = "com.rha.entity.AvailableResource.";
@@ -38,8 +44,7 @@ public class AvailableResource implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
-//    @ManyToOne
-    @Transient
+    @ManyToOne
     Service service;
 
     @Temporal(TemporalType.DATE)
@@ -48,7 +53,19 @@ public class AvailableResource implements Serializable {
     @Temporal(TemporalType.DATE)
     Date endDate;
 
-    Integer available;
+    Long available = 0L;
+
+    @Transient
+    private boolean persisted = true;
+
+    public boolean isPersisted() {
+        return persisted;
+    }
+
+    public void setPersisted(boolean persisted) {
+        this.persisted = persisted;
+
+    }
 
     public Integer getId() {
         return id;
@@ -66,27 +83,35 @@ public class AvailableResource implements Serializable {
         this.service = service;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public LocalDate getStartDate() {
+        if (startDate != null) {
+            return LocalDateConverter.toLocalDate(startDate);
+        } else {
+            return null;
+        }
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = LocalDateConverter.toDate(startDate);
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public LocalDate getEndDate() {
+        if (endDate != null) {
+            return LocalDateConverter.toLocalDate(endDate);
+        } else {
+            return null;
+        }
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = LocalDateConverter.toDate(endDate);
     }
 
-    public Integer getAvailable() {
+    public Long getAvailable() {
         return available;
     }
 
-    public void setAvailable(Integer available) {
+    public void setAvailable(Long available) {
         this.available = available;
     }
 

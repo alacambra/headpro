@@ -1,9 +1,8 @@
 package com.rha.entity;
 
+import com.rha.control.LocalDateConverter;
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -25,7 +24,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(uniqueConstraints={
-    @UniqueConstraint(columnNames = {"startdate", "project"})
+//    @UniqueConstraint(columnNames = {"startdate", "project"})
 })
 @NamedQueries({
     @NamedQuery(name = BookedResource.byProjectAndService,
@@ -119,30 +118,26 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     public LocalDate getStartDate() {
         if (startDate != null) {
-            return startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            return LocalDateConverter.toLocalDate(startDate);
         } else {
             return null;
         }
     }
 
     public void setStartDate(LocalDate startDate) {
-        Instant instant = startDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-        this.startDate = Date.from(instant);
-
+        this.startDate = LocalDateConverter.toDate(startDate);
     }
 
     public LocalDate getEndDate() {
         if (endDate != null) {
-            return endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            return LocalDateConverter.toLocalDate(endDate);
         } else {
             return null;
         }
     }
 
     public void setEndDate(LocalDate endDate) {
-        Instant instant = endDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-        this.endDate = Date.from(instant);
-
+        this.endDate = LocalDateConverter.toDate(endDate);
     }
 
     public Long getBooked() {

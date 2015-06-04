@@ -25,27 +25,6 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         return em;
     }
 
-    public List<BookedResource> getBookedResourcesFor(int projectId, int divisionId) {
-
-        List<BookedResource> bookedResources
-                = em.createNamedQuery(BookedResource.byProjectAndService, BookedResource.class)
-                .setParameter("pid", projectId)
-                .setParameter("sid", divisionId)
-                .getResultList();
-
-        return bookedResources;
-    }
-
-    public List<BookedResource> getBookedResourcesForDivision(int divisionId) {
-
-        List<BookedResource> bookedResources
-                = em.createNamedQuery(BookedResource.byService)
-                .setParameter("sid", divisionId)
-                .getResultList();
-
-        return bookedResources;
-    }
-
     public List<BookedResource> getBookedResourcesForService(
             Service service, LocalDate startDate, LocalDate endDate) {
 
@@ -54,16 +33,6 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                 .setParameter("service", service)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
-                .getResultList();
-
-        return bookedResources;
-    }
-
-    public List<Integer> getTotalBookedResourcesPerProjectForDivision(Service service) {
-
-        List<Integer> bookedResources
-                = em.createNamedQuery(BookedResource.totalByService)
-                .setParameter("service", service)
                 .getResultList();
 
         return bookedResources;
@@ -88,15 +57,13 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
     public void updateOrCreateBookings(List<BookedResource> resources) {
 
-        for (BookedResource resource : resources) {
-            if (resource.isPersisted() || resource.getBooked() != 0) {
-                BookedResource br = resource;
-                if (br.getId() == null) {
-                    em.persist(br);
-                } else {
-                    em.merge(br);
-                }
-            }
-        }
+        resources.stream().filter((resource) -> (resource.isPersisted() || resource.getBooked() != 0))
+                .forEach(br -> {
+                    if (br.getId() == null) {
+                        em.persist(br);
+                    } else {
+                        em.merge(br);
+                    }
+                });
     }
 }
