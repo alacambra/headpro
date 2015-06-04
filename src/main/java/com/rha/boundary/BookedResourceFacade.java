@@ -88,26 +88,15 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
     public void updateOrCreateBookings(List<BookedResource> resources) {
 
-        for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).isPersisted() || resources.get(i).getBooked() != 0) {
-                BookedResource br = resources.get(i);
+        for (BookedResource resource : resources) {
+            if (resource.isPersisted() || resource.getBooked() != 0) {
+                BookedResource br = resource;
                 if (br.getId() == null) {
                     em.persist(br);
                 } else {
                     em.merge(br);
                 }
-//                em.merge(br);
-//                resources.set(i, br);
             }
         }
-
-//        resources.stream()
-//                .filter(r -> r.isPersisted() || r.getBooked() != 0)
-//                .forEach(r -> {
-//                    System.out.println("before: " + r.getId() + ":" + r.isPersisted() + ":" + r.getBooked() + ":" + r.hashCode());
-//                    r = em.merge(r);
-//                    r.setPersisted(true);
-//                    System.out.println("after: " + r.getId() + ":" + r.isPersisted() + ":" + r.getBooked() + ":" + r.hashCode());
-//                });
     }
 }
