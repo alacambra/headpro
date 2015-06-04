@@ -34,7 +34,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
             + "ar.startDate>=:startDate AND ar.endDate<=:endDate "
             + "group by ar.startDate, ar.endDate order by ar.startDate"),})
 
-public class AvailableResource implements Serializable {
+public class AvailableResource implements Serializable, PeriodWithValue {
 
     private static final String prefix = "com.rha.entity.AvailableResource.";
     public static final String availabiltyInPeriod = prefix + "availabiltyInPeriod";
@@ -57,6 +57,9 @@ public class AvailableResource implements Serializable {
 
     @Transient
     private boolean persisted = true;
+    
+    @Transient
+    private Integer position;
 
     public boolean isPersisted() {
         return persisted;
@@ -130,6 +133,27 @@ public class AvailableResource implements Serializable {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public Integer getPosition() {
+        return position;
+    }
+
+    @Override
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    @Override
+    public void setValue(Long o) {
+        setAvailable(o);
+    }
+
+    @Override
+    public void setPeriod(LocalDate[] period) {
+        setStartDate(period[0]);
+        setEndDate(period[1]);
     }
 
 }

@@ -16,10 +16,6 @@ public class Service implements Serializable {
     Integer id;
     String name;
 
-//    @ManyToMany
-//    @JoinTable(name = "BOOKEDRESOURCE")
-//    List<Project> projects;
-
     public Integer getId() {
         return id;
     }

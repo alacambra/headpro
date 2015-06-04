@@ -18,16 +18,16 @@
                     <tr>
                         <td>
                             <p:outputLabel for="startDate" value="Start Date" />
-                            <p:calendar id="startDate" value="#{brc.startDate}" mode="inline" />
+                            <p:calendar id="startDate" value="#{arc.startDate}" mode="inline" />
                         </td>
                         <td>
                             <p:outputLabel for="endDate" value="End Date" />
-                            <p:calendar id="endDate" value="#{brc.endDate}" mode="inline" />
+                            <p:calendar id="endDate" value="#{arc.endDate}" mode="inline" />
                         </td>
                         <td>
-                            <p:selectOneMenu id="step" value="#{brc.step}" >
+                            <p:selectOneMenu id="step" value="#{arc.step}" >
                             <f:selectItem itemLabel="Step"/>
-                            <f:selectItems value="#{brc.steps}"
+                            <f:selectItems value="#{arc.steps}"
                                            var="step"
                                            itemValue="#{step}"/>
                         </p:selectOneMenu>
@@ -36,55 +36,55 @@
                 </table>
 
 
-                <p:commandButton value="Submit" update=":form,:totalBookings,:graph" 
-                                 actionListener="#{brc.dateChanged}" icon="ui-icon-check" />
+                <p:commandButton value="Submit" update=":form,:totalAvailabilitys,:graph" 
+                                 actionListener="#{arc.dateChanged}" icon="ui-icon-check" />
             </h:form>
             <h:form id="form">
                 <p:growl id="msgs" showDetail="true"/>
 
-                <p:dataTable id="bookings2" 
-                             var="booking" 
-                             value="#{brc.bookingRow}" 
+                <p:dataTable id="availableResource" 
+                             var="availableResource" 
+                             value="#{arc.availableResourceRows}" 
                              editable="true"
                              editMode="cell" 
-                             widgetVar="booking">
+                             widgetVar="availableResource">
                     <p:growl id="msgs" showDetail="true"/>
 
-                    <p:ajax event="cellEdit" listener="#{brc.onCellEdit}" update=":form:msgs,:totalBookings,:graph" />
+                    <p:ajax event="cellEdit" listener="#{arc.onCellEdit}" update=":form:msgs,:totalAvailabilitys,:graph" />
 
                     <p:column headerText="project name" width="100">
-                        <h:outputText value="#{booking.project.name}"></h:outputText>
+                        <h:outputText value="#{availableResource.service.name}"></h:outputText>
                     </p:column>
 
-                    <c:forEach items="${brc.periods}" var="item" varStatus="counter">
+                    <c:forEach items="${arc.periods}" var="item" varStatus="counter">
                         <p:column headerText="${item.toString()}" width="70" >
                             <p:cellEditor>
-                                <f:facet name="output"><h:outputText value="#{booking.resources.get(counter.index).booked}"/></f:facet>
-                                <f:facet name="input"><p:inputText value="#{booking.resources.get(counter.index).booked}" style="width:96%" label="Year"/></f:facet>
+                                <f:facet name="output"><h:outputText value="#{availableResource.resources.get(counter.index).available}"/></f:facet>
+                                <f:facet name="input"><p:inputText value="#{availableResource.resources.get(counter.index).available}" style="width:96%" label="Year"/></f:facet>
                             </p:cellEditor>
                         </p:column>
                     </c:forEach>
                 </p:dataTable>
             </h:form>
-            <p:dataTable id="totalBookings" 
-                         var="totalBooking" 
-                         value="#{brc.totalBooking}" 
+            <p:dataTable id="totalAvailabilitys" 
+                         var="totalAvailability" 
+                         value="#{arc.totalAvailability}" 
                          editable="true"
                          editMode="cell" 
-                         widgetVar="totalBooking">
+                         widgetVar="totalAvailability">
                 <p:growl id="msgs" showDetail="true"/>
 
                 <p:column width="100">
                     <h:outputText value="total"></h:outputText>
                 </p:column>
 
-                <c:forEach items="${brc.periods}" var="item" varStatus="counter">
+                <c:forEach items="${arc.periods}" var="item" varStatus="counter">
                     <p:column headerText="${item.toString()}" width="70">
-                        <h:outputText value="${totalBooking.get(counter.index).total}"/>
+                        <h:outputText value="${totalAvailability.get(counter.index).total}"/>
                     </p:column>
                 </c:forEach>
             </p:dataTable>
-            <p:chart id="graph" widgetVar="chart" type="bar" model="#{brc.areaModel}" style="height:300px" />
+            <p:chart id="graph" widgetVar="chart" type="bar" model="#{arc.areaModel}" style="height:300px" />
             <h:form>
                 <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
             </h:form>
