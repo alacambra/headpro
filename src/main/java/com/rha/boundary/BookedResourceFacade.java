@@ -25,11 +25,11 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         return em;
     }
 
-    public List<BookedResource> getBookedResourcesForService(
+    public List<BookedResource> getBookedResourcesForServiceInPeriod(
             Service service, LocalDate startDate, LocalDate endDate) {
 
         List<BookedResource> bookedResources
-                = em.createNamedQuery(BookedResource.byServiceForPeriod)
+                = em.createNamedQuery(BookedResource.forServiceInPeriod)
                 .setParameter("service", service)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
@@ -38,14 +38,25 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         return bookedResources;
     }
 
-    public List<PeriodTotal> getTotalBookedResourcesByServiceForPeriod(
+    public List<PeriodTotal> getTotalBookedResourcesForServiceInPeriod(
             Service service, LocalDate startDate, LocalDate endDate) {
 
         List<PeriodTotal> bookedResources
-                = em.createNamedQuery(BookedResource.totalByServiceForPeriod, PeriodTotal.class)
+                = em.createNamedQuery(BookedResource.totalForServiceInPeriod, PeriodTotal.class)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .setParameter("service", service)
+                .getResultList();
+
+        return bookedResources;
+    }
+    
+    public List<PeriodTotal> getTotalBookedResourcesByServiceInPeriod(LocalDate startDate, LocalDate endDate) {
+
+        List<PeriodTotal> bookedResources
+                = em.createNamedQuery(BookedResource.totalByServiceInPeriod, PeriodTotal.class)
+                .setParameter("startDate", LocalDateConverter.toDate(startDate))
+                .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
 
         return bookedResources;

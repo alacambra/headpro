@@ -16,7 +16,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
+import static org.hamcrest.core.Is.is;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,12 +90,12 @@ public class BookedResourceFacadeIT {
 
         cut.create(br);
 
-        List<BookedResource> r = cut.getBookedResourcesForService(s,
+        List<BookedResource> r = cut.getBookedResourcesForServiceInPeriod(s,
                 LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.DECEMBER, 31));
 
         assertThat(r.size(), Is.is(2));
 
-        r = cut.getBookedResourcesForService(s,
+        r = cut.getBookedResourcesForServiceInPeriod(s,
                 LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.MAY, 31));
 
         assertThat(r.size(), Is.is(1));
@@ -142,7 +144,7 @@ public class BookedResourceFacadeIT {
 
         cut.create(br);
 
-        List<PeriodTotal> r = cut.getTotalBookedResourcesByServiceForPeriod(s,
+        List<PeriodTotal> r = cut.getTotalBookedResourcesForServiceInPeriod(s,
                 LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.DECEMBER, 31));
 
         assertThat(r.size(), Is.is(2));
@@ -153,7 +155,31 @@ public class BookedResourceFacadeIT {
     }
 
     @Test
-    public void testGetTotalBookedResourcesPerProjectForDivision_3args() throws Exception {
+    public void testGetTotalBookedResourcesByServiceInPeriod(){
+        
+        Service s = new Service();
+        s.setName("testDivision");
+        s = em.merge(s);
+
+        Project p = new Project();
+        p.setName("testProject");
+        p.setStep(Step.MONTH);
+        p = em.merge(p);
+
+        BookedResource br = new BookedResource();
+        br.setBooked(10L);
+        br.setService(s);
+        br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
+        br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
+        br.setProject(p);
+        
+        em.persist(br);
+        
+        List<PeriodTotal> result = cut.getTotalBookedResourcesByServiceInPeriod(
+                LocalDate.of(2015, Month.FEBRUARY, 1), LocalDate.of(2015, Month.FEBRUARY, 1).plusMonths(12));
+        
+        assertThat(result.size(), is(1));
+        assertThat(result.get(0).getTotal(), is(10L));
     }
 
     @Test

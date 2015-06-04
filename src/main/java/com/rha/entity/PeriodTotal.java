@@ -41,8 +41,9 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal>{
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public PeriodTotal setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+        return this;
     }
 
     @Override
@@ -50,16 +51,18 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal>{
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public PeriodTotal setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+        return this;
     }
 
     public long getTotal() {
         return total;
     }
 
-    public void setTotal(long total) {
+    public PeriodTotal setTotal(long total) {
         this.total = total;
+        return this;
     }
 
     @Override

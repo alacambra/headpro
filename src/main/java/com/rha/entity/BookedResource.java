@@ -23,44 +23,40 @@ import javax.persistence.UniqueConstraint;
  * @author alacambra
  */
 @Entity
-@Table(uniqueConstraints={
-//    @UniqueConstraint(columnNames = {"startdate", "project"})
+@Table(uniqueConstraints = { //    @UniqueConstraint(columnNames = {"startdate", "project"})
 })
 @NamedQueries({
-    @NamedQuery(name = BookedResource.byProjectAndService,
-            query = "SELECT br FROM BookedResource br LEFT JOIN br.project p LEFT JOIN br.service d "
-            + "WHERE p.id=:pid and d.id=:did"),
+    //    @NamedQuery(name = BookedResource.byProjectAndService,
+    //            query = "SELECT br FROM BookedResource br LEFT JOIN br.project p LEFT JOIN br.service d "
+    //            + "WHERE p.id=:pid and d.id=:did"),
 
-    @NamedQuery(name = BookedResource.totalByService,
-            query = "SELECT sum(br.booked) FROM BookedResource br JOIN br.service s "
-            + "WHERE s=:service group by br.startDate order by br.startDate"),
+    @NamedQuery(name = BookedResource.totalByServiceInPeriod,
+            query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked)) "
+            + "FROM BookedResource br "
+            + "WHERE br.startDate>=:startDate AND br.endDate<=:endDate "
+            + "group by br.service, br.startDate, br.endDate order by br.startDate"),
 
-    @NamedQuery(name = BookedResource.byService,
+    @NamedQuery(name = BookedResource.forService,
             query = "SELECT br FROM BookedResource br JOIN br.service s WHERE s=:service"),
 
-    @NamedQuery(name = BookedResource.byServiceForPeriod,
+    @NamedQuery(name = BookedResource.forServiceInPeriod,
             query = "SELECT br FROM BookedResource br JOIN br.service s WHERE "
             + "br.startDate>=:startDate AND br.endDate<=:endDate AND s=:service order by br.startDate"),
 
-    @NamedQuery(name = BookedResource.totalByServiceForPeriod,
+    @NamedQuery(name = BookedResource.totalForServiceInPeriod,
             query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked))"
             + " FROM BookedResource br JOIN br.service s "
-            + "WHERE "
-            + "s=:service AND br.startDate>=:startDate AND br.endDate<=:endDate "
-            + "group by br.startDate, br.endDate order by br.startDate"),
-
-    @NamedQuery(name = "back-up",
-            query = "SELECT br FROM BookedResource br JOIN br.service d WHERE d.id=:did "
-            + "AND br.startDate>=:startDate AND br.endDate<=:endDate")
+            + "WHERE s=:service AND br.startDate>=:startDate AND br.endDate<=:endDate "
+            + "group by br.startDate, br.endDate order by br.startDate")
 })
 public class BookedResource implements Serializable, Comparable<BookedResource>, PeriodWithValue {
 
     private static final String prefix = "com.rha.entity.BookedResource.";
-    public static final String byProjectAndService = prefix + "byProjectAndService";
-    public static final String totalByService = prefix + "totalByService";
-    public static final String totalByServiceForPeriod = prefix + "totalByServiceForPeriod";
-    public static final String byService = prefix + "byService";
-    public static final String byServiceForPeriod = prefix + "byServiceForPeriod";
+//    public static final String byProjectAndService = prefix + "byProjectAndService";
+    public static final String totalByServiceInPeriod = prefix + "totalByServiceInPeriod";
+    public static final String totalForServiceInPeriod = prefix + "totalForServiceForPeriod";
+    public static final String forService = prefix + "forService";
+    public static final String forServiceInPeriod = prefix + "forServiceForPeriod";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
