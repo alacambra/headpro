@@ -47,12 +47,17 @@ import javax.persistence.UniqueConstraint;
             query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked))"
             + " FROM BookedResource br JOIN br.service s "
             + "WHERE s=:service AND br.startDate>=:startDate AND br.endDate<=:endDate "
-            + "group by br.startDate, br.endDate order by br.startDate")
+            + "group by br.startDate, br.endDate order by br.startDate"),
+    
+    @NamedQuery(name = BookedResource.bookedInPeriod,
+            query = "SELECT br FROM BookedResource br"
+                    + " WHERE br.startDate>=:startDate AND br.endDate<=:endDate"
+                    + " ORDER BY br.startDate")
 })
 public class BookedResource implements Serializable, Comparable<BookedResource>, PeriodWithValue {
 
     private static final String prefix = "com.rha.entity.BookedResource.";
-//    public static final String byProjectAndService = prefix + "byProjectAndService";
+    public static final String bookedInPeriod = prefix + "totalInPeriod";
     public static final String totalByServiceInPeriod = prefix + "totalByServiceInPeriod";
     public static final String totalForServiceInPeriod = prefix + "totalForServiceForPeriod";
     public static final String forService = prefix + "forService";

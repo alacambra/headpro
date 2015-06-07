@@ -53,7 +53,39 @@ public class BookedResourceFacadeIT {
     }
 
     @Test
-    public void testGetBookedResourcesFor() throws Exception {
+    public void testGetBookedResourcesInPeriod() throws Exception {
+        
+        Service s = new Service();
+        s.setName("testDivision");
+        s = em.merge(s);
+
+        Project p = new Project();
+        p.setName("testProject");
+        p.setStep(Step.MONTH);
+        p = em.merge(p);
+
+        BookedResource br = new BookedResource();
+        br.setBooked(10L);
+        br.setService(s);
+        br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
+        br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
+        br.setProject(p);
+
+        cut.create(br);
+
+        br = new BookedResource();
+        br.setBooked(10L);
+        br.setService(s);
+        br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
+        br.setEndDate(LocalDate.of(2015, Month.JULY, 30));
+        br.setProject(p);
+
+        cut.create(br);
+        
+        List<BookedResource> r = 
+                cut.getBookedResourcesInPeriod(LocalDate.of(2010, Month.MARCH, 30), LocalDate.of(2017, Month.MARCH, 30));
+        
+        assertThat(r.size(), is(2));
     }
 
     @Test
@@ -181,9 +213,47 @@ public class BookedResourceFacadeIT {
         assertThat(result.size(), is(1));
         assertThat(result.get(0).getTotal(), is(10L));
     }
+    
+    @Test
+    public void testGetBookedResourcesForServiceInPeriod() throws Exception {
+    }
+
+    @Test
+    public void testGetTotalBookedResourcesForServiceInPeriod() throws Exception {
+    }
 
     @Test
     public void testUpdateOrCreateBookings() throws Exception {
     }
+
+    @Test
+    public void testCreate() throws Exception {
+    }
+
+    @Test
+    public void testEdit() throws Exception {
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+    }
+
+    @Test
+    public void testFind() throws Exception {
+    }
+
+    @Test
+    public void testFindAll() throws Exception {
+    }
+
+    @Test
+    public void testFindRange() throws Exception {
+    }
+
+    @Test
+    public void testCount() throws Exception {
+    }
+
+    
 
 }

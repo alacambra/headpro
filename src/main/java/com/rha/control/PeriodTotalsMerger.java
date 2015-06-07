@@ -5,6 +5,7 @@
  */
 package com.rha.control;
 
+import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
 import java.util.List;
 import java.util.function.BinaryOperator;
@@ -32,6 +33,16 @@ public class PeriodTotalsMerger {
                 ).values().stream().map(v -> v.get()).sorted().collect(toList());
 
         return periods;
+    }
+
+    public static List<BookedResource> factorsPonderation(List<BookedResource> bookedResources) {
+
+        List<BookedResource> r = bookedResources.stream().map(br -> {
+            br.setBooked(br.getBooked() * br.getProject().getProbability() / (1 - br.getProject().getAbscence()));
+            return br;
+        }).collect(toList());
+    
+        return r;
     }
 
 }

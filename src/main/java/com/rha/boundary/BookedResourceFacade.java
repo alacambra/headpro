@@ -50,7 +50,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
         return bookedResources;
     }
-    
+
     public List<PeriodTotal> getTotalBookedResourcesByServiceInPeriod(LocalDate startDate, LocalDate endDate) {
 
         List<PeriodTotal> bookedResources
@@ -76,5 +76,15 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                         em.merge(br);
                     }
                 });
+    }
+
+    List<BookedResource> getBookedResourcesInPeriod(LocalDate startDate, LocalDate endDate) {
+        List<BookedResource> r = 
+                em.createNamedQuery(BookedResource.bookedInPeriod)
+                .setParameter("startDate", LocalDateConverter.toDate(startDate))
+                .setParameter("endDate", LocalDateConverter.toDate(endDate))
+                .getResultList();
+        
+        return r;
     }
 }
