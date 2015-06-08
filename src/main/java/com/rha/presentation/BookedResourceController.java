@@ -75,6 +75,8 @@ public class BookedResourceController implements Serializable {
 
     @ManagedProperty(value = "param.selectedService")
     Service currentService;
+    
+    private boolean disableCache = false;
 
     @PostConstruct
     public void init() {
@@ -140,7 +142,7 @@ public class BookedResourceController implements Serializable {
     }
 
     public List<BookingRow> getBookingRow() {
-        if (bookingRows == null) {
+        if (bookingRows == null || disableCache) {
             loadBookedResourcesForPeriod();
         }
 
@@ -149,7 +151,7 @@ public class BookedResourceController implements Serializable {
 
     public List<LocalDate> getPeriods() {
 
-        if (periods == null) {
+        if (periods == null || disableCache) {
             loadPeriods();
         }
 
@@ -185,7 +187,7 @@ public class BookedResourceController implements Serializable {
 
     public BarChartModel getAreaModel() {
 
-        if (barModel == null) {
+        if (barModel == null || disableCache) {
             createAreaModel();
         }
 
@@ -245,7 +247,7 @@ public class BookedResourceController implements Serializable {
 
     public List<List<PeriodTotal>> getTotalBooking() {
 
-        if (totalBooking == null) {
+        if (totalBooking == null || disableCache) {
             List<PeriodTotal> values
                     = bookedResourceFacade.getTotalBookedResourcesForServiceInPeriod(currentService, startDate, endDate);
 

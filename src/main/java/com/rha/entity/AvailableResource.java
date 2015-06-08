@@ -156,4 +156,9 @@ public class AvailableResource implements Serializable, PeriodWithValue {
         setEndDate(period[1]);
     }
 
+    @Override
+    public Long getValue() {
+        return available;
+    }
+
 }

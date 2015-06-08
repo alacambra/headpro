@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 /**
  *
@@ -48,11 +47,11 @@ import javax.persistence.UniqueConstraint;
             + " FROM BookedResource br JOIN br.service s "
             + "WHERE s=:service AND br.startDate>=:startDate AND br.endDate<=:endDate "
             + "group by br.startDate, br.endDate order by br.startDate"),
-    
+
     @NamedQuery(name = BookedResource.bookedInPeriod,
             query = "SELECT br FROM BookedResource br"
-                    + " WHERE br.startDate>=:startDate AND br.endDate<=:endDate"
-                    + " ORDER BY br.startDate")
+            + " WHERE br.startDate>=:startDate AND br.endDate<=:endDate"
+            + " ORDER BY br.startDate")
 })
 public class BookedResource implements Serializable, Comparable<BookedResource>, PeriodWithValue {
 
@@ -213,6 +212,11 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     public void setPeriod(LocalDate[] period) {
         setStartDate(period[0]);
         setEndDate(period[1]);
+    }
+
+    @Override
+    public Long getValue() {
+        return booked;
     }
 
 }

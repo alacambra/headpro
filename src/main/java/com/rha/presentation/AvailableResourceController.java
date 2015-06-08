@@ -62,6 +62,7 @@ public class AvailableResourceController implements Serializable {
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Step step = Step.BIWEEK;
+    private boolean disableCache = false;
 
     public void loadAvailableResourcesForPeriod() {
 
@@ -115,7 +116,7 @@ public class AvailableResourceController implements Serializable {
     }
 
     public List<AvailableResourceRow> getAvailableResourceRows() {
-        if (availableResourceRow == null) {
+        if (availableResourceRow == null || disableCache) {
             loadAvailableResourcesForPeriod();
         }
 
@@ -124,7 +125,7 @@ public class AvailableResourceController implements Serializable {
 
     public List<LocalDate> getPeriods() {
 
-        if (periods == null) {
+        if (periods == null || disableCache) {
             loadPeriods();
         }
 
@@ -161,7 +162,7 @@ public class AvailableResourceController implements Serializable {
 
     public BarChartModel getAreaModel() {
 
-        if (barModel == null) {
+        if (barModel == null || disableCache) {
             createAreaModel();
         }
 
@@ -219,7 +220,7 @@ public class AvailableResourceController implements Serializable {
 
     public List<List<PeriodTotal>> getTotalAvailability() {
 
-        if (totalBooking == null) {
+        if (totalBooking == null || disableCache) {
             List<PeriodTotal> values
                     = availableResourceFacade.getTotalAvailableResourcesInPeriod(startDate, endDate);
 

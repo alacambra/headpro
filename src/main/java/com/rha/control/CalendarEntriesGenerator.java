@@ -30,7 +30,7 @@ public class CalendarEntriesGenerator {
      */
     public <T extends PeriodWithValue> List<T> getCalendarEntries(
             List<T> periodicEntities, List<LocalDate[]> periods, Supplier<T> supplier) {
-
+        
         List<T> generatedEntries = new ArrayList<>();
 
         Iterator<T> it = periodicEntities.iterator();
@@ -78,6 +78,73 @@ public class CalendarEntriesGenerator {
             } else {
 
                 T entity = supplier.get();
+                entity.setPeriod(period);
+                entity.setPosition(i);
+                entity.setValue(0L);
+
+                generatedEntries.add(entity);
+            }
+
+            i++;
+        }
+
+        return generatedEntries;
+
+    }
+    
+    /*
+    Fast workaround. Clean it!!
+    */
+     public List<PeriodWithValue> getCalendarEntriesRaw(
+            List<PeriodWithValue> periodicEntities, List<LocalDate[]> periods, Supplier<PeriodWithValue> supplier) {
+
+        List<PeriodWithValue> generatedEntries = new ArrayList<>();
+
+        Iterator<PeriodWithValue> it = periodicEntities.iterator();
+        PeriodWithValue pointer = null;
+
+        if (it.hasNext()) {
+            pointer = it.next();
+
+            if (pointer.getStartDate().isBefore(periods.get(0)[0])) {
+                logger.log(Level.SEVERE, "pointer can not be before than first period: {0} : {1}", new Object[]
+                {
+                    pointer.getStartDate(), 
+                        periods.get(0)[0]
+                });
+            }
+        }
+
+        int i = 0;
+        for (LocalDate[] period : periods) {
+
+            if (pointer != null && pointer.getStartDate().isBefore(period[0])) {
+
+                logger.fine("pointer earlier than the period. Synchronising...");
+
+                while (pointer != null && pointer.getStartDate().isBefore(period[0])) {
+                    if (it.hasNext()) {
+                        pointer = it.next();
+                    } else {
+                        pointer = null;
+                    }
+                }
+            }
+
+            if (pointer != null && areEquals(period[0], pointer.getStartDate())) {
+
+                pointer.setPosition(i);
+                generatedEntries.add(pointer);
+
+                if (it.hasNext()) {
+                    pointer = it.next();
+                } else {
+                    pointer = null;
+                }
+
+            } else {
+
+                PeriodWithValue entity = supplier.get();
                 entity.setPeriod(period);
                 entity.setPosition(i);
                 entity.setValue(0L);

@@ -14,10 +14,8 @@ import com.rha.entity.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import static java.util.stream.Collectors.*;
 import javax.inject.Inject;
 
@@ -54,7 +52,7 @@ public class ResultsFacade {
         List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate);
 
         Map<Service, List<PeriodWithValue>> brs = booked.stream().map(br -> {
-            br.setBooked(-1 * br.getBooked() * br.getProject().getProbability() / (1 - br.getProject().getAbscence()));
+            br.setBooked((-1 * br.getBooked() * (br.getProject().getProbability()) / (1 - br.getProject().getAbscence()/100))/100);
             return br;
         }).collect(groupingBy(BookedResource::getService, mapping(r -> (PeriodWithValue) r, toList())));
 

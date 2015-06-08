@@ -78,7 +78,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                 });
     }
 
-    List<BookedResource> getBookedResourcesInPeriod(LocalDate startDate, LocalDate endDate) {
+    public List<BookedResource> getBookedResourcesInPeriod(LocalDate startDate, LocalDate endDate) {
         List<BookedResource> r = 
                 em.createNamedQuery(BookedResource.bookedInPeriod)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))

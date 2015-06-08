@@ -134,6 +134,11 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal>{
         
         return new StringBuilder(startDate.toString()).append(":").append(endDate).append(" = ").append(total).toString();
     }
+
+    @Override
+    public Long getValue() {
+        return this.total;
+    }
     
     
 }

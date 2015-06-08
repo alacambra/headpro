@@ -14,6 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -28,25 +31,54 @@ public class DataImport {
 
     @PersistenceContext
     EntityManager em;
+
+    List<Service> services = new ArrayList<>();
+    Service service;
+    Integer factor;
     
-    Service javaService;
 
     public void loadData() {
 
-        javaService = new Service();
-        javaService.setName("java");
-        javaService = em.merge(javaService);
+        Service service = new Service();
+        service.setName("java");
+        service = em.merge(service);
+        services.add(service);
 
-        try {
-            Stream<String> lines = Files.lines(
-                    Paths.get("/Users/albertlacambra1/git/rha/src/main/resources/",
-                            "servicedata.csv"));
+        service = new Service();
+        service.setName("docker");
+        service = em.merge(service);
+        services.add(service);
 
-            lines.map(l -> l.split(",")).forEach(this::insertRow);
+        service = new Service();
+        service.setName("aws");
+        service = em.merge(service);
+        services.add(service);
 
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        service = new Service();
+        service.setName("angular");
+        service = em.merge(service);
+        services.add(service);
+
+        service = new Service();
+        service.setName("foundation");
+        service = em.merge(service);
+        services.add(service);
+
+        services.stream().forEach(s -> {
+            try {
+                Stream<String> lines = Files.lines(
+                        Paths.get("/Users/albertlacambra1/git/rha/src/main/resources/",
+                                "servicedata.csv"));
+                
+                this.service = s;
+                factor = new Random().nextInt(4);
+
+                lines.map(l -> l.split(",")).forEach(this::insertRow);
+
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
     }
 
     void insertRow(String... row) {
@@ -66,15 +98,15 @@ public class DataImport {
         for (int i = 0; i < row.length - 1; i++) {
 
             LocalDate[] period = supplyNextPeriod(currentDate);
-            
+
             LocalDate startPeriodDate = period[0];
             LocalDate endPeriodDate = period[1];
             currentDate = period[2];
 
             BookedResource br = new BookedResource();
             String v = "".equals(row[i + 1]) ? "0" : row[i + 1];
-            br.setBooked(Math.round(Double.parseDouble(v)));
-            br.setService(javaService);
+            br.setBooked(Math.round(factor * Double.parseDouble(v)));
+            br.setService(service);
             br.setProject(p);
             br.setStartDate(startPeriodDate);
             br.setEndDate(endPeriodDate);
