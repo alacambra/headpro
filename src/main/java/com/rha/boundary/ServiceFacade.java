@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class ServiceFacade extends AbstractFacade<Service> {
-    @PersistenceContext(unitName = "rha")
+    @PersistenceContext
     private EntityManager em;
 
     @Override

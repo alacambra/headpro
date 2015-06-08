@@ -6,6 +6,7 @@ import com.rha.boundary.BookedResourceFacade;
 import com.rha.boundary.ServiceFacade;
 import com.rha.boundary.ProjectFacade;
 import com.rha.control.LocalDateConverter;
+import com.rha.control.WrappedMuttableValue;
 import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
@@ -198,6 +199,9 @@ public class BookedResourceController implements Serializable {
 
         int size = bookingRows.size() * periods.size();
 
+        WrappedMuttableValue<Long> min = new WrappedMuttableValue<>(0L);
+        WrappedMuttableValue<Long> max = new WrappedMuttableValue<>(0L);
+        
         if (size < 1200) {
 
             bookingRows.stream().forEach(row -> {
@@ -237,7 +241,6 @@ public class BookedResourceController implements Serializable {
         Axis yAxis = barModel.getAxis(AxisType.Y);
 
         yAxis.setLabel("Resources");
-        yAxis.setMin(0);
     }
 
     public List<List<PeriodTotal>> getTotalBooking() {

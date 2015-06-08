@@ -12,13 +12,13 @@ import com.rha.entity.PeriodTotal;
 import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Service;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import static java.util.stream.Collectors.*;
-import java.util.stream.Stream;
 import javax.inject.Inject;
 
 /**
@@ -48,28 +48,34 @@ public class ResultsFacade {
         return PeriodTotalsMerger.reduce(available, booked);
     }
 
-    public Map<LocalDate ,Service> getWeighedRemainingResourcesByService(LocalDate startDate, LocalDate endDate) {
+    public Map<Service, List<PeriodWithValue>> getWeighedRemainingResourcesByService(LocalDate startDate, LocalDate endDate) {
 
         List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
         List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate);
 
-        Map<LocalDate, List<PeriodWithValue>> brs = booked.stream().map(br -> {
-            br.setBooked(br.getBooked() * br.getProject().getProbability() / (1 - br.getProject().getAbscence()));
+        Map<Service, List<PeriodWithValue>> brs = booked.stream().map(br -> {
+            br.setBooked(-1 * br.getBooked() * br.getProject().getProbability() / (1 - br.getProject().getAbscence()));
             return br;
-        }).collect(groupingBy(BookedResource::getStartDate, mapping(r -> (PeriodWithValue) r, toList())));
+        }).collect(groupingBy(BookedResource::getService, mapping(r -> (PeriodWithValue) r, toList())));
 
-        Map<LocalDate, List<PeriodWithValue>> ars = available.stream()
-                .collect(groupingBy(AvailableResource::getStartDate, mapping(r -> (PeriodWithValue) r, toList())));
-        
-        Set<LocalDate> dates = new HashSet<>();
-        dates.addAll(brs.keySet());
-        dates.addAll(ars.keySet());
-        
-//        dates.stream().map(date -> {
-//            brs.
-//        });
-        
-        return null;
+        Map<Service, List<PeriodWithValue>> ars = available.stream()
+                .collect(groupingBy(AvailableResource::getService, mapping(r -> (PeriodWithValue) r, toList())));
+
+        Map<Service, List<PeriodWithValue>> result = new HashMap<>();
+
+        brs.entrySet().stream().forEach(entry -> result.put(entry.getKey(), entry.getValue()));
+        ars.entrySet().stream().forEach(entry -> {
+            if(result.containsKey(entry.getKey())){
+                List<PeriodWithValue> value = new ArrayList<>();
+                value.addAll(result.get(entry.getKey()));
+                value.addAll(entry.getValue());
+                result.put(entry.getKey(), value);
+            }else{
+                result.put(entry.getKey(), entry.getValue());
+            }
+        });
+
+        return result;
     }
 
 }

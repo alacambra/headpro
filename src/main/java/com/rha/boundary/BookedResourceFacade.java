@@ -17,7 +17,7 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class BookedResourceFacade extends AbstractFacade<BookedResource> {
 
-    @PersistenceContext(unitName = "rha")
+    @PersistenceContext
     EntityManager em;
 
     @Override
