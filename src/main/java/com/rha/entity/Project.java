@@ -19,7 +19,7 @@ public class Project implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
     
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     List<BookedResource> bookedResources;
 
     String name;

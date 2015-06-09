@@ -26,10 +26,19 @@ public class LocalDateConverter {
     }
     
     public static LocalDate toLocalDate(Date date){
-        return toLocalDate(date, ZoneId.systemDefault());
+        return toLocalDate(new Date(date.getTime()), ZoneId.systemDefault());
     }
     
     public static LocalDate toLocalDate(Date date, ZoneId zoneId){
+        if(date instanceof java.sql.Date) throw new RuntimeException("sql date not accepted");
         return date.toInstant().atZone(zoneId).toLocalDate();
+    }
+    
+    public static LocalDate toLocalDate(java.sql.Date date){
+        return toLocalDate(date, ZoneId.systemDefault());
+    }
+    
+    public static LocalDate toLocalDate(java.sql.Date date, ZoneId zoneId){
+        return toLocalDate(new Date(date.getTime()), zoneId);
     }
 }
