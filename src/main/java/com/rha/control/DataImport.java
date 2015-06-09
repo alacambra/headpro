@@ -15,7 +15,9 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Stream;
 import javax.ejb.Stateless;
@@ -35,7 +37,8 @@ public class DataImport {
     List<Service> services = new ArrayList<>();
     Service service;
     Integer factor;
-    
+    Map<String, Project> projects = new HashMap<>();
+    int i = 1;
 
     public void loadData() {
 
@@ -69,7 +72,7 @@ public class DataImport {
                 Stream<String> lines = Files.lines(
                         Paths.get("/Users/albertlacambra1/git/rha/src/main/resources/",
                                 "servicedata.csv"));
-                
+
                 this.service = s;
                 factor = new Random().nextInt(4);
 
@@ -86,14 +89,23 @@ public class DataImport {
         LocalDate currentDate = LocalDate.of(2015, Month.JANUARY, 1);
 
         String projectName = row[0];
-        Project p = new Project();
 
-        p.setAbscence(10);
-        p.setName(projectName);
-        p.setProbability(90);
-        p.setStep(Step.WEEK);
+        Project p;
+        
+        if (projects.containsKey(projectName)) {
+            p = projects.get(projectName);
+        } else {
+            p = new Project();
+//            p.setId(i);
+            p.setAbscence(10);
+            p.setName(projectName);
+            p.setProbability(90);
+            p.setStep(Step.WEEK);
 
-        em.persist(p);
+            p = em.merge(p);
+            projects.put(projectName, p);
+//            System.out.println(++i);    
+        }
 
         for (int i = 0; i < row.length - 1; i++) {
 
