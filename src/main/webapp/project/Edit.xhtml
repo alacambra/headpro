@@ -12,14 +12,14 @@
             <h:form id="ProjectEditForm">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{projectController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditProjectLabel_id}" for="id" />
+                        <h:outputText id="id" value="#{projectController.selected.id}" title="#{bundle.EditProjectTitle_id}" />
                         <p:outputLabel value="#{bundle.EditProjectLabel_step}" for="step" />
                         <p:inputText id="step" value="#{projectController.selected.step}" title="#{bundle.EditProjectTitle_step}" />
                         <p:outputLabel value="#{bundle.EditProjectLabel_probability}" for="probability" />
                         <p:inputText id="probability" value="#{projectController.selected.probability}" title="#{bundle.EditProjectTitle_probability}" />
                         <p:outputLabel value="#{bundle.EditProjectLabel_name}" for="name" />
                         <p:inputText id="name" value="#{projectController.selected.name}" title="#{bundle.EditProjectTitle_name}" />
-                        <p:outputLabel value="#{bundle.EditProjectLabel_id}" for="id" />
-                        <p:inputText id="id" value="#{projectController.selected.id}" title="#{bundle.EditProjectTitle_id}" />
                         <p:outputLabel value="#{bundle.EditProjectLabel_abscence}" for="abscence" />
                         <p:inputText id="abscence" value="#{projectController.selected.abscence}" title="#{bundle.EditProjectTitle_abscence}" />
                     </p:panelGrid>
