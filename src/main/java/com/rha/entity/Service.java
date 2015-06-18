@@ -1,10 +1,14 @@
 package com.rha.entity;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -17,6 +21,12 @@ public class Service implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
     String name;
+    
+    @OneToMany(mappedBy = "service", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    List<BookedResource> bookedResources;
+    
+    @OneToMany(mappedBy = "service", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    List<AvailableResource> availableResources;
 
     public Integer getId() {
         return id;
