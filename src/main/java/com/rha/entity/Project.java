@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "PROJECT")
 @NamedQueries({
     @NamedQuery(name = Project.emptyProjects, 
             query = "SELECT pr FROM Project pr LEFT JOIN pr.bookedResources br "

@@ -22,8 +22,7 @@ import javax.persistence.Transient;
  * @author alacambra
  */
 @Entity
-@Table(uniqueConstraints = { //    @UniqueConstraint(columnNames = {"startdate", "project"})
-})
+@Table(name = "BOOKEDRESOURCE")
 @NamedQueries({
     //    @NamedQuery(name = BookedResource.byProjectAndService,
     //            query = "SELECT br FROM BookedResource br LEFT JOIN br.project p LEFT JOIN br.service d "

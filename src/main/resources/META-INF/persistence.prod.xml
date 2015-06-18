@@ -4,10 +4,11 @@
     <jta-data-source>java:jboss/datasources/rha</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <!--<property name="javax.persistence.schema-generation.database.action" value="none"/>-->
+        
       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-      <property name="eclipselink.logging.level.sql" value="FINE"/>
-      <property name="eclipselink.logging.parameters" value="true"/>
+      <property name="javax.persistence.schema-generation.create-source" value="metadata"/>
+      <property name="javax.persistence.sql-load-script-source" value="rha.sql"/>
+      
     </properties>
   </persistence-unit>
 </persistence>
