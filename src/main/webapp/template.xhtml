@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/facelets">
 
     <h:head>
         <title><ui:insert name="browser-title">Default Title</ui:insert></title>
@@ -16,19 +17,17 @@
         <p:growl id="growl" life="3000" />
 
         <p:layout fullPage="true">
-            <p:layoutUnit position="north" size="65" header="#{bundle.AppName}">
+            <p:layoutUnit position="north">
                 <h:form id="menuForm">
-                    <p:menubar>
-                        <p:submenu label="#{bundle.Maintenance}">
-                            <p:menuitem value="Available resources" outcome="/availableResource/edittable.xhtml" />
-                            <p:menuitem value="Services" outcome="/service/List.xhtml" />
-                            <p:menuitem value="Projects" outcome="/project/List.xhtml" />
-                            <p:menuitem value="Results" outcome="/results/results.xhtml" />
-                        </p:submenu>
-                    </p:menubar>
+                    <p:tabMenu activeIndex="#{param.i}">
+                        <p:menuitem value="Services" outcome="/service/List.xhtml?i=0" />
+                        <p:menuitem value="Projects" outcome="/project/List.xhtml?i=1" />
+                        <p:menuitem value="Resources availavility" outcome="/availableResource/edittable.xhtml?i=2" />
+                        <p:menuitem value="Booked resources" outcome="/bookedResource/edittable.xhtml?i=3" />
+                        <p:menuitem value="Remaining resources" outcome="/results/results.xhtml?i=4" />
+                    </p:tabMenu>
                 </h:form>
             </p:layoutUnit>
-
             <p:layoutUnit position="south" size="60">
                 <ui:insert name="footer"/>
             </p:layoutUnit>
