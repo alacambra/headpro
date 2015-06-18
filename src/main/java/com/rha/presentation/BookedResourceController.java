@@ -75,7 +75,7 @@ public class BookedResourceController implements Serializable {
 
     @ManagedProperty(value = "param.selectedService")
     Service currentService;
-    
+
     private boolean disableCache = false;
 
     @PostConstruct
@@ -203,7 +203,7 @@ public class BookedResourceController implements Serializable {
 
         WrappedMuttableValue<Long> min = new WrappedMuttableValue<>(0L);
         WrappedMuttableValue<Long> max = new WrappedMuttableValue<>(0L);
-        
+
         if (size < 1200) {
 
             bookingRows.stream().forEach(row -> {
@@ -250,6 +250,10 @@ public class BookedResourceController implements Serializable {
         if (totalBooking == null || disableCache) {
             List<PeriodTotal> values
                     = bookedResourceFacade.getTotalBookedResourcesForServiceInPeriod(currentService, startDate, endDate);
+
+            if (periods == null) {
+                loadPeriods();
+            }
 
             totalBooking = calendarEntriesGenerator.getCalendarEntries(values, periods, PeriodTotal::new);
 
@@ -299,12 +303,12 @@ public class BookedResourceController implements Serializable {
     }
 
     public void setCurrentService(Service currentService) {
-        if(currentService.equals(this.currentService)){
+        if (currentService.equals(this.currentService)) {
             return;
         }
-        
+
         this.currentService = currentService;
         resetValues();
     }
-    
+
 }

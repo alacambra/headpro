@@ -141,7 +141,7 @@ public class ServiceController implements Serializable {
                 return null;
             }
             ServiceController controller = (ServiceController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "divisionController");
+                    getValue(facesContext.getELContext(), null, "serviceController");
             return controller.getService(getKey(value));
         }
 

@@ -44,13 +44,12 @@ public class Service implements Serializable {
         this.name = name;
     }
 
-//    public List<Project> getProjects() {
-//        return projects;
-//    }
-//
-//    public void setProjects(List<Project> projects) {
-//        this.projects = projects;
-//    }
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+
     
     @Override
     public int hashCode() {
