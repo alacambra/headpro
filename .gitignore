@@ -6,3 +6,7 @@ derby.log
 src/main/.DS_Store
 .DS_Store
 src/main/.DS_Store
+/build/Dockerfile
+/build/docker-build.sh
+/build/mysql-connector-java-5.1.34-bin.jar
+/build/untitled.txt

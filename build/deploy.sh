@@ -9,7 +9,6 @@ cp ../src/main/resources/META-INF/persistence.prod.xml ../src/main/resources/MET
 cd ..
 mvn clean package -P astibert
 cd build
-#scp mysql-connector-java-5.1.34-bin.jar lacambra.de:${BUILD_PATH}
 scp ../target/rha.war build.sh Dockerfile standalone.xml lacambra.de:${BUILD_PATH}
 ssh lacambra.de cd ${BUILD_PATH}
 ssh -t lacambra.de sudo ${BUILD_PATH}/build.sh
