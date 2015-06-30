@@ -204,7 +204,7 @@ public class ResultsController implements Serializable {
             barModel.addSeries(chartSerie);
         }
 
-        barModel.setTitle("Available resources");
+        barModel.setTitle("Required resources");
         barModel.setLegendPosition("ne");
         barModel.setStacked(false);
         barModel.setShowPointLabels(true);
