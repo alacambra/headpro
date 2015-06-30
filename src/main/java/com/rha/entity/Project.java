@@ -1,6 +1,9 @@
 package com.rha.entity;
 
+import com.rha.control.LocalDateConverter;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -8,18 +11,18 @@ import java.util.Objects;
 @Entity
 @Table(name = "PROJECT")
 @NamedQueries({
-    @NamedQuery(name = Project.emptyProjects, 
+    @NamedQuery(name = Project.emptyProjects,
             query = "SELECT pr FROM Project pr LEFT JOIN pr.bookedResources br "
-                    + "GROUP BY pr HAVING count(br) = 0")
+            + "GROUP BY pr HAVING count(br) = 0")
 })
 public class Project implements Serializable {
 
     public static final String emptyProjects = "com.rha.entity.Project.emptyProjects";
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
-    
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     List<BookedResource> bookedResources;
 
@@ -27,6 +30,12 @@ public class Project implements Serializable {
     Integer probability = 100;
     Integer abscence = 0;
     Step step = Step.MONTH;
+
+    @Temporal(TemporalType.DATE)
+    Date startDate;
+
+    @Temporal(TemporalType.DATE)
+    Date endDate;
 
     public Step getStep() {
         return step;
@@ -68,6 +77,30 @@ public class Project implements Serializable {
         this.abscence = abscence;
     }
     
+    public LocalDate getStartDate() {
+        if (startDate != null) {
+            return LocalDateConverter.toLocalDate(startDate);
+        } else {
+            return null;
+        }
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = LocalDateConverter.toDate(startDate);
+    }
+
+    public LocalDate getEndDate() {
+        if (endDate != null) {
+            return LocalDateConverter.toLocalDate(endDate);
+        } else {
+            return null;
+        }
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = LocalDateConverter.toDate(endDate);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -89,6 +122,5 @@ public class Project implements Serializable {
         hash = 19 * hash + Objects.hashCode(this.id);
         return hash;
     }
-
 
 }

@@ -9,7 +9,7 @@
 
     <ui:composition template="/template.xhtml">
         <ui:define name="browser-title">
-            <h:outputText value="RHA - Service availability"></h:outputText>
+            <h:outputText value="RHA - Availability"></h:outputText>
         </ui:define>
 
         <ui:define name="body">
@@ -52,7 +52,7 @@
 
                     <p:ajax event="cellEdit" listener="#{arc.onCellEdit}" update=":form:msgs,:totalAvailabilitys,:graph" />
 
-                    <p:column headerText="project name" width="100">
+                    <p:column headerText="Service name" width="100">
                         <h:outputText value="#{availableResource.service.name}"></h:outputText>
                     </p:column>
 
