@@ -174,13 +174,15 @@ public class BookedResourceController implements Serializable {
 
             bookedResourceFacade.updateOrCreateBookings(entity.getResources());
 
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
+            FacesMessage msg = new FacesMessage(
+                    FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
             FacesContext.getCurrentInstance().addMessage(null, msg);
 
             barModel = null;
             totalBooking = null;
         } else {
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cell not changed", "Old: " + oldValue + ", New:" + newValue);
+            FacesMessage msg = new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR, "Cell not changed", "Old: " + oldValue + ", New:" + newValue);
             FacesContext.getCurrentInstance().addMessage(null, msg);
         }
     }
