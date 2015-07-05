@@ -4,8 +4,10 @@ import com.rha.entity.Project;
 import com.rha.presentation.util.JsfUtil;
 import com.rha.presentation.util.JsfUtil.PersistAction;
 import com.rha.boundary.ProjectFacade;
+import com.rha.control.LocalDateConverter;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -29,6 +31,34 @@ public class ProjectController implements Serializable {
     private Project selected;
 
     public ProjectController() {
+    }
+
+    public Date getSelectedProjectStartDate() {
+        if (selected != null && selected.getStartDate() != null) {
+            return LocalDateConverter.toDate(selected.getStartDate());
+        } else {
+            return null;
+        }
+    }
+    
+    public Date getSelectedProjectEndDate() {
+        if (selected != null && selected.getEndDate() != null) {
+            return LocalDateConverter.toDate(selected.getEndDate());
+        } else {
+            return null;
+        }
+    }
+    
+    public void setSelectedProjectStartDate(Date date){
+        if (selected != null) {
+            selected.setStartDate(LocalDateConverter.toLocalDate(date));
+        } 
+    }
+    
+    public void setSelectedProjectEndDate(Date date){
+        if (selected != null) {
+            selected.setEndDate(LocalDateConverter.toLocalDate(date));
+        } 
     }
 
     public Project getSelected() {

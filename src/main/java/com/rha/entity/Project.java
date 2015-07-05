@@ -31,12 +31,10 @@ public class Project implements Serializable {
     Integer abscence = 0;
     Step step = Step.MONTH;
 
-    @Transient
-//    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.DATE)
     Date startDate;
 
-    @Transient
-//    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.DATE)
     Date endDate;
 
     public Step getStep() {
