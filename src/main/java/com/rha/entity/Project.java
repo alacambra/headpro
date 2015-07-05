@@ -11,14 +11,18 @@ import java.util.Objects;
 @Entity
 @Table(name = "PROJECT")
 @NamedQueries({
-    @NamedQuery(name = Project.emptyProjects,
+    @NamedQuery(name = Project.projectsInPeriod,
             query = "SELECT pr FROM Project pr LEFT JOIN pr.bookedResources br "
-            + "WHERE pr.startDate>=:startDate AND pr.endDate<=:endDate "
-            + "GROUP BY pr HAVING count(br) = 0")
+            + "WHERE ((pr.startDate>=:startDate AND pr.startDate<=:endDate)"
+            + " OR  "
+            + "(pr.endDate>=:startDate AND pr.endDate<=:endDate) "
+            + " OR  "
+            + "(pr.startDate<=:startDate AND pr.endDate>=:endDate)) "
+    )
 })
 public class Project implements Serializable {
 
-    public static final String emptyProjects = "com.rha.entity.Project.emptyProjects";
+    public static final String projectsInPeriod = "com.rha.entity.Project.projectsInPeriod";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

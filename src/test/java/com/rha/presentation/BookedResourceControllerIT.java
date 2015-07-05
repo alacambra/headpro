@@ -5,21 +5,12 @@
  */
 package com.rha.presentation;
 
-import com.rha.boundary.BookedResourceFacade;
-import com.rha.entity.PeriodTotal;
-import com.rha.entity.Step;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import org.primefaces.event.CellEditEvent;
-import org.primefaces.model.chart.BarChartModel;
 
 /**
  *

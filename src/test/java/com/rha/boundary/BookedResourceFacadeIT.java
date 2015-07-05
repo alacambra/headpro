@@ -54,7 +54,7 @@ public class BookedResourceFacadeIT {
 
     @Test
     public void testGetBookedResourcesInPeriod() throws Exception {
-        
+
         Service s = new Service();
         s.setName("testDivision");
         s = em.merge(s);
@@ -81,10 +81,10 @@ public class BookedResourceFacadeIT {
         br.setProject(p);
 
         cut.create(br);
-        
-        List<BookedResource> r = 
-                cut.getBookedResourcesInPeriod(LocalDate.of(2010, Month.MARCH, 30), LocalDate.of(2017, Month.MARCH, 30));
-        
+
+        List<BookedResource> r
+                = cut.getBookedResourcesInPeriod(LocalDate.of(2010, Month.MARCH, 30), LocalDate.of(2017, Month.MARCH, 30));
+
         assertThat(r.size(), is(2));
     }
 
@@ -187,8 +187,8 @@ public class BookedResourceFacadeIT {
     }
 
     @Test
-    public void testGetTotalBookedResourcesByServiceInPeriod(){
-        
+    public void testGetTotalBookedResourcesByServiceInPeriod() {
+
         Service s = new Service();
         s.setName("testDivision");
         s = em.merge(s);
@@ -204,16 +204,16 @@ public class BookedResourceFacadeIT {
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
         br.setProject(p);
-        
+
         em.persist(br);
-        
+
         List<PeriodTotal> result = cut.getTotalBookedResourcesByServiceInPeriod(
                 LocalDate.of(2015, Month.FEBRUARY, 1), LocalDate.of(2015, Month.FEBRUARY, 1).plusMonths(12));
-        
+
         assertThat(result.size(), is(1));
         assertThat(result.get(0).getTotal(), is(10L));
     }
-    
+
     @Test
     public void testGetBookedResourcesForServiceInPeriod() throws Exception {
     }
@@ -253,7 +253,5 @@ public class BookedResourceFacadeIT {
     @Test
     public void testCount() throws Exception {
     }
-
-    
 
 }

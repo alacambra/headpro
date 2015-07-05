@@ -21,7 +21,7 @@ import javax.persistence.PersistenceContext;
 public class ProjectFacade extends AbstractFacade<Project> {
 
     @PersistenceContext
-    private EntityManager em;
+    EntityManager em;
 
     @Override
     protected EntityManager getEntityManager() {
@@ -30,7 +30,7 @@ public class ProjectFacade extends AbstractFacade<Project> {
 
     public List<Project> getProjectsWithoutBookedResources(LocalDate startDate, LocalDate endDate) {
         List<Project> emptyProjects = em
-                .createNamedQuery(Project.emptyProjects, Project.class)
+                .createNamedQuery(Project.projectsInPeriod, Project.class)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();

@@ -96,15 +96,15 @@ public class BookedResourceController implements Serializable {
         final Map<Project, List<BookedResource>> resourcesByProject
                 = bookedResources.stream().collect(groupingBy(br -> br.getProject()));
 
-        emptyProjects.stream().forEach(pr -> {
-            resourcesByProject.putIfAbsent(pr, new ArrayList<>());
-        });
-
         bookingRows = new ArrayList<>();
 
         if (periods == null) {
             loadPeriods();
         }
+        
+        emptyProjects.stream().forEach(pr -> {
+            resourcesByProject.putIfAbsent(pr, new ArrayList<>());
+        });
 
         for (Project project : resourcesByProject.keySet()) {
 
@@ -119,11 +119,21 @@ public class BookedResourceController implements Serializable {
             List<BookedResource> resources = calendarEntriesGenerator
                     .getCalendarEntries(resourcesByProject.get(project), periods, supplier);
 
-            bookingRows.add(new BookingRow(
+            BookingRow bookingRow = new BookingRow(
                     project,
                     resources,
-                    serviceFacade.find(1)));
+                    serviceFacade.find(1));
+
+            bookingRow.setRowIsActive(projectIsActive(project));
+            bookingRows.add(bookingRow);
         }
+    }
+    
+    boolean projectIsActive(Project project){
+        return (project.getStartDate().isAfter(startDate.minusDays(1)) && project.getStartDate().isBefore(endDate.plusDays(1)))
+                    || (project.getEndDate().isAfter(startDate.minusDays(1)) && project.getEndDate().isBefore(endDate.plusDays(1))) || 
+                (project.getStartDate().isBefore(startDate.plusDays(1)) && project.getEndDate().isAfter(endDate.minusDays(1)))
+                ;
     }
 
     private void loadPeriods() {
@@ -312,10 +322,10 @@ public class BookedResourceController implements Serializable {
         this.currentService = currentService;
         resetValues();
     }
-    
-    public boolean somethingToShow(){
+
+    public boolean somethingToShow() {
         return currentService != null && getBookingRow().size() > 0;
-                
+
     }
 
 }

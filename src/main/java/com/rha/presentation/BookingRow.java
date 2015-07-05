@@ -26,6 +26,7 @@ public class BookingRow implements Serializable{
     Project project;
     Service division;
     List<BookedResource> resources;
+    boolean rowIsActive = true;
     
     @Inject
     Logger logger;
@@ -52,6 +53,14 @@ public class BookingRow implements Serializable{
         this.resources = resources;
     }
 
+    public boolean isRowIsActive() {
+        return rowIsActive;
+    }
+
+    public void setRowIsActive(boolean rowIsActive) {
+        this.rowIsActive = rowIsActive;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof BookingRow) {
