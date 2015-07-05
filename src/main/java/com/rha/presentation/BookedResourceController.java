@@ -91,7 +91,7 @@ public class BookedResourceController implements Serializable {
         List<BookedResource> bookedResources
                 = bookedResourceFacade.getBookedResourcesForServiceInPeriod(currentService, startDate, endDate);
 
-        List<Project> emptyProjects = projectFacade.findAll();
+        List<Project> emptyProjects = projectFacade.getProjectsWithoutBookedResources(startDate, endDate);
 
         final Map<Project, List<BookedResource>> resourcesByProject
                 = bookedResources.stream().collect(groupingBy(br -> br.getProject()));
@@ -311,6 +311,11 @@ public class BookedResourceController implements Serializable {
 
         this.currentService = currentService;
         resetValues();
+    }
+    
+    public boolean somethingToShow(){
+        return currentService != null && getBookingRow().size() > 0;
+                
     }
 
 }

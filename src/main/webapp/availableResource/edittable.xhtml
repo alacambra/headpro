@@ -36,7 +36,7 @@
                 </table>
 
 
-                <p:commandButton value="Submit" update=":form,:totalAvailabilitys,:graph" 
+                <p:commandButton value="Submit" update=":form,:totalAvailabilities,:graph" 
                                  actionListener="#{arc.dateChanged}" icon="ui-icon-check" />
             </h:form>
             <h:form id="form">
@@ -50,7 +50,7 @@
                              widgetVar="availableResource">
                     <p:growl id="msgs" showDetail="true"/>
 
-                    <p:ajax event="cellEdit" listener="#{arc.onCellEdit}" update=":form:msgs,:totalAvailabilitys,:graph" />
+                    <p:ajax event="cellEdit" listener="#{arc.onCellEdit}" update=":form:msgs,:totalAvailabilities,:graph" />
 
                     <p:column headerText="Service name" width="100">
                         <h:outputText value="#{availableResource.service.name}"></h:outputText>
@@ -66,7 +66,7 @@
                     </c:forEach>
                 </p:dataTable>
             </h:form>
-            <p:dataTable id="totalAvailabilitys" 
+            <p:dataTable id="totalAvailabilities" 
                          var="totalAvailability" 
                          value="#{arc.totalAvailability}" 
                          editable="true"

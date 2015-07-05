@@ -41,13 +41,11 @@
                         </td>
                     </tr>
                 </table>
-
-
                 <p:commandButton value="Submit" update=":contents" 
                                  actionListener="#{brc.dateChanged}" icon="ui-icon-check" />
             </h:form>
             <h:panelGroup id="contents">
-                <h:panelGroup rendered="#{brc.currentService != null}">
+                <h:panelGroup rendered="#{brc.somethingToShow()}">
                     <h:form id="form">
                         <p:growl id="msgs" showDetail="true"/>
 
@@ -100,6 +98,8 @@
                         <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
                     </h:form>
                 </h:panelGroup>
+                <h:outputLabel rendered="#{!brc.somethingToShow()}" 
+                               value="Nothing to show (no service selected or no active projects on this date range)"></h:outputLabel>
             </h:panelGroup>
         </ui:define>
     </ui:composition>

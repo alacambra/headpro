@@ -5,7 +5,9 @@
  */
 package com.rha.boundary;
 
+import com.rha.control.LocalDateConverter;
 import com.rha.entity.Project;
+import java.time.LocalDate;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -26,9 +28,11 @@ public class ProjectFacade extends AbstractFacade<Project> {
         return em;
     }
 
-    public List<Project> getProjectsWithoutBookedResources(int did) {
+    public List<Project> getProjectsWithoutBookedResources(LocalDate startDate, LocalDate endDate) {
         List<Project> emptyProjects = em
                 .createNamedQuery(Project.emptyProjects, Project.class)
+                .setParameter("startDate", LocalDateConverter.toDate(startDate))
+                .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
 
         return emptyProjects;

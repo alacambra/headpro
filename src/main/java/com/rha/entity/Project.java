@@ -13,6 +13,7 @@ import java.util.Objects;
 @NamedQueries({
     @NamedQuery(name = Project.emptyProjects,
             query = "SELECT pr FROM Project pr LEFT JOIN pr.bookedResources br "
+            + "WHERE pr.startDate>=:startDate AND pr.endDate<=:endDate "
             + "GROUP BY pr HAVING count(br) = 0")
 })
 public class Project implements Serializable {
@@ -76,7 +77,7 @@ public class Project implements Serializable {
     public void setAbscence(Integer abscence) {
         this.abscence = abscence;
     }
-    
+
     public LocalDate getStartDate() {
         if (startDate != null) {
             return LocalDateConverter.toLocalDate(startDate);
