@@ -22,6 +22,10 @@
                         <p:inputText id="name" value="#{projectController.selected.name}" title="#{bundle.EditProjectTitle_name}" />
                         <p:outputLabel value="#{bundle.EditProjectLabel_abscence}" for="abscence" />
                         <p:inputText id="abscence" value="#{projectController.selected.abscence}" title="#{bundle.EditProjectTitle_abscence}" />
+                        <p:outputLabel value="start date" for="startDate"></p:outputLabel>
+                        <p:calendar id="startDate" value="#{projectController.selectedProjectStartDate}"></p:calendar>
+                        <p:outputLabel value="start date" for="endDate"></p:outputLabel>
+                        <p:calendar id="endDate" value="#{projectController.selectedProjectEndDate}"></p:calendar>
                     </p:panelGrid>
                     <p:commandButton actionListener="#{projectController.update}" value="#{bundle.Save}" update="display,:ProjectListForm:datalist,:growl" oncomplete="handleSubmit(args, 'ProjectEditDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}" onclick="ProjectEditDialog.hide()"/>

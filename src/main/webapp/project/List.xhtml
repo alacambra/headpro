@@ -24,8 +24,8 @@
                                  rowsPerPageTemplate="10,20,30,40,50"
                                  >
 
-                        <p:ajax event="rowSelect"   update="createButton viewButton editButton deleteButton"/>
-                        <p:ajax event="rowUnselect" update="createButton viewButton editButton deleteButton"/>
+                        <p:ajax event="rowSelect"   update="createButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton editButton deleteButton"/>
                         <p:column width="20">
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListProjectTitle_id}"/>
@@ -50,15 +50,20 @@
                             </f:facet>
                             <h:outputText value="#{item.probability}%"/>
                         </p:column>
-                        <p:column width="70">
+                        <p:column>
                             <f:facet name="header">
-                                <h:outputText value="#{bundle.ListProjectTitle_abscence}"/>
+                                <h:outputText value="Start Date"></h:outputText>
                             </f:facet>
-                            <h:outputText value="#{item.abscence}"/>
+                            <h:outputText value="#{item.startDate}"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="End Date"></h:outputText>
+                            </f:facet>
+                            <h:outputText value="#{item.endDate}"></h:outputText>
                         </p:column>
                         <f:facet name="footer">
                             <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{projectController.prepareCreate}" update=":ProjectCreateForm" oncomplete="PF('ProjectCreateDialog').show()"/>
-                            <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":ProjectViewForm" oncomplete="PF('ProjectViewDialog').show()" disabled="#{empty projectController.selected}"/>
                             <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":ProjectEditForm" oncomplete="PF('ProjectEditDialog').show()" disabled="#{empty projectController.selected}"/>
                             <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="#{bundle.Delete}" actionListener="#{projectController.destroy}" update=":growl,datalist" disabled="#{empty projectController.selected}"/>
                         </f:facet>
