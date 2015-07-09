@@ -21,16 +21,17 @@ import com.rha.entity.Step;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.*;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -183,12 +184,21 @@ public class ResultsController implements Serializable {
                 ChartSeries chartSerie = new ChartSeries();
                 chartSerie.setLabel(row.getService().getName());
 
-                row.getResources().stream().forEach(b -> {
-                    int position = Optional.ofNullable(b.getPosition()).orElse(chartSerie.getData().size());
-                    long remainingResources = Optional.ofNullable(b.getValue()).orElse(0L);
+                row.getResources().stream().forEach(remainingresource -> {
+                    long remainingResources = Optional.ofNullable(remainingresource.getValue()).orElse(0L);
                     if(remainingResources < min.get()) min.set(remainingResources);
                     if(remainingResources > max.get()) max.set(remainingResources);
-                    chartSerie.set(position + 1, remainingResources);
+                    
+                    String columnName;
+                     if(step == Step.WEEK){
+                        WeekFields fields = WeekFields.of(Locale.GERMANY);
+                        int kw = remainingresource.getStartDate().get(fields.weekOfYear());
+                        columnName = "CW" + kw;
+                    }else{
+                        columnName = Utils.defaultDateFormat(LocalDateConverter.toDate(remainingresource.getStartDate()));
+                    }
+                    
+                    chartSerie.set(columnName, remainingResources);
                 });
 
                 barModel.addSeries(chartSerie);

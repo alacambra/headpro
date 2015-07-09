@@ -13,14 +13,7 @@
         </ui:define>
 
         <ui:define name="body">
-
-            <script type="text/javascript">
-                function toggle(id) {
-                    $("#" + id).fadeToggle();
-                }
-            </script>
-
-            <button onclick="toggle('control')" value="toggle"></button>
+            <button onclick="toggle('control')">toggle</button>
             <p:panel id="control">
                 <h:form>
                     <table>

@@ -15,10 +15,12 @@ import com.rha.entity.Step;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -159,15 +161,19 @@ public class BookedResourceController implements Serializable {
         return bookingRows;
     }
 
-    public List<LocalDate> getPeriods() {
+    public List<String> getPeriods() {
 
         if (periods == null || disableCache) {
             loadPeriods();
         }
 
-        return periods.stream().map(period -> period[0]).collect(toList());
+        if(step == Step.WEEK){
+            return periods.stream().map(period -> "CW" + Utils.getCalenderWeekOf(period[0]) + " (" + Utils.defaultDateFormat(period[0]) + ")").collect(toList());
+        } else {
+            return periods.stream().map(period -> Utils.defaultDateFormat(period[0])).collect(toList());
+        }
     }
-
+    
     private LocalDate getDate(BookedResource br) {
         return br.getStartDate();
     }
@@ -223,10 +229,20 @@ public class BookedResourceController implements Serializable {
                 ChartSeries chartSerie = new ChartSeries();
                 chartSerie.setLabel(row.getProject().getName());
 
-                row.getResources().stream().forEach(b -> {
-                    int position = Optional.ofNullable(b.getPosition()).orElse(chartSerie.getData().size());
-                    long booked = Optional.ofNullable(b.getBooked()).orElse(0L);
-                    chartSerie.set(position + 1, booked);
+                row.getResources().stream().forEach(bookedResource -> {
+                    
+                    String columnName;
+                    long booked = Optional.ofNullable(bookedResource.getBooked()).orElse(0L);
+                    
+                    if(step == Step.WEEK){
+                        WeekFields fields = WeekFields.of(Locale.GERMANY);
+                        int kw = bookedResource.getStartDate().get(fields.weekOfYear());
+                        columnName = "CW" + kw;
+                    }else{
+                        columnName = Utils.defaultDateFormat(bookedResource.getStartDateAsDate());
+                    }
+                    
+                    chartSerie.set(columnName, booked);
                 });
 
                 barModel.addSeries(chartSerie);

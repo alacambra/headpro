@@ -30,6 +30,12 @@
             <version>5.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.primefaces.themes</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>1.0.8</version>
+            <scope>compile</scope>
+        </dependency>
         <!--        <dependency>
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>

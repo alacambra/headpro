@@ -6,3 +6,7 @@ function handleSubmit(args, dialog) {
         PF(dialog).hide();
     }
 }
+
+function toggle(id) {
+    $("#" + id).fadeToggle();
+}
