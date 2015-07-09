@@ -127,6 +127,40 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     public void setAvailable(Long available) {
         this.available = available;
     }
+    
+    public String getPrettifiedAvailable() {
+        
+        String pretty = String.valueOf(available);
+        
+        if(pretty.length() <= 2){
+            pretty = "0." + pretty; 
+        }else{
+            pretty = new StringBuilder(pretty).insert(pretty.length() - 2, '.').toString();
+        }
+        
+        return pretty;
+    }
+
+    public void setPrettifiedAvailable(String available) {
+        
+        String[] parts = available.replace(",", ".").split("\\.");
+        available = available.replace(",", ".").replace(".", "");
+        
+        if(parts.length < 2){
+            available += "00";
+        } else {
+            if(parts[1].length() == 0){
+                available += "00";
+            }else if(parts[1].length() == 1){
+                available += "0";
+            }else if(parts[1].length() > 2){
+                available = available.substring(0, parts[0].length() + 2);
+            }
+        }
+        
+        this.available = Long.valueOf(available);
+    }
+
 
     @Override
     public int hashCode() {

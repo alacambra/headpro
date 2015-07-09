@@ -63,9 +63,10 @@
                         <p:column headerText="${item.toString()}" width="70"  styleClass="wrap">
                             <p:cellEditor>
                                 <f:facet name="output">
-                                    <h:outputText value="#{availableResource.resources.get(counter.index).available}"/>
+                                    <h:outputText value="#{availableResource.resources.get(counter.index).prettifiedAvailable}"/>
                                 </f:facet>
-                                <f:facet name="input"><p:inputText value="#{availableResource.resources.get(counter.index).available}" style="width:96%" label="Year"/></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{availableResource.resources.get(counter.index).prettifiedAvailable}" style="width:96%" label="Year"/></f:facet>
                             </p:cellEditor>
                         </p:column>
                     </c:forEach>
