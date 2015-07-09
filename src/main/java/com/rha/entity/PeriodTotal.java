@@ -61,6 +61,14 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal> {
         this.endDate = endDate;
         return this;
     }
+    
+    public Date getStartDateAsDate(){
+        return LocalDateConverter.toDate(startDate);
+    }
+    
+    public Date getEndDateAsDate(){
+        return LocalDateConverter.toDate(endDate);
+    }
 
     public long getTotal() {
         return total;

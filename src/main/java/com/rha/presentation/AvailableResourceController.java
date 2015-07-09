@@ -11,12 +11,15 @@ import com.rha.entity.PeriodTotal;
 import com.rha.entity.Service;
 import com.rha.entity.Step;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -123,13 +126,17 @@ public class AvailableResourceController implements Serializable {
         return availableResourceRow;
     }
 
-    public List<LocalDate> getPeriods() {
+    public List<String> getPeriods() {
 
         if (periods == null || disableCache) {
             loadPeriods();
         }
 
-        return periods.stream().map(period -> period[0]).collect(toList());
+        if(step == Step.WEEK){
+            return periods.stream().map(period -> "CW" + Utils.getCalenderWeekOf(period[0]) + " (" + Utils.defaultDateFormat(period[0]) + ")").collect(toList());
+        } else {
+            return periods.stream().map(period -> Utils.defaultDateFormat(period[0])).collect(toList());
+        }
     }
 
     private LocalDate getDate(BookedResource br) {
@@ -183,10 +190,20 @@ public class AvailableResourceController implements Serializable {
                 ChartSeries chartSerie = new ChartSeries();
                 chartSerie.setLabel(row.getService().getName());
 
-                row.getResources().stream().forEach(b -> {
-                    int position = Optional.ofNullable(b.getPosition()).orElse(chartSerie.getData().size());
-                    long available = Optional.ofNullable(b.getAvailable()).orElse(0L);
-                    chartSerie.set(position + 1, available);
+                row.getResources().stream().forEach(availableResource -> {
+                    
+                    String columnName = "";
+                    
+                    if(step == Step.WEEK){
+                        WeekFields fields = WeekFields.of(Locale.GERMANY);
+                        int kw = availableResource.getStartDate().get(fields.weekOfYear());
+                        columnName = "CW" + kw;
+                    }else{
+                        columnName = Utils.defaultDateFormat(availableResource.getStartDateAsDate());
+                    }
+                    long available = Optional.ofNullable(availableResource.getAvailable()).orElse(0L);
+                    chartSerie.set(columnName, available);
+                    
                 });
 
                 barModel.addSeries(chartSerie);
@@ -197,7 +214,7 @@ public class AvailableResourceController implements Serializable {
 
             int i = 0;
             for (PeriodTotal value : totalBooking) {
-                chartSerie.set(value.getStartDate(), value.getTotal());
+                chartSerie.set(Utils.defaultDateFormat(value.getStartDateAsDate()), value.getTotal());
             }
             barModel.addSeries(chartSerie);
         }

@@ -111,6 +111,14 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     public void setEndDate(LocalDate endDate) {
         this.endDate = LocalDateConverter.toDate(endDate);
     }
+    
+    public Date getStartDateAsDate(){
+        return new Date(startDate.getTime());
+    }
+    
+    public Date getEndDateAsDate(){
+        return new Date(endDate.getTime());
+    }
 
     public Long getAvailable() {
         return available;

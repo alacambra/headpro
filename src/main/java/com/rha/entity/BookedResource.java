@@ -140,6 +140,14 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     public void setEndDate(LocalDate endDate) {
         this.endDate = LocalDateConverter.toDate(endDate);
     }
+    
+    public Date getStartDateAsDate(){
+        return new Date(startDate.getTime());
+    }
+    
+    public Date getEndDateAsDate(){
+        return new Date(endDate.getTime());
+    }
 
     public Long getBooked() {
         return booked;
