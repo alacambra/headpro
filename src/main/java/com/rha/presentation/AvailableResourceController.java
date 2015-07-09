@@ -208,13 +208,13 @@ public class AvailableResourceController implements Serializable {
         barModel.setShowPointLabels(true);
         barModel.setZoom(true);
 
-        Axis xAxis = new CategoryAxis("Month");
+        Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
         xAxis.setTickAngle(90);
 
         barModel.getAxes().put(AxisType.X, xAxis);
         Axis yAxis = barModel.getAxis(AxisType.Y);
 
-        yAxis.setLabel("Resources");
+        yAxis.setLabel("Resources (hours)");
         yAxis.setMin(0);
     }
 

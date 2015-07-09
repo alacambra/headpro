@@ -50,13 +50,13 @@ public class ProjectController implements Serializable {
     }
     
     public void setSelectedProjectStartDate(Date date){
-        if (selected != null) {
+        if (selected != null && selected.getStartDate() != null) {
             selected.setStartDate(LocalDateConverter.toLocalDate(date));
         } 
     }
     
     public void setSelectedProjectEndDate(Date date){
-        if (selected != null) {
+        if (selected != null && selected.getEndDate() != null) {
             selected.setEndDate(LocalDateConverter.toLocalDate(date));
         } 
     }

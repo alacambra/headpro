@@ -185,10 +185,10 @@ public class ResultsController implements Serializable {
 
                 row.getResources().stream().forEach(b -> {
                     int position = Optional.ofNullable(b.getPosition()).orElse(chartSerie.getData().size());
-                    long remaining = Optional.ofNullable(b.getValue()).orElse(0L);
-                    if(remaining < min.get()) min.set(remaining);
-                    if(remaining > max.get()) max.set(remaining);
-                    chartSerie.set(position + 1, remaining);
+                    long remainingResources = Optional.ofNullable(b.getValue()).orElse(0L);
+                    if(remainingResources < min.get()) min.set(remainingResources);
+                    if(remainingResources > max.get()) max.set(remainingResources);
+                    chartSerie.set(position + 1, remainingResources);
                 });
 
                 barModel.addSeries(chartSerie);
@@ -198,27 +198,27 @@ public class ResultsController implements Serializable {
             chartSerie.setLabel("total");
 
             int i = 0;
-            for (PeriodTotal value : totalBooking) {
-                chartSerie.set(value.getStartDate(), value.getTotal());
-            }
+            totalBooking.stream().forEach((booking) -> {
+                chartSerie.set(booking.getStartDate(), booking.getTotal());
+            });
             barModel.addSeries(chartSerie);
         }
 
-        barModel.setTitle("Required resources");
+        barModel.setTitle("Remaining resources");
         barModel.setLegendPosition("ne");
         barModel.setStacked(false);
         barModel.setShowPointLabels(true);
         barModel.setZoom(true);
 
-        Axis xAxis = new CategoryAxis("Month");
-        xAxis.setTickAngle(90);
+        Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
+        xAxis.setTickAngle(0);
 
         barModel.getAxes().put(AxisType.X, xAxis);
         Axis yAxis = barModel.getAxis(AxisType.Y);
 
-        yAxis.setLabel("Resources");
-        yAxis.setMin(min.get());
-        yAxis.setMax(max.get());
+        yAxis.setLabel("Resources (hours)");
+        yAxis.setMin(Math.round(min.get() * 1.1));
+        yAxis.setMax(Math.round(max.get() * 1.1));
     }
 
     public Date getStartDate() {

@@ -89,7 +89,7 @@ public class Project implements Serializable {
             return null;
         }
     }
-
+    
     public void setStartDate(LocalDate startDate) {
         this.startDate = LocalDateConverter.toDate(startDate);
     }
@@ -100,6 +100,14 @@ public class Project implements Serializable {
         } else {
             return null;
         }
+    }
+    
+    public Date getStartDateAsDate(){
+        return new Date(startDate.getTime());
+    }
+    
+    public Date getEndDateAsDate(){
+        return new Date(endDate.getTime());
     }
 
     public void setEndDate(LocalDate endDate) {

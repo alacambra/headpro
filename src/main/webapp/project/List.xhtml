@@ -54,13 +54,17 @@
                             <f:facet name="header">
                                 <h:outputText value="Start Date"></h:outputText>
                             </f:facet>
-                            <h:outputText value="#{item.startDate}"></h:outputText>
+                            <h:outputText value="#{item.startDateAsDate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </h:outputText>
                         </p:column>
                         <p:column>
                             <f:facet name="header">
                                 <h:outputText value="End Date"></h:outputText>
                             </f:facet>
-                            <h:outputText value="#{item.endDate}"></h:outputText>
+                            <h:outputText value="#{item.endDateAsDate}">
+                            <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </h:outputText>
                         </p:column>
                         <f:facet name="footer">
                             <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{projectController.prepareCreate}" update=":ProjectCreateForm" oncomplete="PF('ProjectCreateDialog').show()"/>
