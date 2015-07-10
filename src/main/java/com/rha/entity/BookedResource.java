@@ -100,6 +100,10 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Service getService() {
         return service;
     }

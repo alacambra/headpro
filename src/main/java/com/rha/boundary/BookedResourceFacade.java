@@ -71,20 +71,21 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         resources.stream().filter((resource) -> (resource.isPersisted() || resource.getBooked() != 0))
                 .forEach(br -> {
                     if (br.getId() == null) {
-                        em.persist(br);
+                        br.setId(em.merge(br).getId());
                     } else {
                         em.merge(br);
                     }
+                    br.setPersisted(true);
                 });
     }
 
     public List<BookedResource> getBookedResourcesInPeriod(LocalDate startDate, LocalDate endDate) {
-        List<BookedResource> r = 
-                em.createNamedQuery(BookedResource.bookedInPeriod)
+        List<BookedResource> r
+                = em.createNamedQuery(BookedResource.bookedInPeriod)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
-        
+
         return r;
     }
 }
