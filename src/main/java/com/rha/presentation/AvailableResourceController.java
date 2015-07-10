@@ -203,7 +203,7 @@ public class AvailableResourceController implements Serializable {
                     }
                     long available = Optional.ofNullable(availableResource.getAvailable()).orElse(0L);
                     Double d = 100D;
-                    chartSerie.set(columnName, available/d);
+                    chartSerie.set(columnName, available);
                 });
 
                 barModel.addSeries(chartSerie);

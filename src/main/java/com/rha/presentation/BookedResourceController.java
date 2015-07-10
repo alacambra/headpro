@@ -244,7 +244,7 @@ public class BookedResourceController implements Serializable {
                     }
                     
                     Double d = 100D;
-                    chartSerie.set(columnName, booked/d);
+                    chartSerie.set(columnName, booked);
                 });
 
                 barModel.addSeries(chartSerie);

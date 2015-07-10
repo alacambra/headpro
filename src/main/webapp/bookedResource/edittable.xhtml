@@ -70,10 +70,10 @@
                                 <p:column headerText="${item.toString()}" width="70" >
                                     <p:cellEditor>
                                         <f:facet name="output">
-                                            <h:outputText value="#{booking.resources.get(counter.index).prettifiedBooked}"/>
+                                            <h:outputText value="#{booking.resources.get(counter.index).booked}"/>
                                         </f:facet>
                                         <f:facet name="input">
-                                            <p:inputText value="#{booking.resources.get(counter.index).prettifiedBooked}" style="width:96%" label="Year"/>
+                                            <p:inputText value="#{booking.resources.get(counter.index).booked}" style="width:96%" label="Year"/>
                                         </f:facet>
                                     </p:cellEditor>
                                 </p:column>

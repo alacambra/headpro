@@ -5,7 +5,6 @@
  */
 package com.rha.entity;
 
-import org.hamcrest.core.Is;
 import static org.hamcrest.core.Is.is;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,6 +71,9 @@ public class BookedResourceTest {
         
         cut.setPrettifiedBooked("0.9");
         assertThat(cut.getBooked(), is(90L));
+        
+        cut.setPrettifiedBooked("0");
+        assertThat(cut.getBooked(), is(0L));
         
         cut.setPrettifiedBooked("0.10");
         assertThat(cut.getBooked(), is(10L));
