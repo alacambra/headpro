@@ -8,6 +8,7 @@ import com.rha.control.LocalDateConverter;
 import com.rha.entity.AvailableResource;
 import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
+import com.rha.entity.Project;
 import com.rha.entity.Service;
 import com.rha.entity.Step;
 import java.io.Serializable;
@@ -29,6 +30,8 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Observes;
+import static javax.enterprise.event.TransactionPhase.AFTER_SUCCESS;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -251,7 +254,15 @@ public class AvailableResourceController implements Serializable {
 
         return r;
     }
+    
+    public void updateResources(@Observes(during=AFTER_SUCCESS)  ProjectEvent projectEvent){
+        resetValues();
+    }
 
+    public void updateResources(@Observes(during=AFTER_SUCCESS) ServiceEvent serviceEvent){
+        resetValues();
+    }
+    
     public Date getStartDate() {
         return LocalDateConverter.toDate(startDate);
     }

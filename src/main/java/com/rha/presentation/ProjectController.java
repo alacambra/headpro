@@ -16,10 +16,12 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Event;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("projectController")
 @SessionScoped
@@ -29,35 +31,38 @@ public class ProjectController implements Serializable {
     private com.rha.boundary.ProjectFacade ejbFacade;
     private List<Project> items = null;
     private Project selected;
+    
+    @Inject
+    Event<ProjectEvent> projectEvent;
 
     public ProjectController() {
     }
 
     public Date getSelectedProjectStartDate() {
-        if (selected != null && selected.getStartDate() != null) {
-            return LocalDateConverter.toDate(selected.getStartDate());
+        if (selected != null && selected.getStartLocalDate() != null) {
+            return LocalDateConverter.toDate(selected.getStartLocalDate());
         } else {
             return null;
         }
     }
     
     public Date getSelectedProjectEndDate() {
-        if (selected != null && selected.getEndDate() != null) {
-            return LocalDateConverter.toDate(selected.getEndDate());
+        if (selected != null && selected.getEndLocalDate() != null) {
+            return LocalDateConverter.toDate(selected.getEndLocalDate());
         } else {
             return null;
         }
     }
     
     public void setSelectedProjectStartDate(Date date){
-        if (selected != null && selected.getStartDate() != null) {
-            selected.setStartDate(LocalDateConverter.toLocalDate(date));
+        if (selected != null && selected.getStartLocalDate() != null) {
+            selected.setStartLocalDate(LocalDateConverter.toLocalDate(date));
         } 
     }
     
     public void setSelectedProjectEndDate(Date date){
-        if (selected != null && selected.getEndDate() != null) {
-            selected.setEndDate(LocalDateConverter.toLocalDate(date));
+        if (selected != null && selected.getEndLocalDate() != null) {
+            selected.setEndLocalDate(LocalDateConverter.toLocalDate(date));
         } 
     }
 
@@ -120,7 +125,11 @@ public class ProjectController implements Serializable {
                 } else {
                     getFacade().remove(selected);
                 }
+                
+                ProjectEvent event = new ProjectEvent(selected, persistAction);
+                projectEvent.fire(event);
                 JsfUtil.addSuccessMessage(successMessage);
+                
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();

@@ -2,8 +2,6 @@ package com.rha.entity;
 
 import com.rha.control.LocalDateConverter;
 import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
@@ -156,8 +154,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     }
 
     public void setBooked(Long booked) {
-        this.booked = booked;
-
+        this.booked = booked == null ? 0 : booked;
     }
 
     public String getPrettifiedBooked() {

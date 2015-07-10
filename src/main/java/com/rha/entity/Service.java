@@ -2,6 +2,7 @@ package com.rha.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.enterprise.event.Event;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,7 +28,7 @@ public class Service implements Serializable {
     
     @OneToMany(mappedBy = "service", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<AvailableResource> availableResources;
-
+    
     public Integer getId() {
         return id;
     }

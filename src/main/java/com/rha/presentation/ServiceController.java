@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJBException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Event;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -35,6 +36,9 @@ public class ServiceController implements Serializable {
     
     private List<Service> items = null;
     private Service selected;
+    
+    @Inject
+    Event<ServiceEvent> serviceEvent;
 
     public ServiceController() {
     }
@@ -101,6 +105,8 @@ public class ServiceController implements Serializable {
                 } else {
                     getFacade().remove(selected);
                 }
+                ServiceEvent event = new ServiceEvent(selected, persistAction);
+                serviceEvent.fire(event);
                 JsfUtil.addSuccessMessage(successMessage);
             } catch (EJBException ex) {
                 String msg = "";

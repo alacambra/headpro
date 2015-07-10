@@ -41,8 +41,8 @@ public class BookedResourceControllerTest {
         cut.endDate = LocalDate.now();
         
         Project project = new Project();
-        project.setStartDate(LocalDate.of(2015, Month.JULY, 1));
-        project.setEndDate(LocalDate.of(2015, Month.JULY, 24));
+        project.setStartLocalDate(LocalDate.of(2015, Month.JULY, 1));
+        project.setEndLocalDate(LocalDate.of(2015, Month.JULY, 24));
         
         assertThat(cut.projectIsActive(project), is(true));
     }

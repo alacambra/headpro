@@ -30,6 +30,8 @@ import java.util.logging.Logger;
 import static java.util.stream.Collectors.*;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Observes;
+import static javax.enterprise.event.TransactionPhase.AFTER_SUCCESS;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
@@ -133,9 +135,9 @@ public class BookedResourceController implements Serializable {
     }
     
     boolean projectIsActive(Project project){
-        return (project.getStartDate().isAfter(startDate.minusDays(1)) && project.getStartDate().isBefore(endDate.plusDays(1)))
-                    || (project.getEndDate().isAfter(startDate.minusDays(1)) && project.getEndDate().isBefore(endDate.plusDays(1))) || 
-                (project.getStartDate().isBefore(startDate.plusDays(1)) && project.getEndDate().isAfter(endDate.minusDays(1)))
+        return (project.getStartLocalDate().isAfter(startDate.minusDays(1)) && project.getStartLocalDate().isBefore(endDate.plusDays(1)))
+                    || (project.getEndLocalDate().isAfter(startDate.minusDays(1)) && project.getEndLocalDate().isBefore(endDate.plusDays(1))) || 
+                (project.getStartLocalDate().isBefore(startDate.plusDays(1)) && project.getEndLocalDate().isAfter(endDate.minusDays(1)))
                 ;
     }
 
@@ -294,6 +296,14 @@ public class BookedResourceController implements Serializable {
         logger.log(Level.FINE, totalBooking.toString());
 
         return r;
+    }
+    
+    public void updateResources(@Observes(during=AFTER_SUCCESS) ProjectEvent projectEvent){
+        resetValues();
+    }
+
+    public void updateResources(@Observes(during=AFTER_SUCCESS) ServiceEvent serviceEvent){
+        resetValues();
     }
 
     public Date getStartDate() {

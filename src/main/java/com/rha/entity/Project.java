@@ -82,38 +82,57 @@ public class Project implements Serializable {
         this.abscence = abscence;
     }
 
-    public LocalDate getStartDate() {
+    public LocalDate getStartLocalDate() {
         if (startDate != null) {
             return LocalDateConverter.toLocalDate(startDate);
         } else {
             return null;
         }
     }
+
+    public Date getStartDate() {
+        return startDate;
+    }
     
-    public void setStartDate(LocalDate startDate) {
+    public void setStartLocalDate(LocalDate startDate) {
         this.startDate = LocalDateConverter.toDate(startDate);
     }
 
-    public LocalDate getEndDate() {
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+    
+    public LocalDate getEndLocalDate() {
         if (endDate != null) {
             return LocalDateConverter.toLocalDate(endDate);
         } else {
             return null;
         }
     }
+
+    public Date getEndDate() {
+        return endDate;
+    }
     
     public Date getStartDateAsDate(){
+        if(startDate == null) return null;
         return new Date(startDate.getTime());
     }
     
     public Date getEndDateAsDate(){
+        if(endDate == null) return null;
         return new Date(endDate.getTime());
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndLocalDate(LocalDate endDate) {
         this.endDate = LocalDateConverter.toDate(endDate);
     }
 
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

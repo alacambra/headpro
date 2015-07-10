@@ -42,8 +42,8 @@ public class ProjectFacadeIT {
     public void testGetProjectsWithoutBookedResources() throws Exception {
         
         Project project = new Project();
-        project.setStartDate(LocalDate.now());
-        project.setEndDate(LocalDate.now().plusMonths(1));
+        project.setStartLocalDate(LocalDate.now());
+        project.setEndLocalDate(LocalDate.now().plusMonths(1));
         project = em.merge(project);
         List<Project> pr = cut.getProjectsWithoutBookedResources(LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
         

@@ -19,9 +19,9 @@
                         <p:outputLabel value="#{bundle.CreateProjectLabel_probability}" for="probability" />
                         <p:inputText id="probability" value="#{projectController.selected.probability}" title="#{bundle.CreateProjectTitle_probability}" />
                         <p:outputLabel value="start date" for="startDate"></p:outputLabel>
-                        <p:calendar id="startDate" value="#{projectController.selectedProjectStartDate}"></p:calendar>
+                        <p:calendar id="startDate" value="#{projectController.selected.startDate}"></p:calendar>
                         <p:outputLabel value="start date" for="endDate"></p:outputLabel>
-                        <p:calendar id="endDate" value="#{projectController.selectedProjectEndDate}"></p:calendar>
+                        <p:calendar id="endDate" value="#{projectController.selected.endDate}"></p:calendar>
                     </p:panelGrid>
                     <p:commandButton actionListener="#{projectController.create}" value="#{bundle.Save}" update="display,:ProjectListForm:datalist,:growl" oncomplete="handleSubmit(args,'ProjectCreateDialog');"/>
                     <p:commandButton value="#{bundle.Cancel}" onclick="ProjectCreateDialog.hide()"/>
