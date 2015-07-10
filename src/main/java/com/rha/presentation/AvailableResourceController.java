@@ -202,8 +202,8 @@ public class AvailableResourceController implements Serializable {
                         columnName = Utils.defaultDateFormat(availableResource.getStartDateAsDate());
                     }
                     long available = Optional.ofNullable(availableResource.getAvailable()).orElse(0L);
-                    chartSerie.set(columnName, available);
-                    
+                    Double d = 100D;
+                    chartSerie.set(columnName, available/d);
                 });
 
                 barModel.addSeries(chartSerie);

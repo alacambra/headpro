@@ -13,6 +13,7 @@ import com.rha.entity.Project;
 import com.rha.entity.Service;
 import com.rha.entity.Step;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
@@ -242,7 +243,8 @@ public class BookedResourceController implements Serializable {
                         columnName = Utils.defaultDateFormat(bookedResource.getStartDateAsDate());
                     }
                     
-                    chartSerie.set(columnName, booked);
+                    Double d = 100D;
+                    chartSerie.set(columnName, booked/d);
                 });
 
                 barModel.addSeries(chartSerie);

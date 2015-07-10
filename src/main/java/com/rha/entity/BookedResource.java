@@ -48,7 +48,7 @@ import javax.persistence.Transient;
             + " OR (br.startDate<=:startDate AND br.endDate>=:endDate)) "
             + "AND s=:service "
             + "group by br.startDate, br.endDate order by br.startDate"),
- 
+
     @NamedQuery(name = BookedResource.bookedInPeriod,
             query = "SELECT br FROM BookedResource br "
             + " WHERE ((br.startDate>=:startDate AND br.startDate<=:endDate)"
@@ -142,12 +142,12 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     public void setEndDate(LocalDate endDate) {
         this.endDate = LocalDateConverter.toDate(endDate);
     }
-    
-    public Date getStartDateAsDate(){
+
+    public Date getStartDateAsDate() {
         return new Date(startDate.getTime());
     }
-    
-    public Date getEndDateAsDate(){
+
+    public Date getEndDateAsDate() {
         return new Date(endDate.getTime());
     }
 
@@ -159,39 +159,39 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
         this.booked = booked;
 
     }
-    
-    
-    
+
     public String getPrettifiedBooked() {
-        
+
         String pretty = String.valueOf(booked);
-        
-        if(pretty.length() <= 2){
-            pretty = "0." + pretty; 
-        }else{
+
+        if (pretty.length() == 1) {
+            pretty = "0.0" + pretty;
+        } else if (pretty.length() == 2) {
+            pretty = "0." + pretty;
+        } else {
             pretty = new StringBuilder(pretty).insert(pretty.length() - 2, '.').toString();
         }
-        
+
         return pretty;
     }
 
     public void setPrettifiedBooked(String booked) {
-        
+
         String[] parts = booked.replace(",", ".").split("\\.");
         booked = booked.replace(",", ".").replace(".", "");
-        
-        if(parts.length < 2){
+
+        if (parts.length < 2) {
             booked += "00";
         } else {
-            if(parts[1].length() == 0){
+            if (parts[1].length() == 0) {
                 booked += "00";
-            }else if(parts[1].length() == 1){
+            } else if (parts[1].length() == 1) {
                 booked += "0";
-            }else if(parts[1].length() > 2){
+            } else if (parts[1].length() > 2) {
                 booked = booked.substring(0, parts[0].length() + 2);
             }
         }
-        
+
         this.booked = Long.valueOf(booked);
     }
 

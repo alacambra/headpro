@@ -32,7 +32,12 @@ public class BookedResourceTest {
         cut.setBooked(1L);
         String pretty = cut.getPrettifiedBooked();
 
-        assertThat(pretty, is("0.1"));
+        assertThat(pretty, is("0.01"));
+        
+        cut.setBooked(9L);
+        pretty = cut.getPrettifiedBooked();
+
+        assertThat(pretty, is("0.09"));
 
         cut.setBooked(10L);
         pretty = cut.getPrettifiedBooked();
@@ -64,6 +69,9 @@ public class BookedResourceTest {
     public void testSetPrettifiedBooked() {
         cut.setPrettifiedBooked("0.1");
         assertThat(cut.getBooked(), is(10L));
+        
+        cut.setPrettifiedBooked("0.9");
+        assertThat(cut.getBooked(), is(90L));
         
         cut.setPrettifiedBooked("0.10");
         assertThat(cut.getBooked(), is(10L));
