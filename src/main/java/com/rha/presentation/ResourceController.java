@@ -1,6 +1,5 @@
 package com.rha.presentation;
 
-import com.rha.boundary.AvailableResourceFacade;
 import com.rha.control.CalendarEntriesGenerator;
 import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.control.LocalDateConverter;
@@ -35,9 +34,6 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     transient Logger logger;
 
     @Inject
-    AvailableResourceFacade availableResourceFacade;
-
-    @Inject
     CalendarPeriodsGenerator calendarPeriodsGenerator;
 
     @Inject
@@ -51,7 +47,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Step step = Step.BIWEEK;
 
-    public void loadAvailableResourcesForPeriod() {
+    public void loadResourcesForPeriod() {
 
         List<V> availableResources = getResourcesInPeriod();
         List<K> emptyKeys = getKeysWithoutValues();
@@ -73,16 +69,26 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
             Supplier<V> supplier = getResourceSupplierForKey(key);
 
-            List<V> resources = 
-                    calendarEntriesGenerator.getCalendarEntries(resourcesByKey.get(key), periods, supplier);
+            List<V> resources
+                    = calendarEntriesGenerator.getCalendarEntries(resourcesByKey.get(key), periods, supplier);
 
+            ResourcesRow<K, V> bookingRow = new ResourcesRow<>(resources, key);
+
+            bookingRow.setRowIsActive(rowIsActive(key));
             resourceRow.add(new ResourcesRow(resources, key));
         }
     }
 
+    protected boolean rowIsActive(K key) {
+        return true;
+    }
+
     protected abstract List<V> getResourcesInPeriod();
+
     protected abstract List<K> getKeysWithoutValues();
+
     protected abstract K collectResourceByKey(V value);
+
     protected abstract Supplier<V> getResourceSupplierForKey(K key);
 
     private void loadPeriods() {
@@ -93,7 +99,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
                 .generatePeriods();
     }
 
-    private void resetValues() {
+    protected void resetValues() {
         resourceRow = null;
         periods = null;
         totalResources = null;
@@ -102,7 +108,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
     public List<ResourcesRow<K, V>> getResourceRows() {
         if (resourceRow == null) {
-            loadAvailableResourcesForPeriod();
+            loadResourcesForPeriod();
         }
 
         return resourceRow;
@@ -121,9 +127,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
         }
     }
 
-    private LocalDate getDate(BookedResource br) {
-        return br.getStartDate();
-    }
+    protected abstract void updateOrCreateResource(List<V> resource);
 
     public void onCellEdit(CellEditEvent event) {
 
@@ -136,7 +140,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
         if (newValue != null && !newValue.equals(oldValue)) {
 
-            availableResourceFacade.updateOrCreateBookings(entity.getResources());
+            updateOrCreateResource(entity.getResources());
 
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
             FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -160,12 +164,17 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
     protected abstract void createAreaModel();
 
+    protected abstract List<PeriodTotal> getTotalResourcesInPeriod();
+
     public List<List<PeriodTotal>> getTotalAvailability() {
 
         if (totalResources == null) {
-            List<PeriodTotal> values
-                    = availableResourceFacade.getTotalAvailableResourcesInPeriod(startDate, endDate);
-
+            List<PeriodTotal> values = getTotalResourcesInPeriod();
+            
+            if (periods == null) {
+                loadPeriods();
+            }
+            
             totalResources = calendarEntriesGenerator.getCalendarEntries(values, periods, PeriodTotal::new);
 
         }

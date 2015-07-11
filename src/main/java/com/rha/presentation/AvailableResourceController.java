@@ -2,38 +2,20 @@ package com.rha.presentation;
 
 import com.rha.boundary.AvailableResourceFacade;
 import com.rha.boundary.ServiceFacade;
-import com.rha.control.CalendarEntriesGenerator;
-import com.rha.control.CalendarPeriodsGenerator;
-import com.rha.control.LocalDateConverter;
 import com.rha.entity.AvailableResource;
-import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Service;
 import com.rha.entity.Step;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
-import javax.enterprise.event.Observes;
-import static javax.enterprise.event.TransactionPhase.AFTER_SUCCESS;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import org.primefaces.event.CellEditEvent;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
@@ -52,11 +34,6 @@ public class AvailableResourceController extends ResourceController<Service, Ava
 
     @Inject
     ServiceFacade serviceFacade;
-
-    @Inject
-    transient CalendarEntriesGenerator calendarEntriesGenerator;
-
-    BarChartModel barModel;
 
     @Override
     protected List<AvailableResource> getResourcesInPeriod() {
@@ -142,4 +119,16 @@ public class AvailableResourceController extends ResourceController<Service, Ava
         yAxis.setLabel("Resources (hours)");
         yAxis.setMin(0);
     }
+
+    @Override
+    protected List<PeriodTotal> getTotalResourcesInPeriod() {
+        return availableResourceFacade.getTotalAvailableResourcesInPeriod(startDate, endDate);
+    }
+
+    @Override
+    protected void updateOrCreateResource(List<AvailableResource> resources) {
+        availableResourceFacade.updateOrCreateBookings(resources);
+    }
+    
+    
 }

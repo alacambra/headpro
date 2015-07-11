@@ -8,7 +8,6 @@ package com.rha.presentation;
 import com.rha.entity.Project;
 import java.time.LocalDate;
 import java.time.Month;
-import org.hamcrest.core.Is;
 import static org.hamcrest.core.Is.is;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class BookedResourceControllerTest {
         project.setStartLocalDate(LocalDate.of(2015, Month.JULY, 1));
         project.setEndLocalDate(LocalDate.of(2015, Month.JULY, 24));
         
-        assertThat(cut.projectIsActive(project), is(true));
+        assertThat(cut.rowIsActive(project), is(true));
     }
 
     @Test
