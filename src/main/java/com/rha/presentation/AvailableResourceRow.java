@@ -6,33 +6,33 @@
 package com.rha.presentation;
 
 import com.rha.entity.AvailableResource;
+import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Service;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  *
  * @author alacambra
+ * @param <T>
  */
-@SessionScoped
-public class AvailableResourceRow implements Serializable{
+public class AvailableResourceRow<T extends PeriodWithValue> implements Serializable{
 
     Service service;
-    List<AvailableResource> resources;
+    List<T> resources;
     
     @Inject
     transient Logger logger;
 
-    public AvailableResourceRow(List<AvailableResource> resources, Service service) {
+    public AvailableResourceRow(List<T> resources, Service service) {
         this.resources = resources;
         this.service = service;
     }
 
-    public List<AvailableResource> getResources() {
+    public List<T> getResources() {
         return resources;
     }
 

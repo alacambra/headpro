@@ -60,7 +60,7 @@ public class AvailableResourceController implements Serializable {
     transient CalendarEntriesGenerator calendarEntriesGenerator;
 
     List<LocalDate[]> periods;
-    List<AvailableResourceRow> availableResourceRow;
+    List<AvailableResourceRow<AvailableResource>> availableResourceRow;
     List<PeriodTotal> totalBooking;
     BarChartModel barModel;
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
@@ -119,7 +119,7 @@ public class AvailableResourceController implements Serializable {
         barModel = null;
     }
 
-    public List<AvailableResourceRow> getAvailableResourceRows() {
+    public List<AvailableResourceRow<AvailableResource>> getAvailableResourceRows() {
         if (availableResourceRow == null || disableCache) {
             loadAvailableResourcesForPeriod();
         }
