@@ -3,7 +3,6 @@ package com.rha.presentation;
 import com.rha.control.CalendarEntriesGenerator;
 import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.control.LocalDateConverter;
-import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Step;
@@ -72,15 +71,15 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
             List<V> resources
                     = calendarEntriesGenerator.getCalendarEntries(resourcesByKey.get(key), periods, supplier);
 
-            ResourcesRow<K, V> bookingRow = new ResourcesRow<>(resources, key);
+            ResourcesRow<K, V> row = new ResourcesRow<>(resources, key);
 
-            bookingRow.setRowIsActive(rowIsActive(key));
-            resourceRow.add(new ResourcesRow(resources, key));
+            row.setRowIsActive(rowIsActive(key));
+            resourceRow.add(row);
         }
     }
 
     protected boolean rowIsActive(K key) {
-        return true;
+        return false;
     }
 
     protected abstract List<V> getResourcesInPeriod();
