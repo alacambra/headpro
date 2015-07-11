@@ -1,7 +1,6 @@
 package com.rha.presentation;
 
 import com.rha.boundary.AvailableResourceFacade;
-import com.rha.boundary.ServiceFacade;
 import com.rha.control.CalendarEntriesGenerator;
 import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.control.LocalDateConverter;
@@ -37,9 +36,6 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
     @Inject
     AvailableResourceFacade availableResourceFacade;
-
-    @Inject
-    ServiceFacade serviceFacade;
 
     @Inject
     CalendarPeriodsGenerator calendarPeriodsGenerator;
@@ -162,64 +158,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
         return barModel;
     }
 
-    private void createAreaModel() {
-//        barModel = new BarChartModel();
-//        ChartSeries total = new ChartSeries();
-//        total.setLabel("Estimation of required work resources");
-//
-//        int size = resourceRow.size() * periods.size();
-//
-//        if (size < 1200) {
-//
-//            resourceRow.stream().forEach(row -> {
-//
-//                ChartSeries chartSerie = new ChartSeries();
-//                chartSerie.setLabel(row.getKey().getName());
-//
-//                row.getResources().stream().forEach(availableResource -> {
-//                    
-//                    String columnName = "";
-//                    
-//                    if(step == Step.WEEK){
-//                        WeekFields fields = WeekFields.of(Locale.GERMANY);
-//                        int kw = availableResource.getStartDate().get(fields.weekOfYear());
-//                        columnName = "CW" + kw;
-//                    }else{
-//                        columnName = Utils.defaultDateFormat(availableResource.getStartDateAsDate());
-//                    }
-//                    long available = Optional.ofNullable(availableResource.getAvailable()).orElse(0L);
-//                    Double d = 100D;
-//                    chartSerie.set(columnName, available);
-//                });
-//
-//                barModel.addSeries(chartSerie);
-//            });
-//        } else {
-//            ChartSeries chartSerie = new ChartSeries();
-//            chartSerie.setLabel("total");
-//
-//            int i = 0;
-//            for (PeriodTotal value : totalResources) {
-//                chartSerie.set(Utils.defaultDateFormat(value.getStartDateAsDate()), value.getTotal());
-//            }
-//            barModel.addSeries(chartSerie);
-//        }
-//
-//        barModel.setTitle("Available resources");
-//        barModel.setLegendPosition("ne");
-//        barModel.setStacked(true);
-//        barModel.setShowPointLabels(true);
-//        barModel.setZoom(true);
-//
-//        Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
-//        xAxis.setTickAngle(90);
-//
-//        barModel.getAxes().put(AxisType.X, xAxis);
-//        Axis yAxis = barModel.getAxis(AxisType.Y);
-//
-//        yAxis.setLabel("Resources (hours)");
-//        yAxis.setMin(0);
-    }
+    protected abstract void createAreaModel();
 
     public List<List<PeriodTotal>> getTotalAvailability() {
 

@@ -42,7 +42,7 @@ import org.primefaces.model.chart.ChartSeries;
 
 @Named("arc")
 @SessionScoped
-public class AvailableResourceController implements Serializable {
+public class AvailableResourceController extends ResourceController<Service, AvailableResource> implements Serializable {
 
     @Inject
     transient Logger logger;
@@ -54,139 +54,46 @@ public class AvailableResourceController implements Serializable {
     ServiceFacade serviceFacade;
 
     @Inject
-    CalendarPeriodsGenerator calendarPeriodsGenerator;
-
-    @Inject
     transient CalendarEntriesGenerator calendarEntriesGenerator;
 
-    List<LocalDate[]> periods;
-    List<ResourcesRow<Service, AvailableResource>> availableResourceRow;
-    List<PeriodTotal> totalBooking;
     BarChartModel barModel;
-    LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
-    LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
-    Step step = Step.BIWEEK;
-    private boolean disableCache = false;
 
-    public void loadAvailableResourcesForPeriod() {
+    @Override
+    protected List<AvailableResource> getResourcesInPeriod() {
+        return availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
+    }
 
-        List<AvailableResource> availableResources
-                = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
+    @Override
+    protected List<Service> getKeysWithoutValues() {
+        return serviceFacade.findAll();
+    }
 
-        List<Service> emptyServices = serviceFacade.findAll();
+    @Override
+    protected Service collectResourceByKey(AvailableResource value) {
+        return value.getService();
+    }
 
-        final Map<Service, List<AvailableResource>> resourcesByService
-                = availableResources.stream().collect(groupingBy(ar -> ar.getService()));
-
-        emptyServices.stream().forEach(servcie -> {
-            resourcesByService.putIfAbsent(servcie, new ArrayList<>());
-        });
-
-        availableResourceRow = new ArrayList<>();
-
-        if (periods == null) {
-            loadPeriods();
-        }
-
-        for (Service service : resourcesByService.keySet()) {
-
-            Supplier<AvailableResource> supplier = () -> {
+    @Override
+    protected Supplier<AvailableResource> getResourceSupplierForKey(Service key) {
+        return  () -> {
                 AvailableResource ar = new AvailableResource();
                 ar.setPersisted(false);
-                ar.setService(service);
+                ar.setService(key);
                 return ar;
             };
-
-            List<AvailableResource> resources = calendarEntriesGenerator
-                    .getCalendarEntries(resourcesByService.get(service), periods, supplier);
-
-            availableResourceRow.add(new ResourcesRow(resources, service));
-        }
     }
 
-    private void loadPeriods() {
-        periods = calendarPeriodsGenerator
-                .setStartDate(startDate)
-                .setEndDate(endDate)
-                .setStep(step)
-                .generatePeriods();
-    }
-
-    private void resetValues() {
-        availableResourceRow = null;
-        periods = null;
-        totalBooking = null;
-        barModel = null;
-    }
-
-    public List<ResourcesRow<Service, AvailableResource>> getAvailableResourceRows() {
-        if (availableResourceRow == null || disableCache) {
-            loadAvailableResourcesForPeriod();
-        }
-
-        return availableResourceRow;
-    }
-
-    public List<String> getPeriods() {
-
-        if (periods == null || disableCache) {
-            loadPeriods();
-        }
-
-        if(step == Step.WEEK){
-            return periods.stream().map(period -> "CW" + Utils.getCalenderWeekOf(period[0]) + " (" + Utils.defaultDateFormat(period[0]) + ")").collect(toList());
-        } else {
-            return periods.stream().map(period -> Utils.defaultDateFormat(period[0])).collect(toList());
-        }
-    }
-
-    private LocalDate getDate(BookedResource br) {
-        return br.getStartDate();
-    }
-
-    public void onCellEdit(CellEditEvent event) {
-
-        Object oldValue = event.getOldValue();
-        Object newValue = event.getNewValue();
-
-        FacesContext context = FacesContext.getCurrentInstance();
-        ResourcesRow entity = 
-                context.getApplication().evaluateExpressionGet(context, "#{availableResource}", ResourcesRow.class);
-
-        if (newValue != null && !newValue.equals(oldValue)) {
-
-            availableResourceFacade.updateOrCreateBookings(entity.getResources());
-
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-
-            barModel = null;
-            totalBooking = null;
-        } else {
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cell not changed", "Old: " + oldValue + ", New:" + newValue);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-        }
-    }
-
-    public BarChartModel getAreaModel() {
-
-        if (barModel == null || disableCache) {
-            createAreaModel();
-        }
-
-        return barModel;
-    }
-
-    private void createAreaModel() {
+    @Override
+    protected void createAreaModel() {
         barModel = new BarChartModel();
         ChartSeries total = new ChartSeries();
         total.setLabel("Estimation of required work resources");
 
-        int size = availableResourceRow.size() * periods.size();
+        int size = resourceRow.size() * periods.size();
 
         if (size < 1200) {
 
-            availableResourceRow.stream().forEach(row -> {
+            resourceRow.stream().forEach(row -> {
 
                 ChartSeries chartSerie = new ChartSeries();
                 chartSerie.setLabel(row.getKey().getName());
@@ -214,7 +121,7 @@ public class AvailableResourceController implements Serializable {
             chartSerie.setLabel("total");
 
             int i = 0;
-            for (PeriodTotal value : totalBooking) {
+            for (PeriodTotal value : totalResources) {
                 chartSerie.set(Utils.defaultDateFormat(value.getStartDateAsDate()), value.getTotal());
             }
             barModel.addSeries(chartSerie);
@@ -234,62 +141,5 @@ public class AvailableResourceController implements Serializable {
 
         yAxis.setLabel("Resources (hours)");
         yAxis.setMin(0);
-    }
-
-    public List<List<PeriodTotal>> getTotalAvailability() {
-
-        if (totalBooking == null || disableCache) {
-            List<PeriodTotal> values
-                    = availableResourceFacade.getTotalAvailableResourcesInPeriod(startDate, endDate);
-
-            totalBooking = calendarEntriesGenerator.getCalendarEntries(values, periods, PeriodTotal::new);
-
-        }
-
-        List<List<PeriodTotal>> r = new ArrayList();
-        r.add(totalBooking);
-        logger.log(Level.FINE, totalBooking.toString());
-
-        return r;
-    }
-    
-    public void updateResources(@Observes(during=AFTER_SUCCESS)  ProjectEvent projectEvent){
-        resetValues();
-    }
-
-    public void updateResources(@Observes(during=AFTER_SUCCESS) ServiceEvent serviceEvent){
-        resetValues();
-    }
-    
-    public Date getStartDate() {
-        return LocalDateConverter.toDate(startDate);
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = LocalDateConverter.toLocalDate(startDate);
-    }
-
-    public Date getEndDate() {
-        return LocalDateConverter.toDate(endDate);
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = LocalDateConverter.toLocalDate(endDate);
-    }
-
-    public void dateChanged() {
-        resetValues();
-    }
-
-    public Step getStep() {
-        return step;
-    }
-
-    public void setStep(Step step) {
-        this.step = step;
-    }
-
-    public List<Step> getSteps() {
-        return Arrays.asList(Step.values());
     }
 }
