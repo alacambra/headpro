@@ -136,7 +136,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
         FacesContext context = FacesContext.getCurrentInstance();
         ResourcesRow entity
-                = context.getApplication().evaluateExpressionGet(context, "#{availableResource}", ResourcesRow.class);
+                = context.getApplication().evaluateExpressionGet(context, "#{resources}", ResourcesRow.class);
 
         if (newValue != null && !newValue.equals(oldValue)) {
 
@@ -166,7 +166,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
     protected abstract List<PeriodTotal> getTotalResourcesInPeriod();
 
-    public List<List<PeriodTotal>> getTotalAvailability() {
+    public List<List<PeriodTotal>> getTotalResources() {
 
         if (totalResources == null) {
             List<PeriodTotal> values = getTotalResourcesInPeriod();

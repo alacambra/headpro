@@ -45,8 +45,8 @@
             <h:form id="form">
                 <p:growl id="msgs" showDetail="true"/>
 
-                <p:dataTable id="availableResource" 
-                             var="availableResource" 
+                <p:dataTable id="resourcesId" 
+                             var="resources" 
                              value="#{arc.resourceRows}" 
                              editable="true"
                              editMode="cell" 
@@ -56,17 +56,17 @@
                     <p:ajax event="cellEdit" listener="#{arc.onCellEdit}" update=":form:msgs,:totalAvailabilities,:graph" />
 
                     <p:column headerText="Service name" width="100">
-                        <h:outputText value="#{availableResource.key.name}"></h:outputText>
+                        <h:outputText value="#{resources.key.name}"></h:outputText>
                     </p:column>
 
                     <c:forEach items="${arc.periods}" var="item" varStatus="counter">
                         <p:column headerText="${item.toString()}" width="70"  styleClass="wrap">
                             <p:cellEditor>
                                 <f:facet name="output">
-                                    <h:outputText value="#{availableResource.resources.get(counter.index).available}"/>
+                                    <h:outputText value="#{resources.resources.get(counter.index).available}"/>
                                 </f:facet>
                                 <f:facet name="input">
-                                    <p:inputText value="#{availableResource.resources.get(counter.index).available}" style="width:96%" label="Year"/></f:facet>
+                                    <p:inputText value="#{resources.resources.get(counter.index).available}" style="width:96%" label="Year"/></f:facet>
                             </p:cellEditor>
                         </p:column>
                     </c:forEach>
@@ -74,7 +74,7 @@
             </h:form>
             <p:dataTable id="totalAvailabilities" 
                          var="totalAvailability" 
-                         value="#{arc.totalAvailability}" 
+                         value="#{arc.totalResources}" 
                          editable="true"
                          editMode="cell" 
                          widgetVar="totalAvailability">
