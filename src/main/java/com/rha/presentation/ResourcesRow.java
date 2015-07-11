@@ -5,46 +5,48 @@
  */
 package com.rha.presentation;
 
-import com.rha.entity.AvailableResource;
 import com.rha.entity.PeriodWithValue;
-import com.rha.entity.Service;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-/**
- *
- * @author alacambra
- * @param <T>
- */
-public class AvailableResourceRow<T extends PeriodWithValue> implements Serializable{
+public class ResourcesRow<K, T extends PeriodWithValue> implements Serializable{
 
-    Service service;
+    K key;
     List<T> resources;
     
     @Inject
     transient Logger logger;
+    private boolean rowIsActive;
 
-    public AvailableResourceRow(List<T> resources, Service service) {
+    public ResourcesRow(List<T> resources, K service) {
         this.resources = resources;
-        this.service = service;
+        this.key = service;
     }
 
     public List<T> getResources() {
         return resources;
     }
 
-    public Service getService() {
-        return service;
+    public K getKey() {
+        return key;
+    }
+    
+    public boolean isRowIsActive() {
+        return rowIsActive;
+    }
+
+    public void setRowIsActive(boolean rowIsActive) {
+        this.rowIsActive = rowIsActive;
     }
     
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof AvailableResourceRow) {
-            final AvailableResourceRow other = (AvailableResourceRow) obj;
-            return service.equals(other.getService());
+        if (obj instanceof ResourcesRow) {
+            final ResourcesRow other = (ResourcesRow) obj;
+            return key.equals(other.getKey());
         } else {
             return false;
         }
@@ -52,6 +54,6 @@ public class AvailableResourceRow<T extends PeriodWithValue> implements Serializ
     
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(service).append(resources).toHashCode();
+        return new HashCodeBuilder().append(key).append(resources).toHashCode();
     }
 }

@@ -60,7 +60,7 @@ public class AvailableResourceController implements Serializable {
     transient CalendarEntriesGenerator calendarEntriesGenerator;
 
     List<LocalDate[]> periods;
-    List<AvailableResourceRow<AvailableResource>> availableResourceRow;
+    List<ResourcesRow<Service, AvailableResource>> availableResourceRow;
     List<PeriodTotal> totalBooking;
     BarChartModel barModel;
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
@@ -100,7 +100,7 @@ public class AvailableResourceController implements Serializable {
             List<AvailableResource> resources = calendarEntriesGenerator
                     .getCalendarEntries(resourcesByService.get(service), periods, supplier);
 
-            availableResourceRow.add(new AvailableResourceRow(resources, service));
+            availableResourceRow.add(new ResourcesRow(resources, service));
         }
     }
 
@@ -119,7 +119,7 @@ public class AvailableResourceController implements Serializable {
         barModel = null;
     }
 
-    public List<AvailableResourceRow<AvailableResource>> getAvailableResourceRows() {
+    public List<ResourcesRow<Service, AvailableResource>> getAvailableResourceRows() {
         if (availableResourceRow == null || disableCache) {
             loadAvailableResourcesForPeriod();
         }
@@ -150,8 +150,8 @@ public class AvailableResourceController implements Serializable {
         Object newValue = event.getNewValue();
 
         FacesContext context = FacesContext.getCurrentInstance();
-        AvailableResourceRow entity = 
-                context.getApplication().evaluateExpressionGet(context, "#{availableResource}", AvailableResourceRow.class);
+        ResourcesRow entity = 
+                context.getApplication().evaluateExpressionGet(context, "#{availableResource}", ResourcesRow.class);
 
         if (newValue != null && !newValue.equals(oldValue)) {
 
@@ -189,7 +189,7 @@ public class AvailableResourceController implements Serializable {
             availableResourceRow.stream().forEach(row -> {
 
                 ChartSeries chartSerie = new ChartSeries();
-                chartSerie.setLabel(row.getService().getName());
+                chartSerie.setLabel(row.getKey().getName());
 
                 row.getResources().stream().forEach(availableResource -> {
                     

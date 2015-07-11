@@ -13,7 +13,6 @@ import com.rha.entity.Project;
 import com.rha.entity.Service;
 import com.rha.entity.Step;
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
@@ -71,7 +70,7 @@ public class BookedResourceController implements Serializable {
     transient CalendarEntriesGenerator calendarEntriesGenerator;
 
     List<LocalDate[]> periods;
-    List<BookingRow> bookingRows;
+    List<ResourcesRow<Project, BookedResource>> bookingRows;
     List<PeriodTotal> totalBooking;
     BarChartModel barModel;
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
@@ -124,10 +123,7 @@ public class BookedResourceController implements Serializable {
             List<BookedResource> resources = calendarEntriesGenerator
                     .getCalendarEntries(resourcesByProject.get(project), periods, supplier);
 
-            BookingRow bookingRow = new BookingRow(
-                    project,
-                    resources,
-                    serviceFacade.find(1));
+            ResourcesRow<Project, BookedResource> bookingRow = new ResourcesRow<>(resources, project);
 
             bookingRow.setRowIsActive(projectIsActive(project));
             bookingRows.add(bookingRow);
@@ -156,7 +152,7 @@ public class BookedResourceController implements Serializable {
         barModel = null;
     }
 
-    public List<BookingRow> getBookingRow() {
+    public List<ResourcesRow<Project, BookedResource>> getBookingRow() {
         if (bookingRows == null || disableCache) {
             loadBookedResourcesForPeriod();
         }
@@ -187,7 +183,7 @@ public class BookedResourceController implements Serializable {
         Object newValue = event.getNewValue();
 
         FacesContext context = FacesContext.getCurrentInstance();
-        BookingRow entity = context.getApplication().evaluateExpressionGet(context, "#{booking}", BookingRow.class);
+        ResourcesRow<Project, BookedResource> entity = context.getApplication().evaluateExpressionGet(context, "#{booking}", ResourcesRow.class);
 
         if (newValue != null && !newValue.equals(oldValue)) {
 
@@ -230,7 +226,7 @@ public class BookedResourceController implements Serializable {
             bookingRows.stream().forEach(row -> {
 
                 ChartSeries chartSerie = new ChartSeries();
-                chartSerie.setLabel(row.getProject().getName());
+                chartSerie.setLabel(row.getKey().getName());
 
                 row.getResources().stream().forEach(bookedResource -> {
                     
