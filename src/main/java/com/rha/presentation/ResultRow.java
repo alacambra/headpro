@@ -42,9 +42,9 @@ public class ResultRow implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof AvailableResourceRow) {
-            final AvailableResourceRow other = (AvailableResourceRow) obj;
-            return service.equals(other.getService());
+        if (obj instanceof ResourcesRow) {
+            final ResourcesRow other = (ResourcesRow) obj;
+            return service.equals(other.getKey());
         } else {
             return false;
         }
