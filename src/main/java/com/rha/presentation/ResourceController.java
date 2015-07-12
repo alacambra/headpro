@@ -9,11 +9,14 @@ import com.rha.entity.Step;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +28,11 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import org.primefaces.event.CellEditEvent;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
+import org.primefaces.model.chart.CategoryAxis;
+import org.primefaces.model.chart.ChartSeries;
 
 public abstract class ResourceController<K, V extends PeriodWithValue> implements Serializable {
 
@@ -41,7 +48,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     List<LocalDate[]> periods;
     List<ResourcesRow<K, V>> resourceRow;
     List<PeriodTotal> totalResources;
-    BarChartModel barModel;
+    BarChartModel resourcesGraph;
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Step step = Step.BIWEEK;
@@ -102,7 +109,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
         resourceRow = null;
         periods = null;
         totalResources = null;
-        barModel = null;
+        resourcesGraph = null;
     }
 
     public List<ResourcesRow<K, V>> getResourceRows() {
@@ -144,7 +151,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
             FacesContext.getCurrentInstance().addMessage(null, msg);
 
-            barModel = null;
+            resourcesGraph = null;
             totalResources = null;
         } else {
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cell not changed", "Old: " + oldValue + ", New:" + newValue);
@@ -154,14 +161,73 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
     public BarChartModel getAreaModel() {
 
-        if (barModel == null) {
-            createAreaModel();
+        if (resourcesGraph == null) {
+            createResourcesGraph();
         }
 
-        return barModel;
+        return resourcesGraph;
     }
 
-    protected abstract void createAreaModel();
+    protected void createResourcesGraph(){
+        resourcesGraph = new BarChartModel();
+        ChartSeries total = new ChartSeries();
+        total.setLabel("Estimation of required work resources");
+
+        int size = resourceRow.size() * periods.size();
+
+        if (size < 1200) {
+
+            resourceRow.stream().forEach(row -> {
+
+                ChartSeries chartSerie = new ChartSeries();
+                chartSerie.setLabel(row.getTitle());
+
+                row.getResources().stream().forEach(resource -> {
+
+                    String columnName;
+                    long booked = Optional.ofNullable(resource.getValue()).orElse(0L);
+
+                    if (step == Step.WEEK) {
+                        WeekFields fields = WeekFields.of(Locale.GERMANY);
+                        int kw = resource.getStartDate().get(fields.weekOfYear());
+                        columnName = "CW" + kw;
+                    } else {
+                        columnName = Utils.defaultDateFormat(LocalDateConverter.toDate(resource.getStartDate()));
+                    }
+
+                    Double d = 100D;
+                    chartSerie.set(columnName, booked);
+                });
+
+                resourcesGraph.addSeries(chartSerie);
+            });
+        } else {
+            ChartSeries chartSerie = new ChartSeries();
+            chartSerie.setLabel("total");
+
+            int i = 0;
+            for (PeriodTotal value : totalResources) {
+                chartSerie.set(value.getStartDate(), value.getTotal());
+            }
+            resourcesGraph.addSeries(chartSerie);
+        }
+
+        resourcesGraph.setTitle(getResourcesGraphTitle());
+        resourcesGraph.setLegendPosition("ne");
+        resourcesGraph.setStacked(true);
+        resourcesGraph.setShowPointLabels(true);
+        resourcesGraph.setZoom(true);
+
+        Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
+        xAxis.setTickAngle(90);
+
+        resourcesGraph.getAxes().put(AxisType.X, xAxis);
+        Axis yAxis = resourcesGraph.getAxis(AxisType.Y);
+
+        yAxis.setLabel("Resources (hours)");
+    }
+    
+    protected abstract String getResourcesGraphTitle();
 
     protected abstract List<PeriodTotal> getTotalResourcesInPeriod();
 

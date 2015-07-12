@@ -16,6 +16,7 @@ public class ResourcesRow<K, T extends PeriodWithValue> implements Serializable{
 
     K key;
     List<T> resources;
+    String title;
     
     @Inject
     transient Logger logger;
@@ -40,6 +41,22 @@ public class ResourcesRow<K, T extends PeriodWithValue> implements Serializable{
 
     public void setRowIsActive(boolean rowIsActive) {
         this.rowIsActive = rowIsActive;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    public void setLogger(Logger logger) {
+        this.logger = logger;
     }
     
     @Override
