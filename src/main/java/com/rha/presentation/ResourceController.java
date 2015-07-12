@@ -206,9 +206,9 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
             chartSerie.setLabel("total");
 
             int i = 0;
-            for (PeriodTotal value : totalResources) {
+            totalResources.stream().forEach((value) -> {
                 chartSerie.set(value.getStartDate(), value.getTotal());
-            }
+            });
             resourcesGraph.addSeries(chartSerie);
         }
 
@@ -225,6 +225,14 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
         Axis yAxis = resourcesGraph.getAxis(AxisType.Y);
 
         yAxis.setLabel("Resources (hours)");
+        
+        
+//         resourcesGraph = new ResourcesGraph<K, V>()
+//                    .setGraphTitle(getResourcesGraphTitle())
+//                    .setPeriods(periods)
+//                    .setResourcesRows(resourcesRows)
+//                    .setTotalResources(totalResources)
+//                    .createResourcesGraph();
     }
     
     protected abstract String getResourcesGraphTitle();
