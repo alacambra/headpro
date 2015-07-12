@@ -46,7 +46,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     transient CalendarEntriesGenerator calendarEntriesGenerator;
 
     List<LocalDate[]> periods;
-    List<ResourcesRow<K, V>> resourceRow;
+    List<ResourcesRow<K, V>> resourcesRows;
     List<PeriodTotal> totalResources;
     BarChartModel resourcesGraph;
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
@@ -65,24 +65,24 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
             resourcesByKey.putIfAbsent(servcie, new ArrayList<>());
         });
 
-        resourceRow = new ArrayList<>();
+        resourcesRows = new ArrayList<>();
 
         if (periods == null) {
             loadPeriods();
         }
 
-        for (K key : resourcesByKey.keySet()) {
+        resourcesRows = resourcesByKey.keySet().stream()
+                .map(key -> generateRow(key, resourcesByKey))
+                .collect(toList());
+    }
 
-            Supplier<V> supplier = getResourceSupplierForKey(key);
-
-            List<V> resources
-                    = calendarEntriesGenerator.getCalendarEntries(resourcesByKey.get(key), periods, supplier);
-
-            ResourcesRow<K, V> row = new ResourcesRow<>(resources, key);
-
-            row.setRowIsActive(rowIsActive(key));
-            resourceRow.add(row);
-        }
+    ResourcesRow<K, V> generateRow(K key, Map<K, List<V>> resourcesByKey) {
+        Supplier<V> supplier = getResourceSupplierForKey(key);
+        List<V> resources
+                = calendarEntriesGenerator.getCalendarEntries(resourcesByKey.get(key), periods, supplier);
+        ResourcesRow<K, V> row = new ResourcesRow<>(resources, key);
+        row.setRowIsActive(rowIsActive(key));
+        return row;
     }
 
     protected boolean rowIsActive(K key) {
@@ -106,18 +106,18 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     }
 
     protected void resetValues() {
-        resourceRow = null;
+        resourcesRows = null;
         periods = null;
         totalResources = null;
         resourcesGraph = null;
     }
 
     public List<ResourcesRow<K, V>> getResourceRows() {
-        if (resourceRow == null) {
+        if (resourcesRows == null) {
             loadResourcesForPeriod();
         }
 
-        return resourceRow;
+        return resourcesRows;
     }
 
     public List<String> getPeriods() {
@@ -168,16 +168,16 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
         return resourcesGraph;
     }
 
-    protected void createResourcesGraph(){
+    protected void createResourcesGraph() {
         resourcesGraph = new BarChartModel();
         ChartSeries total = new ChartSeries();
         total.setLabel("Estimation of required work resources");
 
-        int size = resourceRow.size() * periods.size();
+        int size = resourcesRows.size() * periods.size();
 
         if (size < 1200) {
 
-            resourceRow.stream().forEach(row -> {
+            resourcesRows.stream().forEach(row -> {
 
                 ChartSeries chartSerie = new ChartSeries();
                 chartSerie.setLabel(row.getTitle());
@@ -235,11 +235,11 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
         if (totalResources == null) {
             List<PeriodTotal> values = getTotalResourcesInPeriod();
-            
+
             if (periods == null) {
                 loadPeriods();
             }
-            
+
             totalResources = calendarEntriesGenerator.getCalendarEntries(values, periods, PeriodTotal::new);
 
         }
