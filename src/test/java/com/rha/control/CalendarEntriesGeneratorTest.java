@@ -74,17 +74,17 @@ public class CalendarEntriesGeneratorTest {
         List<PeriodTotal> totals = cut.getCalendarEntries(periodicEntities, periods, supplier);
         assertThat(totals.size(), Is.is(totalPeriods));
         
-        assertThat(totals.get(0).getTotal(), Is.is(10L));
-        assertThat(totals.get(4).getTotal(), Is.is(20L));
-        assertThat(totals.get(10).getTotal(), Is.is(30L));
-        assertThat(totals.get(11).getTotal(), Is.is(40L));
+        assertThat(totals.get(0).getTotal(), Is.is(10f));
+        assertThat(totals.get(4).getTotal(), Is.is(20f));
+        assertThat(totals.get(10).getTotal(), Is.is(30f));
+        assertThat(totals.get(11).getTotal(), Is.is(40f));
         
         totals.stream()
                 .filter(t -> t != totals.get(0))
                 .filter(t -> t != totals.get(4))
                 .filter(t -> t != totals.get(10))
                 .filter(t -> t != totals.get(11))
-                .forEach(t -> assertThat(t.getTotal(), Is.is(0L)));
+                .forEach(t -> assertThat(t.getTotal(), Is.is(0f)));
     }
 
 }
