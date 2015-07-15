@@ -32,6 +32,10 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal> {
         }
         this.total = total;
     }
+    
+     public PeriodTotal(Date startDate, Date endDate, Double total) {
+        this(startDate, endDate, new Float(total));
+    }
 
     public PeriodTotal(Date startDate, Float total) {
         this.startDate = LocalDateConverter.toLocalDate(startDate);
