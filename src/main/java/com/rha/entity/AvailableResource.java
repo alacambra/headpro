@@ -9,7 +9,6 @@ import com.rha.control.LocalDateConverter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -89,6 +88,7 @@ public class AvailableResource implements Serializable, PeriodWithValue {
         this.service = service;
     }
 
+    @Override
     public LocalDate getStartDate() {
         if (startDate != null) {
             return LocalDateConverter.toLocalDate(startDate);
@@ -101,6 +101,7 @@ public class AvailableResource implements Serializable, PeriodWithValue {
         this.startDate = LocalDateConverter.toDate(startDate);
     }
 
+    @Override
     public LocalDate getEndDate() {
         if (endDate != null) {
             return LocalDateConverter.toLocalDate(endDate);
@@ -129,40 +130,6 @@ public class AvailableResource implements Serializable, PeriodWithValue {
         this.available = available;
     }
     
-    public String getPrettifiedAvailable() {
-        
-        String pretty = String.valueOf(available);
-        
-        if(pretty.length() <= 2){
-            pretty = "0." + pretty; 
-        }else{
-            pretty = new StringBuilder(pretty).insert(pretty.length() - 2, '.').toString();
-        }
-        
-        return pretty;
-    }
-
-    public void setPrettifiedAvailable(String available) {
-        
-        String[] parts = available.replace(",", ".").split("\\.");
-        available = available.replace(",", ".").replace(".", "");
-        
-        if(parts.length < 2){
-            available += "00";
-        } else {
-            if(parts[1].length() == 0){
-                available += "00";
-            }else if(parts[1].length() == 1){
-                available += "0";
-            }else if(parts[1].length() > 2){
-                available = available.substring(0, parts[0].length() + 2);
-            }
-        }
-        
-        this.available = Float.valueOf(available);
-    }
-
-
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(id).toHashCode();

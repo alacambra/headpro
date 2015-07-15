@@ -121,6 +121,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
 
     }
 
+    @Override
     public LocalDate getStartDate() {
         if (startDate != null) {
             return LocalDateConverter.toLocalDate(startDate);
@@ -133,6 +134,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
         this.startDate = LocalDateConverter.toDate(startDate);
     }
 
+    @Override
     public LocalDate getEndDate() {
         if (endDate != null) {
             return LocalDateConverter.toLocalDate(endDate);
@@ -161,45 +163,12 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
         this.booked = booked == null ? 0 : booked;
     }
 
-    public String getPrettifiedBooked() {
-
-        String pretty = String.valueOf(booked);
-
-        if (pretty.length() == 1) {
-            pretty = "0.0" + pretty;
-        } else if (pretty.length() == 2) {
-            pretty = "0." + pretty;
-        } else {
-            pretty = new StringBuilder(pretty).insert(pretty.length() - 2, '.').toString();
-        }
-
-        return pretty;
-    }
-
-    public void setPrettifiedBooked(String booked) {
-
-        String[] parts = booked.replace(",", ".").split("\\.");
-        booked = booked.replace(",", ".").replace(".", "");
-
-        if (parts.length < 2) {
-            booked += "00";
-        } else {
-            if (parts[1].length() == 0) {
-                booked += "00";
-            } else if (parts[1].length() == 1) {
-                booked += "0";
-            } else if (parts[1].length() > 2) {
-                booked = booked.substring(0, parts[0].length() + 2);
-            }
-        }
-
-        this.booked = Float.valueOf(booked);
-    }
-
+    @Override
     public Integer getPosition() {
         return position;
     }
 
+    @Override
     public void setPosition(int position) {
         this.position = position;
 
