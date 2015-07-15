@@ -32,8 +32,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
     @NamedQuery(name = AvailableResource.totalAvailabiltyInPeriod, query
             = "SELECT new com.rha.entity.PeriodTotal(ar.startDate, ar.endDate, sum(ar.available))"
             + "FROM AvailableResource ar "
-            + "WHERE "
-            + "ar.startDate>=:startDate AND ar.endDate<=:endDate "
+            + "WHERE ((ar.startDate>=:startDate AND ar.startDate<=:endDate)"
+            + " OR (ar.endDate>=:startDate AND ar.endDate<=:endDate) "
+            + " OR (ar.startDate<=:startDate AND ar.endDate>=:endDate))  "
             + "group by ar.startDate, ar.endDate order by ar.startDate"),})
 
 public class AvailableResource implements Serializable, PeriodWithValue {
