@@ -9,6 +9,7 @@ import com.rha.control.LocalDateConverter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -55,7 +56,7 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     @Temporal(TemporalType.DATE)
     Date endDate;
 
-    Long available = 0L;
+    float available = 0;
 
     @Transient
     private boolean persisted = true;
@@ -120,11 +121,11 @@ public class AvailableResource implements Serializable, PeriodWithValue {
         return new Date(endDate.getTime());
     }
 
-    public Long getAvailable() {
+    public Float getAvailable() {
         return available;
     }
 
-    public void setAvailable(Long available) {
+    public void setAvailable(Float available) {
         this.available = available;
     }
     
@@ -158,7 +159,7 @@ public class AvailableResource implements Serializable, PeriodWithValue {
             }
         }
         
-        this.available = Long.valueOf(available);
+        this.available = Float.valueOf(available);
     }
 
 
@@ -190,7 +191,7 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     }
 
     @Override
-    public void setValue(Long o) {
+    public void setValue(Float o) {
         setAvailable(o);
     }
 
@@ -201,7 +202,7 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     }
 
     @Override
-    public Long getValue() {
+    public Float getValue() {
         return available;
     }
 

@@ -16,10 +16,10 @@ public interface PeriodWithValue {
     Integer getPosition();
     LocalDate getStartDate();
     LocalDate getEndDate();
-    Long getValue();
+    Float getValue();
     
     void setPosition(int position);
-    void setValue(Long o);
+    void setValue(Float o);
     void setPeriod(LocalDate[] period);
     
 

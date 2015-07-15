@@ -16,7 +16,7 @@ public class RemainingResource implements PeriodWithValue {
     private Integer position;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Long total;
+    private Float total;
     private Service service;
 
     @Override
@@ -40,7 +40,7 @@ public class RemainingResource implements PeriodWithValue {
     }
 
     @Override
-    public void setValue(Long o) {
+    public void setValue(Float o) {
         this.total = o;
     }
 
@@ -55,7 +55,7 @@ public class RemainingResource implements PeriodWithValue {
     }
 
     @Override
-    public Long getValue() {
+    public Float getValue() {
         return this.total;
     }
 

@@ -97,7 +97,7 @@ public class AvailableResourceFacadeIT {
         ar.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         ar.setEndDate(LocalDate.of(2015, Month.MARCH, 1).plusMonths(1));
         ar.setService(s);
-        ar.setAvailable(50L);
+        ar.setAvailable(50f);
         em.merge(ar);
 
         s = createService();
@@ -105,7 +105,7 @@ public class AvailableResourceFacadeIT {
         ar.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         ar.setEndDate(LocalDate.of(2015, Month.MARCH, 1).plusMonths(1));
         ar.setService(s);
-        ar.setAvailable(5L);
+        ar.setAvailable(5f);
         em.merge(ar);
 
         tx.commit();
@@ -140,7 +140,7 @@ public class AvailableResourceFacadeIT {
         assertThat(ar.isPersisted(), is(false));
         assertThat(result.size(), is(0));
 
-        ar.setAvailable(50L);
+        ar.setAvailable(50f);
 
         cut.updateOrCreateBookings(Arrays.asList(ar));
 
@@ -155,7 +155,7 @@ public class AvailableResourceFacadeIT {
         tx.commit();
         tx.begin();
         
-        ar.setAvailable(10L);
+        ar.setAvailable(10f);
         cut.updateOrCreateBookings(Arrays.asList(ar));
         
         assertThat(ar.isPersisted(), is(true));

@@ -16,7 +16,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import static org.hamcrest.core.Is.is;
 import org.junit.After;
@@ -65,7 +64,7 @@ public class BookedResourceFacadeIT {
         p = em.merge(p);
 
         BookedResource br = new BookedResource();
-        br.setBooked(10L);
+        br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
@@ -74,7 +73,7 @@ public class BookedResourceFacadeIT {
         cut.create(br);
 
         br = new BookedResource();
-        br.setBooked(10L);
+        br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
         br.setEndDate(LocalDate.of(2015, Month.JULY, 30));
@@ -105,7 +104,7 @@ public class BookedResourceFacadeIT {
         p = em.merge(p);
 
         BookedResource br = new BookedResource();
-        br.setBooked(10L);
+        br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
@@ -114,7 +113,7 @@ public class BookedResourceFacadeIT {
         cut.create(br);
 
         br = new BookedResource();
-        br.setBooked(10L);
+        br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
         br.setEndDate(LocalDate.of(2015, Month.JULY, 30));
@@ -150,7 +149,7 @@ public class BookedResourceFacadeIT {
         p2 = em.merge(p2);
 
         BookedResource br = new BookedResource();
-        br.setBooked(10L);
+        br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
@@ -159,7 +158,7 @@ public class BookedResourceFacadeIT {
         cut.create(br);
 
         br = new BookedResource();
-        br.setBooked(15L);
+        br.setBooked(15f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
@@ -168,7 +167,7 @@ public class BookedResourceFacadeIT {
         cut.create(br);
 
         br = new BookedResource();
-        br.setBooked(30L);
+        br.setBooked(30f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
         br.setEndDate(LocalDate.of(2015, Month.JULY, 30));
@@ -199,7 +198,7 @@ public class BookedResourceFacadeIT {
         p = em.merge(p);
 
         BookedResource br = new BookedResource();
-        br.setBooked(10L);
+        br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
         br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));

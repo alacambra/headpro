@@ -173,8 +173,8 @@ public class ResultsController implements Serializable {
 
         int size = resultRows.size() * periods.size();
         
-        WrappedMuttableValue<Long> max = new WrappedMuttableValue<>(0L);
-        WrappedMuttableValue<Long> min = new WrappedMuttableValue<>(0L);
+        WrappedMuttableValue<Float> max = new WrappedMuttableValue<>(0f);
+        WrappedMuttableValue<Float> min = new WrappedMuttableValue<>(0f);
         
 
         if (size < 1200) {
@@ -185,7 +185,7 @@ public class ResultsController implements Serializable {
                 chartSerie.setLabel(row.getService().getName());
 
                 row.getResources().stream().forEach(remainingresource -> {
-                    long remainingResources = Optional.ofNullable(remainingresource.getValue()).orElse(0L);
+                    float remainingResources = Optional.ofNullable(remainingresource.getValue()).orElse(0f);
                     if(remainingResources < min.get()) min.set(remainingResources);
                     if(remainingResources > max.get()) max.set(remainingResources);
                     

@@ -52,7 +52,7 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
                 row.getResources().stream().forEach(resource -> {
 
                     String columnName;
-                    long booked = Optional.ofNullable(resource.getValue()).orElse(0L);
+                    float booked = Optional.ofNullable(resource.getValue()).orElse(0f);
 
                     if (step == Step.WEEK) {
                         WeekFields fields = WeekFields.of(Locale.GERMANY);

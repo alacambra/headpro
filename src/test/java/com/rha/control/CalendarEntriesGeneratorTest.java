@@ -53,22 +53,22 @@ public class CalendarEntriesGeneratorTest {
         periodicEntities.add(new PeriodTotal(
                 LocalDateConverter.toDate(periods.get(0)[0]), 
                 LocalDateConverter.toDate(periods.get(0)[1]), 
-                10L));
+                10f));
         
         periodicEntities.add(new PeriodTotal(
                 LocalDateConverter.toDate(periods.get(4)[0]), 
                 LocalDateConverter.toDate(periods.get(4)[1]), 
-                20L));
+                20f));
         
         periodicEntities.add(new PeriodTotal(
                 LocalDateConverter.toDate(periods.get(10)[0]), 
                 LocalDateConverter.toDate(periods.get(10)[1]), 
-                30L));
+                30f));
         
         periodicEntities.add(new PeriodTotal(
                 LocalDateConverter.toDate(periods.get(11)[0]), 
                 LocalDateConverter.toDate(periods.get(11)[1]), 
-                40L));
+                40f));
         
         
         List<PeriodTotal> totals = cut.getCalendarEntries(periodicEntities, periods, supplier);

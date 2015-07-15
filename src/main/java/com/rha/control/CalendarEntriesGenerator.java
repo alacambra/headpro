@@ -80,7 +80,7 @@ public class CalendarEntriesGenerator {
                 T entity = supplier.get();
                 entity.setPeriod(period);
                 entity.setPosition(i);
-                entity.setValue(0L);
+                entity.setValue(0f);
 
                 generatedEntries.add(entity);
             }
@@ -147,7 +147,7 @@ public class CalendarEntriesGenerator {
                 PeriodWithValue entity = supplier.get();
                 entity.setPeriod(period);
                 entity.setPosition(i);
-                entity.setValue(0L);
+                entity.setValue(0f);
 
                 generatedEntries.add(entity);
             }

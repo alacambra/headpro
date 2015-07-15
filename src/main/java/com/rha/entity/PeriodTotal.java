@@ -19,10 +19,10 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal> {
 
     LocalDate startDate;
     LocalDate endDate;
-    Long total;
+    Float total;
     int position = -1;
 
-    public PeriodTotal(Date startDate, Date endDate, Long total) {
+    public PeriodTotal(Date startDate, Date endDate, Float total) {
         if (startDate != null) {
             this.startDate = LocalDateConverter.toLocalDate(startDate);
         }
@@ -33,13 +33,13 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal> {
         this.total = total;
     }
 
-    public PeriodTotal(Date startDate, Long total) {
+    public PeriodTotal(Date startDate, Float total) {
         this.startDate = LocalDateConverter.toLocalDate(startDate);
         this.total = total;
     }
 
     public PeriodTotal() {
-        this.total = 0L;
+        this.total = 0f;
     }
 
     @Override
@@ -70,11 +70,11 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal> {
         return LocalDateConverter.toDate(endDate);
     }
 
-    public long getTotal() {
+    public Float getTotal() {
         return total;
     }
 
-    public PeriodTotal setTotal(long total) {
+    public PeriodTotal setTotal(Float total) {
         this.total = total;
         return this;
     }
@@ -90,7 +90,7 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal> {
     }
 
     @Override
-    public void setValue(Long o) {
+    public void setValue(Float o) {
         setTotal(o);
     }
 
@@ -122,10 +122,11 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal> {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.startDate);
-        hash = 97 * hash + Objects.hashCode(this.endDate);
-        hash = 97 * hash + (int) (this.total ^ (this.total >>> 32));
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.startDate);
+        hash = 53 * hash + Objects.hashCode(this.endDate);
+        hash = 53 * hash + Objects.hashCode(this.total);
+        hash = 53 * hash + this.position;
         return hash;
     }
 
@@ -152,7 +153,7 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal> {
     }
 
     @Override
-    public Long getValue() {
+    public Float getValue() {
         return this.total;
     }
 

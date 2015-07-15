@@ -79,7 +79,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     @Temporal(TemporalType.DATE)
     Date endDate;
 
-    Long booked = 0L;
+    Float booked = 0f;
 
     @Transient
     Integer position = 0;
@@ -153,11 +153,11 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
         return new Date(endDate.getTime());
     }
 
-    public Long getBooked() {
+    public Float getBooked() {
         return booked;
     }
 
-    public void setBooked(Long booked) {
+    public void setBooked(Float booked) {
         this.booked = booked == null ? 0 : booked;
     }
 
@@ -193,7 +193,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
             }
         }
 
-        this.booked = Long.valueOf(booked);
+        this.booked = Float.valueOf(booked);
     }
 
     public Integer getPosition() {
@@ -251,7 +251,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     }
 
     @Override
-    public void setValue(Long o) {
+    public void setValue(Float o) {
         setBooked(o);
     }
 
@@ -262,7 +262,7 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     }
 
     @Override
-    public Long getValue() {
+    public Float getValue() {
         return booked;
     }
 
