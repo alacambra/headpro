@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rha.presentation;
 
 import com.rha.boundary.ResultsFacade;
@@ -114,7 +109,7 @@ public class ResultsController implements Serializable {
             remainingResources.put(service, p.values().stream().sorted(new PeriodComparator()).collect(toList()));
 
             List<PeriodWithValue> resources = calendarEntriesGenerator
-                    .getCalendarEntriesRaw(remainingResources.get(service), periods, supplier);
+                    .getCalendarEntries(remainingResources.get(service), periods, supplier);
 
             resultRows.add(new ResultRow(resources, service));
         }

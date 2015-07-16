@@ -54,7 +54,6 @@
                     <p:growl id="msgs" showDetail="true"/>
 
                     <p:ajax event="cellEdit" listener="#{arc.onCellEdit}" update=":form:msgs,:totalAvailabilities,:graph" />
-
                     <p:column headerText="Service name" width="100">
                         <h:outputText value="#{resources.key.name}"></h:outputText>
                     </p:column>

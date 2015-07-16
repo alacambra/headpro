@@ -27,57 +27,54 @@ import org.primefaces.model.chart.ChartSeries;
  * @param <C> class representing the cell values
  */
 public class ResourcesGraph<R, C extends PeriodWithValue> {
-    
+
     BarChartModel resourcesGraph;
     List<ResourcesRow<R, C>> resourcesRows;
     List<LocalDate[]> periods;
     Step step;
     String graphTitle;
     List<PeriodTotal> totalResources;
-    
-    protected BarChartModel createResourcesGraph() {
-        resourcesGraph = new BarChartModel();
-        ChartSeries total = new ChartSeries();
-        total.setLabel("Estimation of required work resources");
+    int detailedGraphMax = 1200;
+    Locale locale;
 
-        int size = resourcesRows.size() * periods.size();
+    private void buildDetailedGraph() {
+        resourcesRows.stream().forEach(row -> {
 
-        if (size < 1200) {
-
-            resourcesRows.stream().forEach(row -> {
-
-                ChartSeries chartSerie = new ChartSeries();
-                chartSerie.setLabel(row.getTitle());
-
-                row.getResources().stream().forEach(resource -> {
-
-                    String columnName;
-                    float value = Optional.ofNullable(resource.getValue()).orElse(0f);
-
-                    if (step == Step.WEEK) {
-                        WeekFields fields = WeekFields.of(Locale.GERMANY);
-                        int kw = resource.getStartDate().get(fields.weekOfYear());
-                        columnName = "CW" + kw;
-                    } else {
-                        columnName = Utils.defaultDateFormat(LocalDateConverter.toDate(resource.getStartDate()));
-                    }
-
-                    chartSerie.set(columnName, value);
-                });
-
-                resourcesGraph.addSeries(chartSerie);
-            });
-        } else {
             ChartSeries chartSerie = new ChartSeries();
-            chartSerie.setLabel("total");
+            chartSerie.setLabel(row.getTitle());
 
-            int i = 0;
-            totalResources.stream().forEach((value) -> {
-                chartSerie.set(value.getStartDate(), value.getTotal());
+            row.getResources().stream().forEach(resource -> {
+
+                String columnName;
+                float value = Optional.ofNullable(resource.getValue()).orElse(0f);
+
+                if (step == Step.WEEK) {
+                    WeekFields fields = WeekFields.of(locale);
+                    int kw = resource.getStartDate().get(fields.weekOfYear());
+                    columnName = "CW" + kw;
+                } else {
+                    columnName = Utils.defaultDateFormat(LocalDateConverter.toDate(resource.getStartDate()));
+                }
+
+                chartSerie.set(columnName, value);
             });
-            resourcesGraph.addSeries(chartSerie);
-        }
 
+            resourcesGraph.addSeries(chartSerie);
+        });
+    }
+
+    private void buildSmallGraph() {
+        ChartSeries chartSerie = new ChartSeries();
+        chartSerie.setLabel("total");
+
+        int i = 0;
+        totalResources.stream().forEach((value) -> {
+            chartSerie.set(value.getStartDate(), value.getTotal());
+        });
+        resourcesGraph.addSeries(chartSerie);
+    }
+    
+    private void configureGraph(){
         resourcesGraph.setTitle(graphTitle);
         resourcesGraph.setLegendPosition("ne");
         resourcesGraph.setStacked(true);
@@ -91,8 +88,41 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         Axis yAxis = resourcesGraph.getAxis(AxisType.Y);
 
         yAxis.setLabel("Resources (hours)");
-        
+    }
+
+    protected BarChartModel createResourcesGraph() {
+        resourcesGraph = new BarChartModel();
+        ChartSeries total = new ChartSeries();
+        total.setLabel("Estimation of required work resources");
+
+        int size = resourcesRows.size() * periods.size();
+
+        if (size < detailedGraphMax) {
+            buildDetailedGraph();
+        } else {
+            buildSmallGraph();
+        }
+
+        configureGraph();
+
         return resourcesGraph;
+    }
+
+    public int getDetailedGraphMax() {
+        return detailedGraphMax;
+    }
+
+    public void setDetailedGraphMax(int detailedGraphMax) {
+        this.detailedGraphMax = detailedGraphMax;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public ResourcesGraph<R, C> setLocale(Locale locale) {
+        this.locale = locale;
+        return this;
     }
 
     public BarChartModel getResourcesGraph() {
@@ -112,7 +142,7 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         this.resourcesRows = resourcesRows;
         return this;
     }
-    
+
     public List<LocalDate[]> getPeriods() {
         return periods;
     }
@@ -148,5 +178,4 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         this.totalResources = totalResources;
         return this;
     }
-    
 }
