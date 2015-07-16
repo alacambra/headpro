@@ -67,7 +67,6 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         ChartSeries chartSerie = new ChartSeries();
         chartSerie.setLabel("total");
 
-        int i = 0;
         totalResources.stream().forEach((value) -> {
             chartSerie.set(value.getStartDate(), value.getTotal());
         });

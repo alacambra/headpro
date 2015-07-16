@@ -48,22 +48,21 @@ public class ResultsController implements Serializable {
     transient ResultsFacade resultsFacade;
 
     @Inject
-    ServiceFacade serviceFacade;
+    transient ServiceFacade serviceFacade;
 
     @Inject
-    CalendarPeriodsGenerator calendarPeriodsGenerator;
+    transient CalendarPeriodsGenerator calendarPeriodsGenerator;
 
     @Inject
     transient CalendarEntriesGenerator calendarEntriesGenerator;
 
     List<LocalDate[]> periods;
-    List<ResultRow> resultRows;
-    List<PeriodTotal> totalBooking;
-    BarChartModel barModel;
+    List<ResourcesRow<Service, PeriodWithValue>> resultRows;
+    List<PeriodTotal> totalResources;
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Step step = Step.BIWEEK;
-    private boolean disableCache = true;
+    BarChartModel resourcesGraph;
 
     public void loadAvailableResourcesForPeriod() {
 
@@ -111,7 +110,7 @@ public class ResultsController implements Serializable {
             List<PeriodWithValue> resources = calendarEntriesGenerator
                     .getCalendarEntries(remainingResources.get(service), periods, supplier);
 
-            resultRows.add(new ResultRow(resources, service));
+            resultRows.add(new ResourcesRow<>(resources, service));
         }
     }
 
@@ -126,11 +125,11 @@ public class ResultsController implements Serializable {
     private void resetValues() {
         resultRows = null;
         periods = null;
-        totalBooking = null;
-        barModel = null;
+        totalResources = null;
+        resourcesGraph = null;
     }
 
-    public List<ResultRow> getAvailableResourceRows() {
+    public List<ResourcesRow<Service, PeriodWithValue>> getAvailableResourceRows() {
         if (resultRows == null) {
             loadAvailableResourcesForPeriod();
         }
@@ -153,73 +152,85 @@ public class ResultsController implements Serializable {
 
     public BarChartModel getAreaModel() {
 
-        if (barModel == null || disableCache) {
+        if (resourcesGraph == null) {
             loadAvailableResourcesForPeriod();
-            createAreaModel();
+//            createAreaModel();
+            resourcesGraph = new ResourcesGraph<Service, PeriodWithValue>()
+                    .setGraphTitle("Remaining resources")
+                    .setPeriods(periods)
+                    .setResourcesRows(resultRows)
+                    .setTotalResources(totalResources)
+                    .setStep(step)
+                    .setLocale(Locale.GERMANY)
+                    .createResourcesGraph();
+            resourcesGraph.setStacked(false);
         }
 
-        return barModel;
+        return resourcesGraph;
     }
 
     private void createAreaModel() {
-        barModel = new BarChartModel();
+        resourcesGraph = new BarChartModel();
         ChartSeries total = new ChartSeries();
         total.setLabel("Estimation of required work resources");
 
         int size = resultRows.size() * periods.size();
-        
+
         WrappedMuttableValue<Float> max = new WrappedMuttableValue<>(0f);
         WrappedMuttableValue<Float> min = new WrappedMuttableValue<>(0f);
-        
 
         if (size < 1200) {
 
             resultRows.stream().forEach(row -> {
 
                 ChartSeries chartSerie = new ChartSeries();
-                chartSerie.setLabel(row.getService().getName());
+                chartSerie.setLabel(row.getKey().getName());
 
                 row.getResources().stream().forEach(remainingresource -> {
                     float remainingResources = Optional.ofNullable(remainingresource.getValue()).orElse(0f);
-                    if(remainingResources < min.get()) min.set(remainingResources);
-                    if(remainingResources > max.get()) max.set(remainingResources);
-                    
+                    if (remainingResources < min.get()) {
+                        min.set(remainingResources);
+                    }
+                    if (remainingResources > max.get()) {
+                        max.set(remainingResources);
+                    }
+
                     String columnName;
-                     if(step == Step.WEEK){
+                    if (step == Step.WEEK) {
                         WeekFields fields = WeekFields.of(Locale.GERMANY);
                         int kw = remainingresource.getStartDate().get(fields.weekOfYear());
                         columnName = "CW" + kw;
-                    }else{
+                    } else {
                         columnName = Utils.defaultDateFormat(LocalDateConverter.toDate(remainingresource.getStartDate()));
                     }
-                    
+
                     chartSerie.set(columnName, remainingResources);
                 });
 
-                barModel.addSeries(chartSerie);
+                resourcesGraph.addSeries(chartSerie);
             });
         } else {
             ChartSeries chartSerie = new ChartSeries();
             chartSerie.setLabel("total");
 
             int i = 0;
-            totalBooking.stream().forEach((booking) -> {
+            totalResources.stream().forEach((booking) -> {
                 chartSerie.set(booking.getStartDate(), booking.getTotal());
             });
-            barModel.addSeries(chartSerie);
+            resourcesGraph.addSeries(chartSerie);
         }
 
-        barModel.setTitle("Remaining resources");
-        barModel.setLegendPosition("ne");
-        barModel.setStacked(false);
-        barModel.setShowPointLabels(true);
-        barModel.setZoom(true);
+        resourcesGraph.setTitle("Remaining resources");
+        resourcesGraph.setLegendPosition("ne");
+        resourcesGraph.setStacked(false);
+        resourcesGraph.setShowPointLabels(true);
+        resourcesGraph.setZoom(true);
 
         Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
         xAxis.setTickAngle(0);
 
-        barModel.getAxes().put(AxisType.X, xAxis);
-        Axis yAxis = barModel.getAxis(AxisType.Y);
+        resourcesGraph.getAxes().put(AxisType.X, xAxis);
+        Axis yAxis = resourcesGraph.getAxis(AxisType.Y);
 
         yAxis.setLabel("Resources (hours)");
         yAxis.setMin(Math.round(min.get() * 1.1));

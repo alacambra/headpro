@@ -10,7 +10,6 @@ import com.rha.entity.Service;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * @author alacambra
  */
-@SessionScoped
 public class ResultRow implements Serializable {
 
     Service service;
