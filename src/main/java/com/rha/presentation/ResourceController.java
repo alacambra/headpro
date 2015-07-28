@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -69,15 +70,18 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
                 .map(key -> generateRow(key, resourcesByKey))
                 .collect(toList());
     }
-
+    
     ResourcesRow<K, V> generateRow(K key, Map<K, List<V>> resourcesByKey) {
         Supplier<V> supplier = getResourceSupplierForKey(key);
         List<V> resources
                 = calendarEntriesGenerator.getCalendarEntries(resourcesByKey.get(key), periods, supplier);
         ResourcesRow<K, V> row = new ResourcesRow<>(resources, key);
+        row.setTitle(getKeyDisplayName().apply(key));
         row.setRowIsActive(rowIsActive(key));
         return row;
     }
+    
+    protected abstract Function<K, String> getKeyDisplayName();
 
     protected boolean rowIsActive(K key) {
         return false;

@@ -7,6 +7,7 @@ import com.rha.entity.PeriodTotal;
 import com.rha.entity.Service;
 import java.io.Serializable;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import javax.inject.Named;
@@ -65,6 +66,9 @@ public class AvailableResourceController extends ResourceController<Service, Ava
     protected String getResourcesGraphTitle() {
         return "Available resources";
     }
-    
-    
+
+    @Override
+    protected Function<Service, String> getKeyDisplayName() {
+        return (Service s) -> s.getName();
+    }
 }

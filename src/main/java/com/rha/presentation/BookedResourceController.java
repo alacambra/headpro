@@ -3,17 +3,13 @@ package com.rha.presentation;
 import com.rha.boundary.BookedResourceFacade;
 import com.rha.boundary.ServiceFacade;
 import com.rha.boundary.ProjectFacade;
-import com.rha.control.WrappedMuttableValue;
 import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
 import com.rha.entity.Service;
-import com.rha.entity.Step;
 import java.io.Serializable;
-import java.time.temporal.WeekFields;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -21,11 +17,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedProperty;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.primefaces.model.chart.Axis;
-import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.BarChartModel;
-import org.primefaces.model.chart.CategoryAxis;
-import org.primefaces.model.chart.ChartSeries;
 
 @SessionScoped
 @Named("brc")
@@ -113,6 +104,11 @@ public class BookedResourceController extends ResourceController<Project, Booked
     @Override
     protected String getResourcesGraphTitle() {
         return "Resources booked for service " + currentService.getName();
+    }
+
+    @Override
+    protected Function<Project, String> getKeyDisplayName() {
+        return (Project p) -> p.getName();
     }
 
 }
