@@ -78,7 +78,7 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         resourcesGraph.setLegendPosition("ne");
         resourcesGraph.setStacked(true);
         resourcesGraph.setShowPointLabels(true);
-        resourcesGraph.setZoom(true);
+        resourcesGraph.setZoom(false);
 
         Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
         xAxis.setTickAngle(90);

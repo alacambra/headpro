@@ -149,16 +149,6 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     }
 
     @Override
-    public Integer getPosition() {
-        return position;
-    }
-
-    @Override
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    @Override
     public void setValue(Float o) {
         setAvailable(o);
     }

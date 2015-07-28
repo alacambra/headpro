@@ -36,7 +36,7 @@ public class BookedResourceControllerTest {
     @Test
     public void testProjectIsActive(){
         
-        cut.startDate = LocalDate.now();
+        cut.startDate = LocalDate.of(2015, Month.JULY, 1);
         cut.endDate = LocalDate.now();
         
         Project project = new Project();

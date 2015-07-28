@@ -22,9 +22,9 @@ public class ResourcesRow<K, T extends PeriodWithValue> implements Serializable{
     transient Logger logger;
     private boolean rowIsActive;
 
-    public ResourcesRow(List<T> resources, K service) {
+    public ResourcesRow(List<T> resources, K key) {
         this.resources = resources;
-        this.key = service;
+        this.key = key;
     }
 
     public List<T> getResources() {

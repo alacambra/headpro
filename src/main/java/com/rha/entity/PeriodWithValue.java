@@ -13,12 +13,10 @@ import java.time.LocalDate;
  */
 public interface PeriodWithValue {
 
-    Integer getPosition();
     LocalDate getStartDate();
     LocalDate getEndDate();
     Float getValue();
     
-    void setPosition(int position);
     void setValue(Float o);
     void setPeriod(LocalDate[] period);
     

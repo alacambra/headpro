@@ -84,16 +84,6 @@ public class PeriodTotal implements PeriodWithValue, Comparable<PeriodTotal> {
     }
 
     @Override
-    public Integer getPosition() {
-        return position;
-    }
-
-    @Override
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    @Override
     public void setValue(Float o) {
         setTotal(o);
     }

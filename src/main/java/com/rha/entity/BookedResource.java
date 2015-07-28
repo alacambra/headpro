@@ -164,17 +164,6 @@ public class BookedResource implements Serializable, Comparable<BookedResource>,
     }
 
     @Override
-    public Integer getPosition() {
-        return position;
-    }
-
-    @Override
-    public void setPosition(int position) {
-        this.position = position;
-
-    }
-
-    @Override
     public int hashCode() {
         int hash = 7;
 

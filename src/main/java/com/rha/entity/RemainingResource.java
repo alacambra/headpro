@@ -13,16 +13,10 @@ import java.time.LocalDate;
  */
 public class RemainingResource implements PeriodWithValue {
 
-    private Integer position;
     private LocalDate startDate;
     private LocalDate endDate;
     private Float total;
     private Service service;
-
-    @Override
-    public Integer getPosition() {
-        return position;
-    }
 
     @Override
     public LocalDate getStartDate() {
@@ -32,11 +26,6 @@ public class RemainingResource implements PeriodWithValue {
     @Override
     public LocalDate getEndDate() {
         return endDate;
-    }
-
-    @Override
-    public void setPosition(int position) {
-        this.position = position;
     }
 
     @Override
