@@ -26,9 +26,9 @@ import org.primefaces.model.chart.ChartSeries;
  * @param <R> class representing the row keys
  * @param <C> class representing the cell values
  */
-public class ResourcesGraph<R, C extends PeriodWithValue> {
+public class ResourcesChart<R, C extends PeriodWithValue> {
 
-    BarChartModel resourcesGraph;
+    BarChartModel resourcesChart;
     List<ResourcesRow<R, C>> resourcesRows;
     List<LocalDate[]> periods;
     Step step;
@@ -36,6 +36,7 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
     List<PeriodTotal> totalResources;
     int detailedGraphMax = 1200;
     Locale locale;
+    Optional<String> extender;
 
     private void buildDetailedGraph() {
         resourcesRows.stream().forEach(row -> {
@@ -59,7 +60,7 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
                 chartSerie.set(columnName, value);
             });
 
-            resourcesGraph.addSeries(chartSerie);
+            resourcesChart.addSeries(chartSerie);
         });
     }
 
@@ -70,31 +71,32 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         totalResources.stream().forEach((value) -> {
             chartSerie.set(value.getStartDate(), value.getTotal());
         });
-        resourcesGraph.addSeries(chartSerie);
+        resourcesChart.addSeries(chartSerie);
     }
     
     private void configureGraph(){
-        resourcesGraph.setTitle(graphTitle);
-        resourcesGraph.setLegendPosition("ne");
-        resourcesGraph.setStacked(true);
-        resourcesGraph.setShowPointLabels(true);
-        resourcesGraph.setZoom(false);
+        resourcesChart.setTitle(graphTitle);
+        resourcesChart.setLegendPosition("ne");
+        resourcesChart.setStacked(true);
+        resourcesChart.setShowPointLabels(true);
+        resourcesChart.setZoom(false);
 
         Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
         xAxis.setTickAngle(90);
 
-        resourcesGraph.getAxes().put(AxisType.X, xAxis);
-        Axis yAxis = resourcesGraph.getAxis(AxisType.Y);
+        resourcesChart.getAxes().put(AxisType.X, xAxis);
+        Axis yAxis = resourcesChart.getAxis(AxisType.Y);
 
         yAxis.setLabel("Resources (hours)");
     }
 
     protected BarChartModel createResourcesGraph() {
-        resourcesGraph = new BarChartModel();
+        resourcesChart = new BarChartModel();
         ChartSeries total = new ChartSeries();
         total.setLabel("Estimation of required work resources");
 
         int size = resourcesRows.size() * periods.size();
+        extender.ifPresent(this::addExtenderToChart);
 
         if (size < detailedGraphMax) {
             buildDetailedGraph();
@@ -104,7 +106,11 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
 
         configureGraph();
 
-        return resourcesGraph;
+        return resourcesChart;
+    }
+    
+    private void addExtenderToChart(String extender){
+        resourcesChart.setExtender(extender);
     }
 
     public int getDetailedGraphMax() {
@@ -119,17 +125,17 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         return locale;
     }
 
-    public ResourcesGraph<R, C> setLocale(Locale locale) {
+    public ResourcesChart<R, C> setLocale(Locale locale) {
         this.locale = locale;
         return this;
     }
 
     public BarChartModel getResourcesGraph() {
-        return resourcesGraph;
+        return resourcesChart;
     }
 
-    public ResourcesGraph<R, C> setResourcesGraph(BarChartModel resourcesGraph) {
-        this.resourcesGraph = resourcesGraph;
+    public ResourcesChart<R, C> setResourcesGraph(BarChartModel resourcesGraph) {
+        this.resourcesChart = resourcesGraph;
         return this;
     }
 
@@ -137,7 +143,7 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         return resourcesRows;
     }
 
-    public ResourcesGraph<R, C> setResourcesRows(List<ResourcesRow<R, C>> resourcesRows) {
+    public ResourcesChart<R, C> setResourcesRows(List<ResourcesRow<R, C>> resourcesRows) {
         this.resourcesRows = resourcesRows;
         return this;
     }
@@ -146,7 +152,7 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         return periods;
     }
 
-    public ResourcesGraph<R, C> setPeriods(List<LocalDate[]> periods) {
+    public ResourcesChart<R, C> setPeriods(List<LocalDate[]> periods) {
         this.periods = periods;
         return this;
     }
@@ -155,7 +161,7 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         return step;
     }
 
-    public ResourcesGraph<R, C> setStep(Step step) {
+    public ResourcesChart<R, C> setStep(Step step) {
         this.step = step;
         return this;
     }
@@ -164,7 +170,7 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         return graphTitle;
     }
 
-    public ResourcesGraph<R, C> setGraphTitle(String graphTitle) {
+    public ResourcesChart<R, C> setGraphTitle(String graphTitle) {
         this.graphTitle = graphTitle;
         return this;
     }
@@ -173,8 +179,13 @@ public class ResourcesGraph<R, C extends PeriodWithValue> {
         return totalResources;
     }
 
-    public ResourcesGraph<R, C> setTotalResources(List<PeriodTotal> totalResources) {
+    public ResourcesChart<R, C> setTotalResources(List<PeriodTotal> totalResources) {
         this.totalResources = totalResources;
+        return this;
+    }
+    
+    public ResourcesChart<R, C> setExetender(String extender){
+        this.extender = Optional.of(extender);
         return this;
     }
 }

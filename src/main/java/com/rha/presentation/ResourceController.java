@@ -160,14 +160,14 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     public BarChartModel getAreaModel() {
 
         if (resourcesGraph == null) {
-            createResourcesGraph();
+            createResourcesChart();
         }
 
         return resourcesGraph;
     }
 
-    protected void createResourcesGraph() {
-        resourcesGraph = new ResourcesGraph<K, V>()
+    protected void createResourcesChart() {
+        resourcesGraph = new ResourcesChart<K, V>()
                 .setGraphTitle(getResourcesGraphTitle())
                 .setPeriods(periods)
                 .setResourcesRows(resourcesRows)

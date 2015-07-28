@@ -62,7 +62,7 @@ public class ResultsController implements Serializable {
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Step step = Step.BIWEEK;
-    BarChartModel resourcesGraph;
+    BarChartModel resourcesChart;
 
     public void loadAvailableResourcesForPeriod() {
 
@@ -126,7 +126,7 @@ public class ResultsController implements Serializable {
         resultRows = null;
         periods = null;
         totalResources = null;
-        resourcesGraph = null;
+        resourcesChart = null;
     }
 
     public List<ResourcesRow<Service, PeriodWithValue>> getAvailableResourceRows() {
@@ -152,10 +152,10 @@ public class ResultsController implements Serializable {
 
     public BarChartModel getAreaModel() {
 
-        if (resourcesGraph == null) {
+        if (resourcesChart == null) {
             loadAvailableResourcesForPeriod();
 //            createAreaModel();
-            resourcesGraph = new ResourcesGraph<Service, PeriodWithValue>()
+            resourcesChart = new ResourcesChart<Service, PeriodWithValue>()
                     .setGraphTitle("Remaining resources")
                     .setPeriods(periods)
                     .setResourcesRows(resultRows)
@@ -163,14 +163,14 @@ public class ResultsController implements Serializable {
                     .setStep(step)
                     .setLocale(Locale.GERMANY)
                     .createResourcesGraph();
-            resourcesGraph.setStacked(false);
+            resourcesChart.setStacked(false);
         }
 
-        return resourcesGraph;
+        return resourcesChart;
     }
 
     private void createAreaModel() {
-        resourcesGraph = new BarChartModel();
+        resourcesChart = new BarChartModel();
         ChartSeries total = new ChartSeries();
         total.setLabel("Estimation of required work resources");
 
@@ -207,7 +207,7 @@ public class ResultsController implements Serializable {
                     chartSerie.set(columnName, remainingResources);
                 });
 
-                resourcesGraph.addSeries(chartSerie);
+                resourcesChart.addSeries(chartSerie);
             });
         } else {
             ChartSeries chartSerie = new ChartSeries();
@@ -217,20 +217,20 @@ public class ResultsController implements Serializable {
             totalResources.stream().forEach((booking) -> {
                 chartSerie.set(booking.getStartDate(), booking.getTotal());
             });
-            resourcesGraph.addSeries(chartSerie);
+            resourcesChart.addSeries(chartSerie);
         }
 
-        resourcesGraph.setTitle("Remaining resources");
-        resourcesGraph.setLegendPosition("ne");
-        resourcesGraph.setStacked(false);
-        resourcesGraph.setShowPointLabels(true);
-        resourcesGraph.setZoom(true);
+        resourcesChart.setTitle("Remaining resources");
+        resourcesChart.setLegendPosition("ne");
+        resourcesChart.setStacked(false);
+        resourcesChart.setShowPointLabels(true);
+        resourcesChart.setZoom(true);
 
         Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
         xAxis.setTickAngle(0);
 
-        resourcesGraph.getAxes().put(AxisType.X, xAxis);
-        Axis yAxis = resourcesGraph.getAxis(AxisType.Y);
+        resourcesChart.getAxes().put(AxisType.X, xAxis);
+        Axis yAxis = resourcesChart.getAxis(AxisType.Y);
 
         yAxis.setLabel("Resources (hours)");
         yAxis.setMin(Math.round(min.get() * 1.1));
