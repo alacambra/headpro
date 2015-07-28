@@ -174,6 +174,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
                 .setTotalResources(totalResources)
                 .setStep(step)
                 .setLocale(Locale.GERMANY)
+//                .setExetender("ext")
                 .createResourcesGraph();
     }
 

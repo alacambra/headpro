@@ -110,7 +110,9 @@ public class ResultsController implements Serializable {
             List<PeriodWithValue> resources = calendarEntriesGenerator
                     .getCalendarEntries(remainingResources.get(service), periods, supplier);
 
-            resultRows.add(new ResourcesRow<>(resources, service));
+            ResourcesRow resourcesRow = new ResourcesRow<>(resources, service);
+            resourcesRow.setTitle(service.getName());
+            resultRows.add(resourcesRow);
         }
     }
 
@@ -162,7 +164,9 @@ public class ResultsController implements Serializable {
                     .setTotalResources(totalResources)
                     .setStep(step)
                     .setLocale(Locale.GERMANY)
+                    .setExetender("ext")
                     .createResourcesGraph();
+
             resourcesChart.setStacked(false);
         }
 
@@ -220,6 +224,7 @@ public class ResultsController implements Serializable {
             resourcesChart.addSeries(chartSerie);
         }
 
+        resourcesChart.setExtender("ext");
         resourcesChart.setTitle("Remaining resources");
         resourcesChart.setLegendPosition("ne");
         resourcesChart.setStacked(false);

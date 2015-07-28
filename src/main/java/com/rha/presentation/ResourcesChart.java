@@ -36,7 +36,7 @@ public class ResourcesChart<R, C extends PeriodWithValue> {
     List<PeriodTotal> totalResources;
     int detailedGraphMax = 1200;
     Locale locale;
-    Optional<String> extender;
+    Optional<String> extender = Optional.empty();
 
     private void buildDetailedGraph() {
         resourcesRows.stream().forEach(row -> {

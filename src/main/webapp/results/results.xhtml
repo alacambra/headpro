@@ -38,6 +38,23 @@
                                  actionListener="#{resultsController.dateChanged}" icon="ui-icon-check" />
             </h:form>
             <p:chart id="graph" widgetVar="chart" type="bar" model="#{resultsController.areaModel}" style="height:300px" />
+            <h:outputScript library="js" name="jqplot/jqplot.canvasOverlay.min.js" />
+
+            <script type="text/javascript">
+                function ext() {
+                    this.cfg.canvasOverlay = {
+                        show: true,
+                        objects: [
+                            {horizontalLine: {
+                                    y: 0,
+                                    lineWidth: 1,
+                                    color: 'black',
+                                    shadow: false
+                                }}
+                        ]
+                    };
+                }
+            </script>
             <h:form>
                 <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
             </h:form>
