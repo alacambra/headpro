@@ -108,6 +108,16 @@
                 <h:outputLabel rendered="#{!brc.somethingToShow()}" 
                                value="Nothing to show (no service selected or no active projects on this date range)"></h:outputLabel>
             </h:panelGroup>
+            <script type="text/javascript">
+                function ext() {
+                    this.cfg.series = [
+                        {}, {}, {}, {}, {}, {}, {},
+                        {
+                            disableStack: true
+                        }
+                    ];
+                }
+            </script>
         </ui:define>
     </ui:composition>
 </html>

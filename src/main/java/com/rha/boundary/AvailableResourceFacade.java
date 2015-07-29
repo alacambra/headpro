@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rha.boundary;
 
 import com.rha.control.LocalDateConverter;
 import com.rha.entity.AvailableResource;
 import com.rha.entity.PeriodTotal;
+import com.rha.entity.Service;
 import java.time.LocalDate;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -44,7 +40,20 @@ public class AvailableResourceFacade extends AbstractFacade<AvailableResource> {
         return availableResources;
     }
 
-    public List<PeriodTotal> getTotalAvailableResourcesInPeriod(LocalDate startDate, LocalDate endDate){
+    public List<AvailableResource> getAvailableResourcesOfServiceInPeriod(
+            LocalDate startDate, LocalDate endDate, Service service) {
+
+        List<AvailableResource> availableResources
+                = em.createNamedQuery(AvailableResource.availabiltyOfServiceInPeriod)
+                .setParameter("startDate", LocalDateConverter.toDate(startDate))
+                .setParameter("endDate", LocalDateConverter.toDate(endDate))
+                .setParameter("service", service)
+                .getResultList();
+
+        return availableResources;
+    }
+
+    public List<PeriodTotal> getTotalAvailableResourcesInPeriod(LocalDate startDate, LocalDate endDate) {
 
         List<PeriodTotal> availableResources
                 = em.createNamedQuery(AvailableResource.totalAvailabiltyInPeriod, PeriodTotal.class)
@@ -64,7 +73,7 @@ public class AvailableResourceFacade extends AbstractFacade<AvailableResource> {
                     } else {
                         em.merge(ar);
                     }
-                    
+
                     ar.setPersisted(true);
                 });
     }

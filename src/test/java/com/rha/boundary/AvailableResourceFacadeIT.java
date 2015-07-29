@@ -164,6 +164,13 @@ public class AvailableResourceFacadeIT {
         assertThat(result.get(0).getAvailable(), is(10L));
         assertTrue(result.get(0) == ar);
     }
+    
+    @Test
+    public void testGetAvailableResourcesOfServiceInPeriod(){
+        cut.getAvailableResourcesOfServiceInPeriod(LocalDate.now(), LocalDate.now(), createService());
+    }
+    
+            
 
     private Service createService() {
         Service s = new Service();

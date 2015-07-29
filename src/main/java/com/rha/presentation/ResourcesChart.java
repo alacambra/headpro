@@ -17,6 +17,7 @@ import java.util.Optional;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
+import org.primefaces.model.chart.BarChartSeries;
 import org.primefaces.model.chart.CategoryAxis;
 import org.primefaces.model.chart.ChartSeries;
 
@@ -41,7 +42,7 @@ public class ResourcesChart<R, C extends PeriodWithValue> {
     private void buildDetailedGraph() {
         resourcesRows.stream().forEach(row -> {
 
-            ChartSeries chartSerie = new ChartSeries();
+            ChartSeries chartSerie = new BarChartSeries();
             chartSerie.setLabel(row.getTitle());
 
             row.getResources().stream().forEach(resource -> {

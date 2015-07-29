@@ -1,22 +1,34 @@
 package com.rha.presentation;
 
+import com.rha.boundary.AvailableResourceFacade;
 import com.rha.boundary.BookedResourceFacade;
 import com.rha.boundary.ServiceFacade;
 import com.rha.boundary.ProjectFacade;
+import com.rha.control.LocalDateConverter;
+import com.rha.entity.AvailableResource;
 import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
+import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Project;
 import com.rha.entity.Service;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.groupingBy;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedProperty;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.model.chart.ChartSeries;
+import org.primefaces.model.chart.LineChartSeries;
 
 @SessionScoped
 @Named("brc")
@@ -27,6 +39,9 @@ public class BookedResourceController extends ResourceController<Project, Booked
 
     @Inject
     BookedResourceFacade bookedResourceFacade;
+
+    @Inject
+    AvailableResourceFacade availableResourceFacade;
 
     @Inject
     ProjectFacade projectFacade;
@@ -43,7 +58,43 @@ public class BookedResourceController extends ResourceController<Project, Booked
 
     @Override
     protected List<BookedResource> getResourcesInPeriod() {
+
         return bookedResourceFacade.getBookedResourcesForServiceInPeriod(currentService, startDate, endDate);
+    }
+
+    @Override
+    protected void createResourcesChart() {
+        List<AvailableResource> availableResources
+                = availableResourceFacade.getAvailableResourcesOfServiceInPeriod(
+                        startDate, endDate, currentService
+                );
+        
+        availableResources.stream().forEach(s -> System.out.println(s));
+
+//        Collectors.reducing(0f, (a, b) -> Float.sum(a, b);
+//        Map<String, List<Float>> results
+//                = availableResources.stream().collect(
+//                        groupingBy(this::getFormatedDate,
+//                                Collectors.mapping(AvailableResource::getAvailable, Collectors.toList()
+//                                )
+//                        )
+//                );
+
+        super.createResourcesChart();
+
+        ChartSeries serie = new LineChartSeries();
+
+        for (AvailableResource ar : availableResources) {
+            serie.set(getFormatedDate(ar.getStartDate()), ar.getValue());
+        }
+        resourcesGraph.setExtender("ext");
+        resourcesGraph.setStacked(true);
+        resourcesGraph.addSeries(serie);
+
+    }
+
+    private String getFormatedDate(LocalDate resource) {
+        return Utils.defaultDateFormat(LocalDateConverter.toDate(resource));
     }
 
     @Override
@@ -66,7 +117,7 @@ public class BookedResourceController extends ResourceController<Project, Booked
             return br;
         };
     }
-    
+
     @Override
     protected boolean rowIsActive(Project project) {
         return (project.getStartLocalDate().isAfter(startDate.minusDays(1)) && project.getStartLocalDate().isBefore(endDate.plusDays(1)))

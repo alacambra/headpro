@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rha.entity;
 
 import com.rha.control.LocalDateConverter;
@@ -28,7 +23,16 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @NamedQueries({
     @NamedQuery(name = AvailableResource.availabiltyInPeriod, query
             = "SELECT ar FROM AvailableResource ar "
-            + "WHERE ar.startDate>=:startDate AND ar.endDate<=:endDate order by ar.startDate"),
+            + "WHERE ((ar.startDate>=:startDate AND ar.startDate<=:endDate)"
+            + " OR (ar.endDate>=:startDate AND ar.endDate<=:endDate) "
+            + " OR (ar.startDate<=:startDate AND ar.endDate>=:endDate))"
+            + " order by ar.startDate"),
+    @NamedQuery(name = AvailableResource.availabiltyOfServiceInPeriod, query
+            = "SELECT ar FROM AvailableResource ar JOIN ar.service s"
+            + " WHERE ((ar.startDate>=:startDate AND ar.startDate<=:endDate)"
+            + " OR (ar.endDate>=:startDate AND ar.endDate<=:endDate) "
+            + " OR (ar.startDate<=:startDate AND ar.endDate>=:endDate)) AND s=:service"
+            + " order by ar.startDate"),
     @NamedQuery(name = AvailableResource.totalAvailabiltyInPeriod, query
             = "SELECT new com.rha.entity.PeriodTotal(ar.startDate, ar.endDate, sum(ar.available))"
             + "FROM AvailableResource ar "
@@ -42,6 +46,7 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     private static final String prefix = "com.rha.entity.AvailableResource.";
     public static final String availabiltyInPeriod = prefix + "availabiltyInPeriod";
     public static final String totalAvailabiltyInPeriod = prefix + "totalAvailabiltyInPeriod";
+    public static final String availabiltyOfServiceInPeriod = prefix + "availabiltyOfServiceInPeriod";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,7 +65,7 @@ public class AvailableResource implements Serializable, PeriodWithValue {
 
     @Transient
     private boolean persisted = true;
-    
+
     @Transient
     private Integer position;
 
@@ -114,12 +119,12 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     public void setEndDate(LocalDate endDate) {
         this.endDate = LocalDateConverter.toDate(endDate);
     }
-    
-    public Date getStartDateAsDate(){
+
+    public Date getStartDateAsDate() {
         return new Date(startDate.getTime());
     }
-    
-    public Date getEndDateAsDate(){
+
+    public Date getEndDateAsDate() {
         return new Date(endDate.getTime());
     }
 
@@ -130,7 +135,7 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     public void setAvailable(Float available) {
         this.available = available;
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(id).toHashCode();
@@ -162,6 +167,17 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     @Override
     public Float getValue() {
         return available;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder("id:")
+                .append(id == null ? "none" : id).append("::")          
+                .append(startDate == null ? "none" : startDate).append("::")      
+                .append(endDate == null ? "none" : endDate).append("::")      
+                .append(service == null ? "none" : service.getName()).append("::")
+                .append(available)
+                .toString();
     }
 
 }
