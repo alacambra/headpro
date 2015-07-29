@@ -110,12 +110,13 @@
             </h:panelGroup>
             <script type="text/javascript">
                 function ext() {
-                    this.cfg.series = [
-                        {}, {}, {}, {}, {}, {}, {},
-                        {
-                            disableStack: true
+                    console.info(this.cfg.series);
+                    for (var i in this.cfg.series) {
+                        obj = this.cfg.series[i];
+                        if (obj.label === "available") {
+                            this.cfg.series[i].disableStack = true;
                         }
-                    ];
+                    }
                 }
             </script>
         </ui:define>

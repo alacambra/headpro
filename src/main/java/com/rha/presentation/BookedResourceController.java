@@ -87,6 +87,7 @@ public class BookedResourceController extends ResourceController<Project, Booked
         for (AvailableResource ar : availableResources) {
             serie.set(getFormatedDate(ar.getStartDate()), ar.getValue());
         }
+        serie.setLabel("available");
         resourcesGraph.setExtender("ext");
         resourcesGraph.setStacked(true);
         resourcesGraph.addSeries(serie);
