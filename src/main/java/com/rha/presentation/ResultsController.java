@@ -175,7 +175,7 @@ public class ResultsController implements Serializable {
     
     private void createAreaModel() {
         resourcesChart = new BarChartModel();
-        resourcesChart.setSeriesColors("62656a,a5a5a5,929397,62656a,a5a5a5,929397,62656a,a5a5a5,62656a,a5a5a5,929397,62656a,a5a5a5,929397,62656a,a5a5a5");
+//        resourcesChart.setSeriesColors("FF0000,FF0000,00FF00,00FF00,0000FF,0000FF,0F0F0F,0F0F0F,AA0000,AA0000,008800,008800,000033,000033,0A000F,0A000F");
         int size = resultRows.size() * periods.size();
         
         WrappedMuttableValue<Float> max = new WrappedMuttableValue<>(0f);
@@ -186,9 +186,7 @@ public class ResultsController implements Serializable {
             resultRows.stream().forEach(row -> {
                 
                 ChartSeries chartSeriePositive = new ChartSeries();
-                chartSeriePositive.setLabel(row.getKey().getName() + "+");
-                ChartSeries chartSerieNegative = new ChartSeries();
-                chartSerieNegative.setLabel(row.getKey().getName());
+                chartSeriePositive.setLabel(row.getKey().getName());
                 
                 row.getResources().stream().forEach(remainingresource -> {
                     float remainingResources = Optional.ofNullable(remainingresource.getValue()).orElse(0f);
@@ -208,17 +206,10 @@ public class ResultsController implements Serializable {
                         columnName = Utils.defaultDateFormat(LocalDateConverter.toDate(remainingresource.getStartDate()));
                     }
                     
-                    if (remainingResources >= 0) {
                         chartSeriePositive.set(columnName, remainingResources);
-                        chartSerieNegative.set(columnName, 0);
-                    } else {
-                        chartSerieNegative.set(columnName, remainingResources);
-                        chartSeriePositive.set(columnName, 0);
-                    }
                 });
                 
                 resourcesChart.addSeries(chartSeriePositive);
-                resourcesChart.addSeries(chartSerieNegative);
                 
             });
         } else {

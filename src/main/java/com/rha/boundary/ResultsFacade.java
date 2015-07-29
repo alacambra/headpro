@@ -52,9 +52,9 @@ public class ResultsFacade {
         List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate);
 
         Map<Service, List<PeriodWithValue>> brs = booked.stream().map(br -> {
-            br.setBooked((
-                    -1 * br.getBooked() * (br.getProject().getProbability()) / 1)/100
-            );
+            
+            int probability = br.getProject().getProbability() / 100;
+            br.setBooked((-1 * br.getBooked() * probability));
             return br;
         }).collect(groupingBy(BookedResource::getService, mapping(r -> (PeriodWithValue) r, toList())));
 
