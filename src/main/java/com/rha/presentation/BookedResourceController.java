@@ -8,20 +8,16 @@ import com.rha.control.LocalDateConverter;
 import com.rha.entity.AvailableResource;
 import com.rha.entity.BookedResource;
 import com.rha.entity.PeriodTotal;
-import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Project;
 import com.rha.entity.Service;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import static java.util.stream.Collectors.groupingBy;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedProperty;
@@ -68,25 +64,25 @@ public class BookedResourceController extends ResourceController<Project, Booked
                 = availableResourceFacade.getAvailableResourcesOfServiceInPeriod(
                         startDate, endDate, currentService
                 );
-        
-        availableResources.stream().forEach(s -> System.out.println(s));
 
-//        Collectors.reducing(0f, (a, b) -> Float.sum(a, b);
-//        Map<String, List<Float>> results
-//                = availableResources.stream().collect(
-//                        groupingBy(this::getFormatedDate,
-//                                Collectors.mapping(AvailableResource::getAvailable, Collectors.toList()
-//                                )
-//                        )
-//                );
+        Map<LocalDate, List<AvailableResource>> res
+                = availableResources.stream().collect(Collectors.groupingBy(AvailableResource::getStartDate, Collectors.toList()));
 
         super.createResourcesChart();
 
         ChartSeries serie = new LineChartSeries();
 
-        for (AvailableResource ar : availableResources) {
-            serie.set(getFormatedDate(ar.getStartDate()), ar.getValue());
+        for (LocalDate[] period : periods) {
+
+            LocalDate startDate = period[0];
+            if (res.containsKey(startDate)) {
+                AvailableResource ar = res.get(startDate).get(0);
+                serie.set(getFormatedDate(ar.getStartDate()), ar.getValue());
+            } else {
+                serie.set(getFormatedDate(startDate), 0);
+            }
         }
+
         serie.setLabel("available");
         resourcesGraph.setExtender("ext");
         resourcesGraph.setStacked(true);
