@@ -14,8 +14,10 @@ import com.rha.entity.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import static java.util.stream.Collectors.*;
 import javax.inject.Inject;
 
@@ -52,8 +54,9 @@ public class ResultsFacade {
         List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate);
 
         Map<Service, List<PeriodWithValue>> brs = booked.stream().map(br -> {
-            
+
             int probability = br.getProject().getProbability() / 100;
+            probability = 1;
             br.setBooked((-1 * br.getBooked() * probability));
             return br;
         }).collect(groupingBy(BookedResource::getService, mapping(r -> (PeriodWithValue) r, toList())));
@@ -65,17 +68,57 @@ public class ResultsFacade {
 
         brs.entrySet().stream().forEach(entry -> result.put(entry.getKey(), entry.getValue()));
         ars.entrySet().stream().forEach(entry -> {
-            if(result.containsKey(entry.getKey())){
+            if (result.containsKey(entry.getKey())) {
                 List<PeriodWithValue> value = new ArrayList<>();
                 value.addAll(result.get(entry.getKey()));
                 value.addAll(entry.getValue());
                 result.put(entry.getKey(), value);
-            }else{
+            } else {
                 result.put(entry.getKey(), entry.getValue());
             }
         });
 
         return result;
+    }
+
+    public Map<Service, Float> getWeighedRemainingResourcesByService2(LocalDate startDate, LocalDate endDate) {
+
+        List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
+        List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate);
+
+        Map<Service, Float> brs = booked.stream().map(br -> {
+
+            int probability = br.getProject().getProbability() / 100;
+            probability = 1;
+            br.setBooked((-1 * br.getBooked() * probability));
+            return br;
+        }).collect(groupingBy(BookedResource::getService, mapping(r -> r.getValue(), reducing(0f, Float::sum))));
+
+        Map<Service, Float> ars = available.stream()
+                .collect(groupingBy(
+                                AvailableResource::getService, mapping(r -> r.getValue(), reducing(0f, Float::sum))));
+
+        Map<Service, Float> result = new HashMap<>();
+
+        Set<Service> services = new HashSet<Service>() {
+            {
+                addAll(ars.keySet());
+                addAll(brs.keySet());
+            }
+        };
+
+        for (Service s : services ) {
+            
+            float total = 0;
+            if(ars.containsKey(s)) total+=ars.get(s);
+            if(brs.containsKey(s)) total+=brs.get(s);
+                    
+            
+            result.put(s, total);
+        }
+        
+        return result;
+                
     }
 
 }

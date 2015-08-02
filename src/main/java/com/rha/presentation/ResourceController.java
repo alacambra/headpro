@@ -137,7 +137,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
-
+        
         FacesContext context = FacesContext.getCurrentInstance();
         ResourcesRow entity
                 = context.getApplication().evaluateExpressionGet(context, "#{resources}", ResourcesRow.class);

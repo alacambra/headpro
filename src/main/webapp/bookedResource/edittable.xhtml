@@ -108,15 +108,28 @@
                 <h:outputLabel rendered="#{!brc.somethingToShow()}" 
                                value="Nothing to show (no service selected or no active projects on this date range)"></h:outputLabel>
             </h:panelGroup>
+            <h:outputScript library="js" name="jqplot/jqplot.canvasOverlay.min.js" />
             <script type="text/javascript">
                 function ext() {
-                    console.info(this.cfg.series);
+
                     for (var i in this.cfg.series) {
                         obj = this.cfg.series[i];
                         if (obj.label === "available") {
                             this.cfg.series[i].disableStack = true;
                         }
                     }
+
+                    this.cfg.canvasOverlay = {
+                        show: true,
+                        objects: [
+                            {horizontalLine: {
+                                    y: 0,
+                                    lineWidth: 3,
+                                    color: 'black',
+                                    shadow: false
+                                }}
+                        ]
+                    };
                 }
             </script>
         </ui:define>
