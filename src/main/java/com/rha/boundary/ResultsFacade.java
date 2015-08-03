@@ -27,11 +27,14 @@ import javax.inject.Inject;
  */
 public class ResultsFacade {
 
-    @Inject
     AvailableResourceFacade availableResourceFacade;
+    BookedResourceFacade bookedResourceFacade;
 
     @Inject
-    BookedResourceFacade bookedResourceFacade;
+    public ResultsFacade(AvailableResourceFacade availableResourceFacade, BookedResourceFacade bookedResourceFacade) {
+        this.availableResourceFacade = availableResourceFacade;
+        this.bookedResourceFacade = bookedResourceFacade;
+    }
 
     /**
      * Subtract TotalAvailableResources - TotalBookedResources per period
@@ -67,6 +70,7 @@ public class ResultsFacade {
         Map<Service, List<PeriodWithValue>> result = new HashMap<>();
 
         brs.entrySet().stream().forEach(entry -> result.put(entry.getKey(), entry.getValue()));
+
         ars.entrySet().stream().forEach(entry -> {
             if (result.containsKey(entry.getKey())) {
                 List<PeriodWithValue> value = new ArrayList<>();
@@ -80,45 +84,49 @@ public class ResultsFacade {
 
         return result;
     }
+    
+    private Service getService(PeriodWithValue resource){
+        if(resource instanceof AvailableResource){
+            return ((AvailableResource)resource).getService();
+        }
+        
+        if(resource instanceof BookedResource){
+            return ((BookedResource)resource).getService();
+        }
+        
+        throw new RuntimeException("Invalid instance");
+    }
 
-    public Map<Service, Float> getWeighedRemainingResourcesByService2(LocalDate startDate, LocalDate endDate) {
+    public Map<Service, Map<LocalDate, Float>> getWeighedRemainingResourcesByService2(LocalDate startDate, LocalDate endDate) {
 
         List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
-        List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate);
+        List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()
+                .map(br -> {
+                    int probability = br.getProject().getProbability() / 100;
+                    probability = 1;
+                    br.setBooked((-1 * br.getBooked() * probability));
+                    return br;
+                }).collect(toList());
 
-        Map<Service, Float> brs = booked.stream().map(br -> {
-
-            int probability = br.getProject().getProbability() / 100;
-            probability = 1;
-            br.setBooked((-1 * br.getBooked() * probability));
-            return br;
-        }).collect(groupingBy(BookedResource::getService, mapping(r -> r.getValue(), reducing(0f, Float::sum))));
-
-        Map<Service, Float> ars = available.stream()
-                .collect(groupingBy(
-                                AvailableResource::getService, mapping(r -> r.getValue(), reducing(0f, Float::sum))));
-
-        Map<Service, Float> result = new HashMap<>();
-
-        Set<Service> services = new HashSet<Service>() {
+        List<PeriodWithValue> resources = new ArrayList<PeriodWithValue>() {
             {
-                addAll(ars.keySet());
-                addAll(brs.keySet());
+                addAll(available);
+                addAll(booked);
             }
         };
 
-        for (Service s : services ) {
-            
-            float total = 0;
-            if(ars.containsKey(s)) total+=ars.get(s);
-            if(brs.containsKey(s)) total+=brs.get(s);
-                    
-            
-            result.put(s, total);
-        }
-        
-        return result;
-                
+        Map<Service, Map<LocalDate, Float>> allResources = resources.stream().collect(
+                groupingBy(
+                        this::getService,
+                        groupingBy(PeriodWithValue::getStartDate,
+                                mapping(r -> r.getValue(),
+                                        reducing(0f, Float::sum))
+                        )
+                ));
+
+
+        return allResources;
+
     }
 
 }

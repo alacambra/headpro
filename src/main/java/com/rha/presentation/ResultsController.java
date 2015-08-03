@@ -263,16 +263,16 @@ public class ResultsController implements Serializable {
     
     public BarChartModel getAreaModel2(){
         
-        Map<Service, Float> res = resultsFacade.getWeighedRemainingResourcesByService2(startDate, endDate);
-        resourcesChart = new BarChartModel();
-        
-        res.entrySet().forEach(r -> {
-            
-            ChartSeries chartSeries = new BarChartSeries();
-            chartSeries.setLabel(r.getKey().getName());
+//        Map<Service, Float> res = resultsFacade.getWeighedRemainingResourcesByService2(startDate, endDate);
+//        resourcesChart = new BarChartModel();
+//        
+//        res.entrySet().forEach(r -> {
+//            
+//            ChartSeries chartSeries = new BarChartSeries();
+//            chartSeries.setLabel(r.getKey().getName());
 //            chart
         
-        });
+//        });
         
         return resourcesChart;
     }
@@ -329,7 +329,7 @@ public class ResultsController implements Serializable {
         resourcesChart.setExtender("ext");
         resourcesChart.setTitle("Remaining resources");
         resourcesChart.setLegendPosition("ne");
-        resourcesChart.setStacked(false);
+        resourcesChart.setStacked(true);
         resourcesChart.setShowPointLabels(true);
 
         Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
