@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rha.boundary;
 
 import com.rha.control.PeriodTotalsMerger;
@@ -14,10 +9,8 @@ import com.rha.entity.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import static java.util.stream.Collectors.*;
 import javax.inject.Inject;
 
@@ -124,9 +117,37 @@ public class ResultsFacade {
                         )
                 ));
 
+        return allResources;
+    }
+    
+    public Map<LocalDate, Map<Service, Float>> getWeighedRemainingResourcesByService3(LocalDate startDate, LocalDate endDate) {
+
+        List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
+        List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()
+                .map(br -> {
+                    int probability = br.getProject().getProbability() / 100;
+                    probability = 1;
+                    br.setBooked((-1 * br.getBooked() * probability));
+                    return br;
+                }).collect(toList());
+
+        List<PeriodWithValue> resources = new ArrayList<PeriodWithValue>() {
+            {
+                addAll(available);
+                addAll(booked);
+            }
+        };
+
+        Map<LocalDate, Map<Service, Float>> allResources = resources.stream().collect(
+                groupingBy(
+                        PeriodWithValue::getStartDate,
+                        groupingBy(this::getService,
+                                mapping(r -> r.getValue(),
+                                        reducing(0f, Float::sum))
+                        )
+                ));
 
         return allResources;
-
     }
 
 }

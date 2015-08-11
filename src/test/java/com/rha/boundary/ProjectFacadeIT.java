@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import org.hamcrest.core.Is;
 import static org.hamcrest.core.Is.is;
 import org.junit.Before;
 import org.junit.Test;

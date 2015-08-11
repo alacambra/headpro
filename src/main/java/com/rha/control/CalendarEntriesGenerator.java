@@ -8,11 +8,15 @@ package com.rha.control;
 import com.rha.entity.PeriodWithValue;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 public class CalendarEntriesGenerator {
@@ -28,7 +32,7 @@ public class CalendarEntriesGenerator {
      * @param supplier: supplier to build the new desired objects
      * @return
      */
-    public <T extends PeriodWithValue> List<T> getCalendarEntries(
+    public <T extends PeriodWithValue> List<T> getCalendarEntries2(
             List<T> periodicEntities, List<LocalDate[]> periods, Supplier<T> supplier) {
 
         List<T> generatedEntries = new ArrayList<>();
@@ -83,7 +87,23 @@ public class CalendarEntriesGenerator {
         return generatedEntries;
     }
 
-    private  <T extends PeriodWithValue> T generateEntity(Supplier<T> supplier, LocalDate[] period) {
+    public <T extends PeriodWithValue> List<T> getCalendarEntries(
+            List<T> periodicEntities, List<LocalDate[]> periods1, Supplier<T> supplier) {
+
+        Map<LocalDate, LocalDate[]> dates = new HashMap<>();
+        
+        Set<LocalDate> periods = periods1.stream().map(p -> {
+            dates.put(p[0], p);
+            return p[0];
+        }).collect(Collectors.toSet());
+        
+        periodicEntities.stream().map(p -> p.getStartDate()).forEach(date -> periods.remove(date));
+
+        periods.stream().forEach(d -> periodicEntities.add(generateEntity(supplier, dates.get(d))));
+        return periodicEntities.stream().sorted((a, b) -> a.getStartDate().compareTo(b.getStartDate())).collect(Collectors.toList());
+    }
+    
+    private <T extends PeriodWithValue> T generateEntity(Supplier<T> supplier, LocalDate[] period) {
         T entity = supplier.get();
         entity.setPeriod(period);
         entity.setValue(0f);
