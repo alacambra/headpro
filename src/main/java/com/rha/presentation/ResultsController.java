@@ -118,10 +118,6 @@ public class ResultsController implements Serializable {
                 )
         );
 
-        if (allAvailableResources.size() != allBookedResources.size()) {
-            throw new RuntimeException("unconsistency on dates");
-        }
-
         chart2 = new BarChartModel();
         chart2.setLegendPosition("ne");
         chart2.setExtender("ext");
