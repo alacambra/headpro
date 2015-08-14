@@ -29,7 +29,7 @@ public class AvailableResourceController extends ResourceController<Service, Ava
 
     @Override
     protected List<AvailableResource> getResourcesInPeriod() {
-        return availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
+        return availableResourceFacade.getAvailableResourcesInPeriod(periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
 
     @Override
@@ -54,7 +54,7 @@ public class AvailableResourceController extends ResourceController<Service, Ava
 
     @Override
     protected List<PeriodTotal> getTotalResourcesInPeriod() {
-        return availableResourceFacade.getTotalAvailableResourcesInPeriod(startDate, endDate);
+        return availableResourceFacade.getTotalAvailableResourcesInPeriod(periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
 
     @Override

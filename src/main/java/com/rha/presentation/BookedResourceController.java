@@ -55,14 +55,14 @@ public class BookedResourceController extends ResourceController<Project, Booked
     @Override
     protected List<BookedResource> getResourcesInPeriod() {
 
-        return bookedResourceFacade.getBookedResourcesForServiceInPeriod(currentService, startDate, endDate);
+        return bookedResourceFacade.getBookedResourcesForServiceInPeriod(currentService, periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
 
     @Override
     protected void createResourcesChart() {
         List<AvailableResource> availableResources
                 = availableResourceFacade.getAvailableResourcesOfServiceInPeriod(
-                        startDate, endDate, currentService
+                        periodController.getLocalStartDate(), periodController.getLocalEndDate(), currentService
                 );
 
         Map<LocalDate, List<AvailableResource>> res
@@ -96,7 +96,7 @@ public class BookedResourceController extends ResourceController<Project, Booked
 
     @Override
     protected List<Project> getKeysWithoutValues() {
-        return projectFacade.getProjectsWithoutBookedResources(startDate, endDate);
+        return projectFacade.getProjectsWithoutBookedResources(periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
 
     @Override
@@ -117,9 +117,12 @@ public class BookedResourceController extends ResourceController<Project, Booked
 
     @Override
     protected boolean rowIsActive(Project project) {
-        return (project.getStartLocalDate().isAfter(startDate.minusDays(1)) && project.getStartLocalDate().isBefore(endDate.plusDays(1)))
-                || (project.getEndLocalDate().isAfter(startDate.minusDays(1)) && project.getEndLocalDate().isBefore(endDate.plusDays(1)))
-                || (project.getStartLocalDate().isBefore(startDate.plusDays(1)) && project.getEndLocalDate().isAfter(endDate.minusDays(1)));
+        return (project.getStartLocalDate().isAfter(periodController.getLocalStartDate().minusDays(1)) 
+                && project.getStartLocalDate().isBefore(periodController.getLocalEndDate().plusDays(1)))
+                || (project.getEndLocalDate().isAfter(periodController.getLocalStartDate().minusDays(1)) 
+                && project.getEndLocalDate().isBefore(periodController.getLocalEndDate().plusDays(1)))
+                || (project.getStartLocalDate().isBefore(periodController.getLocalStartDate().plusDays(1)) 
+                && project.getEndLocalDate().isAfter(periodController.getLocalEndDate().minusDays(1)));
     }
 
     public Service getCurrentService() {
@@ -146,7 +149,8 @@ public class BookedResourceController extends ResourceController<Project, Booked
 
     @Override
     protected List<PeriodTotal> getTotalResourcesInPeriod() {
-        return bookedResourceFacade.getTotalBookedResourcesForServiceInPeriod(currentService, startDate, endDate);
+        return bookedResourceFacade.getTotalBookedResourcesForServiceInPeriod(
+                currentService, periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
 
     @Override

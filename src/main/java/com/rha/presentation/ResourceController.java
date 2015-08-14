@@ -1,17 +1,13 @@
 package com.rha.presentation;
 
 import com.rha.control.CalendarEntriesGenerator;
-import com.rha.control.CalendarPeriodsGenerator;
-import com.rha.control.LocalDateConverter;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Step;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,18 +31,15 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     transient Logger logger;
 
     @Inject
-    CalendarPeriodsGenerator calendarPeriodsGenerator;
-
-    @Inject
     transient CalendarEntriesGenerator calendarEntriesGenerator;
 
     List<LocalDate[]> periods;
     List<ResourcesRow<K, V>> resourcesRows;
     List<PeriodTotal> totalResources;
     BarChartModel resourcesGraph;
-    LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
-    LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
-    Step step = Step.BIWEEK;
+
+    @Inject
+    PeriodController periodController;
 
     public void loadResourcesForPeriod() {
 
@@ -63,7 +56,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
         resourcesRows = new ArrayList<>();
 
         if (periods == null) {
-            loadPeriods();
+            periods = periodController.getPeriods();
         }
 
         resourcesRows = resourcesByKey.keySet().stream()
@@ -95,17 +88,9 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
     protected abstract Supplier<V> getResourceSupplierForKey(K key);
 
-    private void loadPeriods() {
-        periods = calendarPeriodsGenerator
-                .setStartDate(startDate)
-                .setEndDate(endDate)
-                .setStep(step)
-                .generatePeriods();
-    }
-
     protected void resetValues() {
         resourcesRows = null;
-        periods = null;
+        periodController.resetPeriods();
         totalResources = null;
         resourcesGraph = null;
     }
@@ -121,10 +106,10 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     public List<String> getPeriods() {
 
         if (periods == null) {
-            loadPeriods();
+            periods = periodController.getPeriods();
         }
 
-        if (step == Step.WEEK) {
+        if (periodController.getStep() == Step.WEEK) {
             return periods.stream().map(period -> "CW" + Utils.getCalenderWeekOf(period[0]) + " (" + Utils.defaultDateFormat(period[0]) + ")").collect(toList());
         } else {
             return periods.stream().map(period -> Utils.defaultDateFormat(period[0])).collect(toList());
@@ -172,7 +157,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
                 .setPeriods(periods)
                 .setResourcesRows(resourcesRows)
                 .setTotalResources(totalResources)
-                .setStep(step)
+                .setStep(periodController.getStep())
                 .setLocale(Locale.GERMANY)
 //                .setExetender("ext")
                 .createResourcesGraph();
@@ -188,7 +173,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
             List<PeriodTotal> values = getTotalResourcesInPeriod();
 
             if (periods == null) {
-                loadPeriods();
+                periods = periodController.getPeriods();
             }
 
             totalResources = calendarEntriesGenerator.getCalendarEntries(values, periods, PeriodTotal::new);
@@ -210,32 +195,8 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
         resetValues();
     }
 
-    public Date getStartDate() {
-        return LocalDateConverter.toDate(startDate);
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = LocalDateConverter.toLocalDate(startDate);
-    }
-
-    public Date getEndDate() {
-        return LocalDateConverter.toDate(endDate);
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = LocalDateConverter.toLocalDate(endDate);
-    }
-
     public void dateChanged() {
         resetValues();
-    }
-
-    public Step getStep() {
-        return step;
-    }
-
-    public void setStep(Step step) {
-        this.step = step;
     }
 
     public List<Step> getSteps() {

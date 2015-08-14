@@ -18,12 +18,12 @@ import static org.junit.Assert.*;
  * @author alacambra
  */
 public class BookedResourceControllerTest {
-    
+
     BookedResourceController cut;
-    
+
     public BookedResourceControllerTest() {
     }
-    
+
     @Before
     public void setUp() {
         cut = new BookedResourceController();
@@ -32,17 +32,17 @@ public class BookedResourceControllerTest {
     @Test
     public void testInit() {
     }
-    
+
     @Test
-    public void testProjectIsActive(){
-        
-        cut.startDate = LocalDate.of(2015, Month.JULY, 1);
-        cut.endDate = LocalDate.now();
-        
+    public void testProjectIsActive() {
+
+        cut.periodController.setStartDate(LocalDate.of(2015, Month.JULY, 1));
+        cut.periodController.setEndDate(LocalDate.now());
+
         Project project = new Project();
         project.setStartLocalDate(LocalDate.of(2015, Month.JULY, 1));
         project.setEndLocalDate(LocalDate.of(2015, Month.JULY, 24));
-        
+
         assertThat(cut.rowIsActive(project), is(true));
     }
 
@@ -113,5 +113,5 @@ public class BookedResourceControllerTest {
     @Test
     public void testSomethingToShow() {
     }
-    
+
 }

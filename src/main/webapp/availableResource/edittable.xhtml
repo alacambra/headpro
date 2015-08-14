@@ -14,34 +14,6 @@
 
         <ui:define name="body">
             <button onclick="toggle('control')">toggle</button>
-            <p:panel id="control">
-                <h:form>
-                    <table>
-                        <tr>
-                            <td>
-                                <p:outputLabel for="startDate" value="Start Date" />
-                                <p:calendar id="startDate" value="#{arc.startDate}" mode="inline" />
-                            </td>
-                            <td>
-                                <p:outputLabel for="endDate" value="End Date" />
-                                <p:calendar id="endDate" value="#{arc.endDate}" mode="inline" />
-                            </td>
-                            <td>
-                                <p:selectOneMenu id="step" value="#{arc.step}" >
-                                    <f:selectItem itemLabel="Step"/>
-                                    <f:selectItems value="#{arc.steps}"
-                                                   var="step"
-                                                   itemValue="#{step}"/>
-                                </p:selectOneMenu>
-                            </td>
-                        </tr>
-                    </table>
-
-
-                    <p:commandButton value="Submit" update=":form,:totalAvailabilities,:graph" 
-                                     actionListener="#{arc.dateChanged}" icon="ui-icon-check" />
-                </h:form>
-            </p:panel>
             <h:form id="form">
                 <p:growl id="msgs" showDetail="true"/>
 

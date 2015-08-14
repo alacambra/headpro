@@ -13,40 +13,6 @@
         </ui:define>
 
         <ui:define name="body">
-            <button onclick="toggle('control')">toggle</button>
-            <p:panel id="control">
-                <h:form>
-                    <table>
-                        <tr>
-                            <td>
-                                <p:outputLabel for="startDate" value="Start Date" />
-                                <p:calendar id="startDate" value="#{brc.startDate}" mode="inline" />
-                            </td>
-                            <td>
-                                <p:outputLabel for="endDate" value="End Date" />
-                                <p:calendar id="endDate" value="#{brc.endDate}" mode="inline" />
-                            </td>
-                            <td>
-                                <p:selectOneMenu id="step" value="#{brc.step}" >
-                                    <f:selectItem itemLabel="Step"/>
-                                    <f:selectItems value="#{brc.steps}"
-                                                   var="step"
-                                                   itemValue="#{step}"/>
-                                </p:selectOneMenu>
-                                <p:selectOneMenu id="currentService" value="#{brc.currentService}" >
-                                    <f:selectItem itemLabel="Select a service"/>
-                                    <f:selectItems value="#{serviceController.items}"
-
-                                                   var="service"
-                                                   itemValue="#{service}"/>
-                                </p:selectOneMenu>
-                            </td>
-                        </tr>
-                    </table>
-                    <p:commandButton value="Submit" update=":contents" 
-                                     actionListener="#{brc.dateChanged}" icon="ui-icon-check" />
-                </h:form>
-            </p:panel>
             <h:panelGroup id="contents">
                 <h:panelGroup rendered="#{brc.somethingToShow()}">
                     <h:form id="form">
