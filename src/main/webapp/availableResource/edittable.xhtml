@@ -61,9 +61,6 @@
                 </c:forEach>
             </p:dataTable>
             <p:chart id="graph" widgetVar="chart" type="bar" model="#{arc.areaModel}" style="height:300px"/>
-            <h:form>
-                <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
-            </h:form>
         </ui:define>
     </ui:composition>
 </html>
