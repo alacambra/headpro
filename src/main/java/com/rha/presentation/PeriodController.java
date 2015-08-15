@@ -16,14 +16,14 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Event;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -38,6 +38,10 @@ public class PeriodController implements Serializable {
     Service activeSerivice;
     List<LocalDate[]> periods;
     Step step = Step.BIWEEK;
+    
+    @Inject
+    Event<PeriodChangedEvent> event;
+    
     @Inject
     CalendarPeriodsGenerator calendarPeriodsGenerator;
     
@@ -56,10 +60,6 @@ public class PeriodController implements Serializable {
         return periods;
     }
 
-    public void resetPeriods() {
-        this.periods = null;
-    }
-
     public LocalDate getLocalStartDate() {
         return startDate;
     }
@@ -72,7 +72,7 @@ public class PeriodController implements Serializable {
         return LocalDateConverter.toDate(startDate);
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(@NotNull Date startDate) {
         this.startDate = LocalDateConverter.toLocalDate(startDate);
     }
 
@@ -80,7 +80,7 @@ public class PeriodController implements Serializable {
         return LocalDateConverter.toDate(endDate);
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(@NotNull Date endDate) {
         this.endDate = LocalDateConverter.toLocalDate(endDate);
     }
 
@@ -88,15 +88,15 @@ public class PeriodController implements Serializable {
         return activeSerivice;
     }
 
-    public void setActiveSerivice(Service activeSerivice) {
+    public void setActiveSerivice(@NotNull Service activeSerivice) {
         this.activeSerivice = activeSerivice;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(@NotNull LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(@NotNull LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -104,7 +104,7 @@ public class PeriodController implements Serializable {
         return step;
     }
 
-    public void setStep(Step step) {
+    public void setStep(@NotNull Step step) {
         this.step = step;
     }
 
@@ -112,7 +112,19 @@ public class PeriodController implements Serializable {
         return Arrays.asList(Step.values());
     }
 
-    public void reload() {
+    public void submitChanges() {
+        
+        loadPeriods();
+        PeriodChangedEvent periodChangedEvent = 
+                new PeriodChangedEvent()
+                .setActiveSerivice(activeSerivice)
+                .setEndDate(endDate)
+                .setStartDate(startDate)
+                .setPeriods(periods)
+                .setStep(step);
+        
+        event.fire(periodChangedEvent);
+        
         try {
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
@@ -120,5 +132,4 @@ public class PeriodController implements Serializable {
             throw new RuntimeException(ex);
         }
     }
-
 }

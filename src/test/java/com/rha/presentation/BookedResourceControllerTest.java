@@ -27,6 +27,7 @@ public class BookedResourceControllerTest {
     @Before
     public void setUp() {
         cut = new BookedResourceController();
+        cut.periodController = new PeriodController();
     }
 
     @Test

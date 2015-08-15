@@ -45,9 +45,6 @@ public class BookedResourceController extends ResourceController<Project, Booked
     @Inject
     ServiceFacade serviceFacade;
 
-    @ManagedProperty(value = "param.selectedService")
-    Service currentService;
-
     @PostConstruct
     public void init() {
     }
@@ -55,14 +52,14 @@ public class BookedResourceController extends ResourceController<Project, Booked
     @Override
     protected List<BookedResource> getResourcesInPeriod() {
 
-        return bookedResourceFacade.getBookedResourcesForServiceInPeriod(currentService, periodController.getLocalStartDate(), periodController.getLocalEndDate());
+        return bookedResourceFacade.getBookedResourcesForServiceInPeriod(periodController.getActiveSerivice(), periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
 
     @Override
     protected void createResourcesChart() {
         List<AvailableResource> availableResources
                 = availableResourceFacade.getAvailableResourcesOfServiceInPeriod(
-                        periodController.getLocalStartDate(), periodController.getLocalEndDate(), currentService
+                        periodController.getLocalStartDate(), periodController.getLocalEndDate(), periodController.getActiveSerivice()
                 );
 
         Map<LocalDate, List<AvailableResource>> res
@@ -72,7 +69,7 @@ public class BookedResourceController extends ResourceController<Project, Booked
 
         ChartSeries serie = new LineChartSeries();
 
-        for (LocalDate[] period : periods) {
+        for (LocalDate[] period : periodController.getPeriods()) {
 
             LocalDate startDate = period[0];
             if (res.containsKey(startDate)) {
@@ -110,7 +107,7 @@ public class BookedResourceController extends ResourceController<Project, Booked
             BookedResource br = new BookedResource();
             br.setPersisted(false);
             br.setProject(key);
-            br.setService(currentService);
+            br.setService(periodController.getActiveSerivice());
             return br;
         };
     }
@@ -126,20 +123,11 @@ public class BookedResourceController extends ResourceController<Project, Booked
     }
 
     public Service getCurrentService() {
-        return currentService;
-    }
-
-    public void setCurrentService(Service currentService) {
-        if (currentService.equals(this.currentService)) {
-            return;
-        }
-
-        this.currentService = currentService;
-        resetValues();
+        return periodController.getActiveSerivice();
     }
 
     public boolean somethingToShow() {
-        return currentService != null && getResourceRows().size() > 0;
+        return periodController.getActiveSerivice() != null && getResourceRows().size() > 0;
     }
 
     @Override
@@ -150,12 +138,12 @@ public class BookedResourceController extends ResourceController<Project, Booked
     @Override
     protected List<PeriodTotal> getTotalResourcesInPeriod() {
         return bookedResourceFacade.getTotalBookedResourcesForServiceInPeriod(
-                currentService, periodController.getLocalStartDate(), periodController.getLocalEndDate());
+                periodController.getActiveSerivice(), periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
 
     @Override
     protected String getResourcesGraphTitle() {
-        return "Resources booked for service " + currentService.getName();
+        return "Resources booked for service " + periodController.getActiveSerivice().getName();
     }
 
     @Override

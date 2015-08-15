@@ -183,9 +183,9 @@ public class ServiceController implements Serializable {
         Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
         String s = params.get("selectedService");
         logger.log(Level.FINE, "Service {} selected", new Object[]{s});
-        bookedResourceController.setCurrentService(items.stream()
-                .filter(service -> service.getId() == Integer.parseInt(s))
-                .findFirst().get());
+//        bookedResourceController.setCurrentService(items.stream()
+//                .filter(service -> service.getId() == Integer.parseInt(s))
+//                .findFirst().get());
         
         return "/bookedResource/edittable";
     }

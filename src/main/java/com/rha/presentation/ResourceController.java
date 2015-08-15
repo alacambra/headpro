@@ -5,7 +5,6 @@ import com.rha.entity.PeriodTotal;
 import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Step;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +32,6 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     @Inject
     transient CalendarEntriesGenerator calendarEntriesGenerator;
 
-    List<LocalDate[]> periods;
     List<ResourcesRow<K, V>> resourcesRows;
     List<PeriodTotal> totalResources;
     BarChartModel resourcesGraph;
@@ -55,10 +53,6 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
         resourcesRows = new ArrayList<>();
 
-        if (periods == null) {
-            periods = periodController.getPeriods();
-        }
-
         resourcesRows = resourcesByKey.keySet().stream()
                 .map(key -> generateRow(key, resourcesByKey))
                 .collect(toList());
@@ -67,7 +61,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     ResourcesRow<K, V> generateRow(K key, Map<K, List<V>> resourcesByKey) {
         Supplier<V> supplier = getResourceSupplierForKey(key);
         List<V> resources
-                = calendarEntriesGenerator.getCalendarEntries(resourcesByKey.get(key), periods, supplier);
+                = calendarEntriesGenerator.getCalendarEntries(resourcesByKey.get(key), periodController.getPeriods(), supplier);
         ResourcesRow<K, V> row = new ResourcesRow<>(resources, key);
         row.setTitle(getKeyDisplayName().apply(key));
         row.setRowIsActive(rowIsActive(key));
@@ -88,9 +82,8 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
     protected abstract Supplier<V> getResourceSupplierForKey(K key);
 
-    protected void resetValues() {
+    protected void resetValues(@Observes PeriodChangedEvent event) {
         resourcesRows = null;
-        periodController.resetPeriods();
         totalResources = null;
         resourcesGraph = null;
     }
@@ -105,14 +98,10 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
     public List<String> getPeriods() {
 
-        if (periods == null) {
-            periods = periodController.getPeriods();
-        }
-
         if (periodController.getStep() == Step.WEEK) {
-            return periods.stream().map(period -> "CW" + Utils.getCalenderWeekOf(period[0]) + " (" + Utils.defaultDateFormat(period[0]) + ")").collect(toList());
+            return periodController.getPeriods().stream().map(period -> "CW" + Utils.getCalenderWeekOf(period[0]) + " (" + Utils.defaultDateFormat(period[0]) + ")").collect(toList());
         } else {
-            return periods.stream().map(period -> Utils.defaultDateFormat(period[0])).collect(toList());
+            return periodController.getPeriods().stream().map(period -> Utils.defaultDateFormat(period[0])).collect(toList());
         }
     }
 
@@ -154,7 +143,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     protected void createResourcesChart() {
         resourcesGraph = new ResourcesChart<K, V>()
                 .setGraphTitle(getResourcesGraphTitle())
-                .setPeriods(periods)
+                .setPeriods(periodController.getPeriods())
                 .setResourcesRows(resourcesRows)
                 .setTotalResources(totalResources)
                 .setStep(periodController.getStep())
@@ -171,12 +160,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
         if (totalResources == null) {
             List<PeriodTotal> values = getTotalResourcesInPeriod();
-
-            if (periods == null) {
-                periods = periodController.getPeriods();
-            }
-
-            totalResources = calendarEntriesGenerator.getCalendarEntries(values, periods, PeriodTotal::new);
+            totalResources = calendarEntriesGenerator.getCalendarEntries(values, periodController.getPeriods(), PeriodTotal::new);
 
         }
 
@@ -188,15 +172,15 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
     }
 
     public void updateResources(@Observes(during = AFTER_SUCCESS) ProjectEvent projectEvent) {
-        resetValues();
+        resetValues(null);
     }
 
     public void updateResources(@Observes(during = AFTER_SUCCESS) ServiceEvent serviceEvent) {
-        resetValues();
+        resetValues(null);
     }
 
     public void dateChanged() {
-        resetValues();
+        resetValues(null);
     }
 
     public List<Step> getSteps() {
