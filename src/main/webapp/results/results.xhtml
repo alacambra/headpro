@@ -11,54 +11,46 @@
         <ui:define name="browser-title">
             <h:outputText value="RHA-Results"></h:outputText>
         </ui:define>
-
+        <ui:define name="submit-period">
+            <h:form>
+                <span>From </span><p:calendar style="width: 70px" id="startDate" value="#{periodController.startDate}"></p:calendar>
+                <span>to</span> <p:calendar style="width: 70px" id="endDate" value="#{periodController.endDate}"></p:calendar>
+                <span>in</span>
+                <p:selectOneMenu style="margin-left: 5px; vertical-align: bottom" id="step" value="#{periodController.step}" >
+                    <f:selectItem itemLabel="Step"/>
+                    <f:selectItems value="#{periodController.steps}"
+                                   var="step"
+                                   itemValue="#{step}"/>
+                </p:selectOneMenu>
+                <p:commandButton value="Set" action="#{periodController.submitChanges()}" update=":contents">
+                </p:commandButton>
+            </h:form>
+        </ui:define>
         <ui:define name="body">
-            <h:form>
-                <table>
-                    <tr>
-                        <td>
-                            <p:outputLabel for="startDate" value="Start Date" />
-                            <p:calendar id="startDate" value="#{resultsController.startDate}" mode="inline" />
-                        </td>
-                        <td>
-                            <p:outputLabel for="endDate" value="End Date" />
-                            <p:calendar id="endDate" value="#{resultsController.endDate}" mode="inline" />
-                        </td>
-                        <td>
-                            <p:selectOneMenu id="step" value="#{resultsController.step}" >
-                                <f:selectItem itemLabel="Step"/>
-                                <f:selectItems value="#{resultsController.steps}"
-                                               var="step"
-                                               itemValue="#{step}"/>
-                            </p:selectOneMenu>
-                        </td>
-                    </tr>
-                </table>
-                <p:commandButton value="Submit" update=":graph" 
-                                 actionListener="#{resultsController.dateChanged}" icon="ui-icon-check" />
-            </h:form>
-            <p:chart id="graph" widgetVar="chart" type="bar" model="#{resultsController.areaModel}" style="height:300px" />
-            <p:chart id="graph2" widgetVar="chart2" type="bar" model="#{resultsController.chart2}" style="height:300px" />
-            <h:outputScript library="js" name="jqplot/jqplot.canvasOverlay.min.js" />
+            <h:panelGroup id="contents">
+                <p:chart id="graph" widgetVar="chart" type="bar" model="#{resultsController.areaModel}" style="height:300px" />
+                <p:chart id="graph2" widgetVar="chart2" type="bar" model="#{resultsController.chart2}" style="height:300px" />
+                <h:outputScript library="js" name="jqplot/jqplot.canvasOverlay.min.js" />
 
-            <script type="text/javascript">
-                function ext() {
-                    this.cfg.canvasOverlay = {
-                        show: true,
-                        objects: [
-                            {horizontalLine: {
-                                    y: 0,
-                                    lineWidth: 1,
-                                    color: 'black',
-                                    shadow: false
-                                }}
-                        ]
-                    };
-                }
-            </script>
-            <h:form>
-                <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
-            </h:form>
+                <script type="text/javascript">
+                    function ext() {
+                        this.cfg.canvasOverlay = {
+                            show: true,
+                            objects: [
+                                {horizontalLine: {
+                                        y: 0,
+                                        lineWidth: 1,
+                                        color: 'black',
+                                        shadow: false
+                                    }}
+                            ]
+                        };
+                    }
+                </script>
+                <h:form>
+                    <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
+                </h:form>
+            </h:panelGroup>
         </ui:define>
     </ui:composition>
 </html>

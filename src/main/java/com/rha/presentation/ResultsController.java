@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import static java.util.stream.Collectors.*;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.model.chart.Axis;
@@ -67,29 +68,24 @@ public class ResultsController implements Serializable {
     @Inject
     transient CalendarEntriesGenerator calendarEntriesGenerator;
 
-    List<LocalDate[]> periods;
+    @Inject
+    PeriodController periodController;
+
     List<ResourcesRow<Service, PeriodWithValue>> resultRows;
     List<PeriodTotal> totalResources;
-    LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
-    LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
-    Step step = Step.BIWEEK;
     BarChartModel resourcesChart;
     BarChartModel chart2;
 
     public void loadAvailableVsRequiredResources() {
 
         List<AvailableResource> availableResources
-                = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
+                = availableResourceFacade.getAvailableResourcesInPeriod(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
         List<BookedResource> bookedResources
-                = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate);
-
-        if (periods == null) {
-            loadPeriods();
-        }
+                = bookedResourceFacade.getBookedResourcesInPeriod(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
         List<AvailableResource> res = calendarEntriesGenerator
-                .getCalendarEntries(availableResources, periods, () -> {
+                .getCalendarEntries(availableResources, periodController.getPeriods(), () -> {
                     AvailableResource ar = new AvailableResource();
                     ar.setPersisted(false);
                     return ar;
@@ -104,7 +100,7 @@ public class ResultsController implements Serializable {
         );
 
         bookedResources = calendarEntriesGenerator
-                .getCalendarEntries(bookedResources, periods, () -> {
+                .getCalendarEntries(bookedResources, periodController.getPeriods(), () -> {
                     BookedResource ar = new BookedResource();
                     ar.setPersisted(false);
                     return ar;
@@ -127,7 +123,7 @@ public class ResultsController implements Serializable {
         available.setLabel("Available");
         required.setLabel("Required");
 
-        periods.stream().map(period -> period[0]).forEach(date -> {
+        periodController.getPeriods().stream().map(period -> period[0]).forEach(date -> {
             available.set(Utils.defaultDateFormat(
                     LocalDateConverter.toDate(date)),
                     allAvailableResources.get(date));
@@ -140,7 +136,7 @@ public class ResultsController implements Serializable {
         chart2.addSeries(available);
         chart2.addSeries(required);
     }
-    
+
     public BarChartModel getChart2() {
         loadAvailableVsRequiredResources();
         return chart2;
@@ -149,7 +145,7 @@ public class ResultsController implements Serializable {
     public void loadAvailableResourcesForPeriod() {
 
         Map<Service, List<PeriodWithValue>> remainingResources
-                = resultsFacade.getWeighedRemainingResourcesByService(startDate, endDate);
+                = resultsFacade.getWeighedRemainingResourcesByService(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
         List<Service> emptyServices = serviceFacade.findAll();
 
@@ -158,10 +154,6 @@ public class ResultsController implements Serializable {
         });
 
         resultRows = new ArrayList<>();
-
-        if (periods == null) {
-            loadPeriods();
-        }
 
         for (Service service : remainingResources.keySet()) {
 
@@ -190,7 +182,7 @@ public class ResultsController implements Serializable {
             remainingResources.put(service, p.values().stream().sorted(new PeriodComparator()).collect(toList()));
 
             List<PeriodWithValue> resources = calendarEntriesGenerator
-                    .getCalendarEntries(remainingResources.get(service), periods, supplier);
+                    .getCalendarEntries(remainingResources.get(service), periodController.getPeriods(), supplier);
 
             ResourcesRow resourcesRow = new ResourcesRow<>(resources, service);
             resourcesRow.setTitle(service.getName());
@@ -198,17 +190,8 @@ public class ResultsController implements Serializable {
         }
     }
 
-    private void loadPeriods() {
-        periods = calendarPeriodsGenerator
-                .setStartDate(startDate)
-                .setEndDate(endDate)
-                .setStep(step)
-                .generatePeriods();
-    }
-
-    private void resetValues() {
+    private void resetValues(@Observes PeriodChangedEvent event) {
         resultRows = null;
-        periods = null;
         totalResources = null;
         resourcesChart = null;
     }
@@ -222,12 +205,7 @@ public class ResultsController implements Serializable {
     }
 
     public List<LocalDate> getPeriods() {
-
-        if (periods == null) {
-            loadPeriods();
-        }
-
-        return periods.stream().map(period -> period[0]).collect(toList());
+        return periodController.getPeriods().stream().map(period -> period[0]).collect(toList());
     }
 
     private LocalDate getDate(BookedResource br) {
@@ -242,7 +220,7 @@ public class ResultsController implements Serializable {
 //            createAreaModel();
 //            resourcesChart = new ResourcesChart<Service, PeriodWithValue>()
 //                    .setGraphTitle("Remaining resources")
-//                    .setPeriods(periods)
+//                    .setPeriods(periodController.getPeriods())
 //                    .setResourcesRows(resultRows)
 //                    .setTotalResources(totalResources)
 //                    .setStep(step)
@@ -258,7 +236,7 @@ public class ResultsController implements Serializable {
 
     public BarChartModel getAreaModel2() {
 
-//        Map<Service, Float> res = resultsFacade.getWeighedRemainingResourcesByService2(startDate, endDate);
+//        Map<Service, Float> res = resultsFacade.getWeighedRemainingResourcesByService2(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 //        resourcesChart = new BarChartModel();
 //        
 //        res.entrySet().forEach(r -> {
@@ -271,53 +249,50 @@ public class ResultsController implements Serializable {
     }
 
     private void getChart3() {
-        
-        if(periods == null){
-            loadPeriods();
-        }
+
         resourcesChart = new BarChartModel();
 
         Map<Service, Map<LocalDate, Float>> resources
-                = resultsFacade.getWeighedRemainingResourcesByService2(startDate, endDate);
+                = resultsFacade.getWeighedRemainingResourcesByService2(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
         resources.entrySet().forEach(serviceEntry -> {
-            
+
             ChartSeries chartSeries = new BarChartSeries();
-            periods.stream().sorted((a, b)->a[0].compareTo(b[0])).forEach(date -> chartSeries.set(date[0], 0));
+            periodController.getPeriods().stream().sorted((a, b) -> a[0].compareTo(b[0])).forEach(date -> chartSeries.set(date[0], 0));
             chartSeries.setLabel(serviceEntry.getKey().getName());
-            Set<LocalDate> dates = periods.stream().map(p -> p[0]).collect(Collectors.toSet());
-            
+            Set<LocalDate> dates = periodController.getPeriods().stream().map(p -> p[0]).collect(Collectors.toSet());
+
             serviceEntry.getValue().entrySet().forEach(dateEntry -> {
                 dates.remove(dateEntry.getKey());
                 chartSeries.set(dateEntry.getKey(), dateEntry.getValue());
             });
-            
+
             dates.stream().forEach(date -> {
                 chartSeries.set(date, 0f);
             });
-            
+
             resourcesChart.addSeries(chartSeries);
         });
-        
+
         resourcesChart.setExtender("ext");
         resourcesChart.setTitle("Remaining resources");
         resourcesChart.setLegendPosition("ne");
         resourcesChart.setStacked(true);
         resourcesChart.setShowPointLabels(true);
 
-        Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
+        Axis xAxis = new CategoryAxis("Period (" + periodController.getStep().name().toLowerCase() + ")");
         xAxis.setTickAngle(0);
 
         resourcesChart.getAxes().put(AxisType.X, xAxis);
         Axis yAxis = resourcesChart.getAxis(AxisType.Y);
 
         yAxis.setLabel("Resources (hours)");
-        
+
     }
 
     private void createAreaModel() {
         resourcesChart = new BarChartModel();
-        int size = resultRows.size() * periods.size();
+        int size = resultRows.size() * periodController.getPeriods().size();
 
         if (size < 1200) {
 
@@ -330,7 +305,7 @@ public class ResultsController implements Serializable {
                     float remainingResources = Optional.ofNullable(remainingresource.getValue()).orElse(0f);
 
                     String columnName;
-                    if (step == Step.WEEK) {
+                    if (periodController.getStep() == Step.WEEK) {
                         WeekFields fields = WeekFields.of(Locale.GERMANY);
                         int kw = remainingresource.getStartDate().get(fields.weekOfYear());
                         columnName = "CW" + kw;
@@ -360,7 +335,7 @@ public class ResultsController implements Serializable {
         resourcesChart.setStacked(true);
         resourcesChart.setShowPointLabels(true);
 
-        Axis xAxis = new CategoryAxis("Period (" + step.name().toLowerCase() + ")");
+        Axis xAxis = new CategoryAxis("Period (" + periodController.getStep().name().toLowerCase() + ")");
         xAxis.setTickAngle(0);
 
         resourcesChart.getAxes().put(AxisType.X, xAxis);
@@ -369,36 +344,8 @@ public class ResultsController implements Serializable {
         yAxis.setLabel("Resources (hours)");
     }
 
-    public Date getStartDate() {
-        return LocalDateConverter.toDate(startDate);
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = LocalDateConverter.toLocalDate(startDate);
-    }
-
-    public Date getEndDate() {
-        return LocalDateConverter.toDate(endDate);
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = LocalDateConverter.toLocalDate(endDate);
-    }
-
-    public void dateChanged() {
-        resetValues();
-    }
-
-    public Step getStep() {
-        return step;
-    }
-
-    public void setStep(Step step) {
-        this.step = step;
-    }
-
     public List<Step> getSteps() {
-        return Arrays.asList(Step.values());
+        return Arrays.asList(Step.BIWEEK);
     }
 
 }
