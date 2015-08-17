@@ -13,8 +13,28 @@
         </ui:define>
 
         <ui:define name="submit-period">
-            <p:commandButton value="Set" action="#{periodController.submitChanges()}" update=":contents">
-            </p:commandButton>
+            <h:form>
+                <span>From </span><p:calendar style="width: 70px" id="startDate" value="#{periodController.startDate}"></p:calendar>
+                <span>to</span> <p:calendar style="width: 70px" id="endDate" value="#{periodController.endDate}"></p:calendar>
+                <span>in</span>
+                <p:selectOneMenu style="margin-left: 5px; vertical-align: bottom" id="step" value="#{periodController.step}" >
+                    <f:selectItem itemLabel="Step"/>
+                    <f:selectItems value="#{periodController.steps}"
+                                   var="step"
+                                   itemValue="#{step}"/>
+                </p:selectOneMenu>
+                <span>for</span>
+                <p:selectOneMenu  style="margin-left: 5px; vertical-align: bottom" id="currentService" value="#{periodController.activeSerivice}" >
+                    <f:selectItem itemLabel="service"/>
+                    <f:selectItems value="#{serviceController.items}"
+                                   var="service"
+                                   itemValue="#{service}"/>
+                </p:selectOneMenu>
+
+
+                <p:commandButton value="Set" action="#{periodController.submitChanges()}" update=":contents">
+                </p:commandButton>
+            </h:form>
         </ui:define>
         <ui:define name="body">
             <h:panelGroup id="contents">
