@@ -125,11 +125,11 @@ public class PeriodController implements Serializable {
         
         event.fire(periodChangedEvent);
         
-        try {
-            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-            ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+//        try {
+//            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+//            ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+//        } catch (IOException ex) {
+//            throw new RuntimeException(ex);
+//        }
     }
 }

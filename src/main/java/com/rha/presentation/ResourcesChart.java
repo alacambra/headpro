@@ -74,8 +74,8 @@ public class ResourcesChart<R, C extends PeriodWithValue> {
         });
         resourcesChart.addSeries(chartSerie);
     }
-    
-    private void configureGraph(){
+
+    private void configureGraph() {
         resourcesChart.setTitle(graphTitle);
         resourcesChart.setLegendPosition("ne");
         resourcesChart.setStacked(true);
@@ -106,11 +106,27 @@ public class ResourcesChart<R, C extends PeriodWithValue> {
         }
 
         configureGraph();
-
+        checkStackedAndSeries();
         return resourcesChart;
     }
-    
-    private void addExtenderToChart(String extender){
+
+    private void checkStackedAndSeries() {
+
+        if(!resourcesChart.isStacked()){
+            return;
+        }
+        
+        resourcesChart.getSeries().stream().map(serie -> serie.getData().size()).forEach(value -> {
+            Integer last = null;
+            if (last == null) {
+                last = value;
+            } else if(!last.equals(value)){
+                throw new RuntimeException("Stacked graph with inconsistent series");
+            }
+        });
+    }
+
+    private void addExtenderToChart(String extender) {
         resourcesChart.setExtender(extender);
     }
 
@@ -184,8 +200,8 @@ public class ResourcesChart<R, C extends PeriodWithValue> {
         this.totalResources = totalResources;
         return this;
     }
-    
-    public ResourcesChart<R, C> setExetender(String extender){
+
+    public ResourcesChart<R, C> setExetender(String extender) {
         this.extender = Optional.of(extender);
         return this;
     }

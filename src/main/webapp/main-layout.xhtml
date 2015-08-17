@@ -16,8 +16,8 @@
     <h:body>
         <p:growl id="growl" life="3000" />
 
-        <p:layout fullPage="true">
-            <p:layoutUnit position="north">
+        <p:layout fullPage="true" id="all">
+            <p:layoutUnit position="north" id="north-panel">
                 <h:form id="menuForm">
                     <p:tabMenu activeIndex="#{param.i}">
                         <p:menuitem value="Services" outcome="/service/List.xhtml?i=0" />
@@ -27,6 +27,7 @@
                         <p:menuitem value="#{bundle.ResultsTitle}" outcome="/results/results.xhtml?i=4" />
                         <p:menuitem value="#{bundle.ResultsTitle}">
                             <h:form>
+
                                 <span>From </span><p:calendar style="width: 70px" id="startDate" value="#{periodController.startDate}"></p:calendar>
                                 <span>to</span> <p:calendar style="width: 70px" id="endDate" value="#{periodController.endDate}"></p:calendar>
                                 <span>in</span>
@@ -43,20 +44,18 @@
                                                    var="service"
                                                    itemValue="#{service}"/>
                                 </p:selectOneMenu>
-                                <h:commandButton value="Set" action="#{periodController.submitChanges() }"></h:commandButton>
+                                <ui:insert name="submit-period"/>
                             </h:form>
                         </p:menuitem>
                     </p:tabMenu>
                 </h:form>
             </p:layoutUnit>
-            <p:layoutUnit position="south" size="60">
-                <ui:insert name="footer"/>
-            </p:layoutUnit>
-
-            <p:layoutUnit position="center" id="body-panel">
+            <p:layoutUnit position="center" id="center-panel">
                 <ui:insert name="body"/>
             </p:layoutUnit>
-
+            <p:layoutUnit position="south" size="60" id="south-panel">
+                <ui:insert name="footer"/>
+            </p:layoutUnit>
         </p:layout>
 
     </h:body>

@@ -12,6 +12,10 @@
             <h:outputText value="#{bundle.ListBookedResourceTitle}"></h:outputText>
         </ui:define>
 
+        <ui:define name="submit-period">
+            <p:commandButton value="Set" action="#{periodController.submitChanges()}" update=":contents">
+            </p:commandButton>
+        </ui:define>
         <ui:define name="body">
             <h:panelGroup id="contents">
                 <h:panelGroup rendered="#{brc.somethingToShow()}">

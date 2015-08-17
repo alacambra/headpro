@@ -11,56 +11,61 @@
         <ui:define name="browser-title">
             <h:outputText value="RHA - Availability"></h:outputText>
         </ui:define>
-
+        <ui:define name="submit-period">
+            <p:commandButton value="Set" action="#{periodController.submitChanges()}" update=":contents">
+            </p:commandButton>
+        </ui:define>
         <ui:define name="body">
-            <h:form id="form">
-                <p:growl id="msgs" showDetail="true"/>
-
-                <p:dataTable id="resourcesId" 
-                             var="resources" 
-                             value="#{arc.resourceRows}" 
-                             editable="true"
-                             editMode="cell" 
-                             widgetVar="availableResource">
+            <h:panelGroup id="contents">
+                <h:form id="form">
                     <p:growl id="msgs" showDetail="true"/>
 
-                    <p:ajax event="cellEdit" listener="#{arc.onCellEdit}" update=":form:msgs,:totalAvailabilities,:graph" />
-                    <p:column headerText="Service name" width="100">
-                        <h:outputText value="#{resources.key.name}"></h:outputText>
+                    <p:dataTable id="resourcesId" 
+                                 var="resources" 
+                                 value="#{arc.resourceRows}" 
+                                 editable="true"
+                                 editMode="cell" 
+                                 widgetVar="availableResource">
+                        <p:growl id="msgs" showDetail="true"/>
+
+                        <p:ajax event="cellEdit" listener="#{arc.onCellEdit}" update=":form:msgs,:totalAvailabilities,:graph" />
+                        <p:column headerText="Service name" width="100">
+                            <h:outputText value="#{resources.key.name}"></h:outputText>
+                        </p:column>
+
+                        <c:forEach items="${arc.periods}" var="item" varStatus="counter">
+                            <p:column headerText="${item.toString()}" width="70"  styleClass="wrap">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{resources.resources.get(counter.index).available}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{resources.resources.get(counter.index).available}" style="width:96%" label="Year"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                        </c:forEach>
+                    </p:dataTable>
+                </h:form>
+                <p:dataTable id="totalAvailabilities" 
+                             var="totalAvailability" 
+                             value="#{arc.totalResources}" 
+                             editable="true"
+                             editMode="cell" 
+                             widgetVar="totalAvailability">
+                    <p:growl id="msgs" showDetail="true"/>
+
+                    <p:column width="100">
+                        <h:outputText value="Total"></h:outputText>
                     </p:column>
 
                     <c:forEach items="${arc.periods}" var="item" varStatus="counter">
-                        <p:column headerText="${item.toString()}" width="70"  styleClass="wrap">
-                            <p:cellEditor>
-                                <f:facet name="output">
-                                    <h:outputText value="#{resources.resources.get(counter.index).available}"/>
-                                </f:facet>
-                                <f:facet name="input">
-                                    <p:inputText value="#{resources.resources.get(counter.index).available}" style="width:96%" label="Year"/></f:facet>
-                            </p:cellEditor>
+                        <p:column headerText="" width="70">
+                            <h:outputText value="${totalAvailability.get(counter.index).total}"/>
                         </p:column>
                     </c:forEach>
                 </p:dataTable>
-            </h:form>
-            <p:dataTable id="totalAvailabilities" 
-                         var="totalAvailability" 
-                         value="#{arc.totalResources}" 
-                         editable="true"
-                         editMode="cell" 
-                         widgetVar="totalAvailability">
-                <p:growl id="msgs" showDetail="true"/>
-
-                <p:column width="100">
-                    <h:outputText value="Total"></h:outputText>
-                </p:column>
-
-                <c:forEach items="${arc.periods}" var="item" varStatus="counter">
-                    <p:column headerText="" width="70">
-                        <h:outputText value="${totalAvailability.get(counter.index).total}"/>
-                    </p:column>
-                </c:forEach>
-            </p:dataTable>
-            <p:chart id="graph" widgetVar="chart" type="bar" model="#{arc.areaModel}" style="height:300px"/>
+                <p:chart id="graph" widgetVar="chart" type="bar" model="#{arc.areaModel}" style="height:300px"/>
+            </h:panelGroup>
         </ui:define>
     </ui:composition>
 </html>
