@@ -14,6 +14,9 @@ import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
@@ -38,6 +41,7 @@ public class ResourcesChart<R, C extends PeriodWithValue> {
     int detailedGraphMax = 1200;
     Locale locale;
     Optional<String> extender = Optional.empty();
+    Logger logger = Logger.getLogger(getClass().getName());
 
     private void buildDetailedGraph() {
         resourcesRows.stream().forEach(row -> {
@@ -112,18 +116,16 @@ public class ResourcesChart<R, C extends PeriodWithValue> {
 
     private void checkStackedAndSeries() {
 
-        if(!resourcesChart.isStacked()){
+        if (!resourcesChart.isStacked()) {
             return;
         }
+
+        Set<Integer> sizes = resourcesChart.getSeries().stream()
+                .map(serie -> serie.getData().size()).collect(Collectors.toSet());
         
-        resourcesChart.getSeries().stream().map(serie -> serie.getData().size()).forEach(value -> {
-            Integer last = null;
-            if (last == null) {
-                last = value;
-            } else if(!last.equals(value)){
-                throw new RuntimeException("Stacked graph with inconsistent series");
-            }
-        });
+        if(sizes.size() != 1){
+            logger.info("Invalid chart series:" + sizes.size() + " (" + sizes + ")");
+        }
     }
 
     private void addExtenderToChart(String extender) {
