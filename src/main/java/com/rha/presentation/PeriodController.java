@@ -109,7 +109,7 @@ public class PeriodController implements Serializable {
     }
 
     public List<Step> getSteps() {
-        return Arrays.asList(Step.values());
+        return Arrays.asList(Step.BIWEEK);
     }
 
     public void submitChanges() {
