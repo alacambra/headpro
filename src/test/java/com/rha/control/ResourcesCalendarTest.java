@@ -14,6 +14,7 @@ import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import org.hamcrest.core.Is;
 import org.junit.After;
@@ -24,15 +25,17 @@ import static org.junit.Assert.*;
 /**
  *
  * @author alacambra
-*/
+ */
 public class ResourcesCalendarTest {
 
     CalendarPeriodsGenerator cut;
+    CalendarEntriesGenerator entriesGenerator;
 
     @Before
     public void setUp() {
         cut = new CalendarPeriodsGenerator();
-
+        entriesGenerator = new CalendarEntriesGenerator();
+        entriesGenerator.logger = Logger.getAnonymousLogger();
     }
 
     @After
@@ -180,18 +183,18 @@ public class ResourcesCalendarTest {
         cut.setStep(Step.WEEK);
 
         assertThat(cut.generatePeriods().size(), Is.is(19));
-        
+
         setUp();
         cut.setStartDate(LocalDate.of(2014, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2016, Month.DECEMBER, 31));
 
         cut.setStep(Step.WEEK);
-        
-        WeekFields weekFields = WeekFields.of(Locale.GERMANY);       
 
-        int total = (LocalDate.ofYearDay(2014, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear())) +
-                (LocalDate.ofYearDay(2015, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear())) +
-                (LocalDate.ofYearDay(2016, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear()));
+        WeekFields weekFields = WeekFields.of(Locale.GERMANY);
+
+        int total = (LocalDate.ofYearDay(2014, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear()))
+                + (LocalDate.ofYearDay(2015, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear()))
+                + (LocalDate.ofYearDay(2016, 365).with(TemporalAdjusters.lastDayOfYear()).get(weekFields.weekOfYear()));
 
         assertThat(cut.generatePeriods().size(), Is.is(total));
     }
@@ -250,7 +253,6 @@ public class ResourcesCalendarTest {
                 .setStep(Step.MONTH)
                 .generatePeriods();
 
-        CalendarEntriesGenerator entriesGenerator = new CalendarEntriesGenerator();
         List<BookedResource> result = entriesGenerator.getCalendarEntries(
                 existentResources, periods, () -> {
                     BookedResource res = new BookedResource();
@@ -278,14 +280,13 @@ public class ResourcesCalendarTest {
                 .setStep(Step.MONTH)
                 .generatePeriods();
 
-        CalendarEntriesGenerator entriesGenerator = new CalendarEntriesGenerator();
         List<BookedResource> result = entriesGenerator.getCalendarEntries(
                 existentResources, periods, () -> {
                     BookedResource res = new BookedResource();
                     res.setPersisted(false);
                     return res;
                 });
-        
+
         assertEquals(7, result.size());
         assertTrue(result.contains(existentResources.get(0)));
         assertEquals(existentResources.get(0), result.get(4));
@@ -306,20 +307,19 @@ public class ResourcesCalendarTest {
 
         existentResources.add(br);
 
-        List<LocalDate[]> periods 
+        List<LocalDate[]> periods
                 = cut.setStartDate(LocalDate.of(2015, Month.JANUARY, 1))
                 .setEndDate(LocalDate.of(2015, Month.DECEMBER, 31))
                 .setStep(Step.MONTH)
                 .generatePeriods();
 
-        CalendarEntriesGenerator entriesGenerator = new CalendarEntriesGenerator();
         List<BookedResource> result = entriesGenerator.getCalendarEntries(
                 existentResources, periods, () -> {
                     BookedResource res = new BookedResource();
                     res.setPersisted(false);
                     return res;
                 });
-        
+
         assertEquals(12, result.size());
 //        assertEquals(existentResources.get(0), result.get(0));
         assertEquals(existentResources.get(1), result.get(5));

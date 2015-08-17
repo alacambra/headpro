@@ -15,6 +15,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
+import javax.persistence.RollbackException;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.After;
 import org.junit.Before;
@@ -34,6 +36,27 @@ public class AvailableResourceFacadeIT {
     public AvailableResourceFacadeIT() {
     }
 
+    private void clearTables() {
+        try {
+
+            tx.begin();
+
+            Query q1 = em.createNativeQuery("DELETE FROM AvailableResource");
+            Query q2 = em.createNativeQuery("DELETE FROM BookedResource");
+            Query q3 = em.createNativeQuery("DELETE FROM Project");
+            Query q4 = em.createNativeQuery("DELETE FROM Service");
+
+            q1.executeUpdate();
+            q2.executeUpdate();
+            q3.executeUpdate();
+            q4.executeUpdate();
+
+            tx.commit();
+        } catch (SecurityException | IllegalStateException | RollbackException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Before
     public void setUp() {
         cut = new AvailableResourceFacade();
@@ -44,6 +67,7 @@ public class AvailableResourceFacadeIT {
 
     @After
     public void tearDown() {
+        clearTables();
     }
 
     @Test
@@ -116,13 +140,13 @@ public class AvailableResourceFacadeIT {
 
         tx.commit();
         assertThat(result.size(), is(1));
-        assertThat(result.get(0).getTotal(), is(55L));
+        assertThat(result.get(0).getTotal(), is(55F));
 
     }
 
     @Test
     public void testUpdateOrCreateBookings() throws Exception {
-        
+
         tx.begin();
         Service s = createService();
         AvailableResource ar = new AvailableResource();
@@ -132,7 +156,6 @@ public class AvailableResourceFacadeIT {
         ar.setPersisted(false);
 
         cut.updateOrCreateBookings(Arrays.asList(ar));
-
 
         List<AvailableResource> result
                 = cut.getAvailableResourcesInPeriod(LocalDate.of(2010, Month.MARCH, 1), LocalDate.of(2017, Month.MARCH, 1));
@@ -149,28 +172,27 @@ public class AvailableResourceFacadeIT {
         assertThat(ar.isPersisted(), is(true));
         assertThat(result.size(), is(1));
         assertThat(result.get(0), is(ar));
-        assertThat(result.get(0).getAvailable(), is(50L));
+        assertThat(result.get(0).getAvailable(), is(50F));
         assertTrue(result.get(0) == ar);
-        
+
         tx.commit();
         tx.begin();
-        
+
         ar.setAvailable(10f);
         cut.updateOrCreateBookings(Arrays.asList(ar));
-        
+
+        tx.commit();
         assertThat(ar.isPersisted(), is(true));
         assertThat(result.size(), is(1));
         assertThat(result.get(0), is(ar));
-        assertThat(result.get(0).getAvailable(), is(10L));
+        assertThat(result.get(0).getAvailable(), is(10F));
         assertTrue(result.get(0) == ar);
     }
-    
+
     @Test
-    public void testGetAvailableResourcesOfServiceInPeriod(){
+    public void testGetAvailableResourcesOfServiceInPeriod() {
         cut.getAvailableResourcesOfServiceInPeriod(LocalDate.now(), LocalDate.now(), createService());
     }
-    
-            
 
     private Service createService() {
         Service s = new Service();

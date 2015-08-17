@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +31,7 @@ public class CalendarEntriesGeneratorTest {
     @Before
     public void setUp() {
         cut = new CalendarEntriesGenerator();
+        cut.logger = Logger.getAnonymousLogger();
     }
 
     @Test
