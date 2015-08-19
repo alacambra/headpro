@@ -80,7 +80,7 @@
 
     </dependencies>
     <build>
-        <finalName>rha</finalName>
+        <finalName>hp</finalName>
     </build>
     <profiles>
         <profile>
