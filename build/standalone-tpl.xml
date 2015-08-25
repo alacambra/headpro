@@ -365,25 +365,6 @@
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:resource-adapters:2.0">
             <resource-adapters>
-                <resource-adapter id="neo4j">
-                    <archive>
-                        jca-neo4j-connector.rar
-                    </archive>
-                    <transaction-support>LocalTransaction</transaction-support>
-                    <connection-definitions>
-                        <connection-definition class-name="com.poolingpeople.neo4j.connector.GenericManagedConnectionFactory" jndi-name="java:/eis/neo4j/restTx" enabled="true" pool-name="neo4j-rest-tx">
-                            <pool>
-                                <min-pool-size>5</min-pool-size>
-                            </pool>
-                            <security>
-                                <application/>
-                            </security>
-                            <validation>
-                                <background-validation>true</background-validation>
-                            </validation>
-                        </connection-definition>
-                    </connection-definitions>
-                </resource-adapter>
             </resource-adapters>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
@@ -457,7 +438,7 @@
 
     <interfaces>
         <interface name="management">
-            <inet-address value="${jboss.bind.address.management:127.0.0.1}"/>
+            <inet-address value="${jboss.bind.address.management:0.0.0.0}"/>
         </interface>
         <interface name="public">
             <any-ipv4-address/>

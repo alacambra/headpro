@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BUILD_PATH=/home/alacambra/rha/build
+BUILD_PATH=/home/alacambra/hp/build
 
 envsubst '${COOKINGHELPER_DB_USR}:${COOKINGHELPER_DB_PSW}' < "standalone-tpl.xml" > "standalone.xml"
 envsubst '${COOKINGHELPER_WF_USR}:${COOKINGHELPER_WF_PSW}' < "Dockerfile-tpl" > "Dockerfile"

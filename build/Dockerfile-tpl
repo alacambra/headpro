@@ -1,6 +1,5 @@
-FROM alacambra/rha
-RUN rm /opt/jboss/wildfly/standalone/configuration/standalone.xml
-ADD standalone.xml /opt/jboss/wildfly/standalone/configuration/
-RUN /opt/jboss/wildfly/bin/add-user.sh ${COOKINGHELPER_WF_USR} ${COOKINGHELPER_WF_PSW} --silent
-ADD hp.war /opt/jboss/wildfly/standalone/deployments/
-CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
+FROM alacambra/wildfly:8.2.1
+RUN rm ${WILDFLY_HOME}/standalone/configuration/standalone.xml
+ADD standalone.xml ${WILDFLY_HOME}/standalone/configuration/
+RUN ${WILDFLY_HOME}/bin/add-user.sh ${COOKINGHELPER_WF_USR} ${COOKINGHELPER_WF_PSW} --silent
+ADD hp.war ${WILDFLY_HOME}/standalone/deployments/
