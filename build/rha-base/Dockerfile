@@ -1,4 +1,4 @@
-FROM poolingpeople/wildfly
+FROM poolingpeople/wildfly:8.2.0
 ADD libs/mysql-connector-java-5.1.34-bin.jar /opt/jboss/wildfly/standalone/deployments/
 ADD libs/itext-2.1.7.jar /opt/jboss/wildfly/modules/system/layers/base/com/rha/main/
 ADD libs/primefaces-5.0.jar /opt/jboss/wildfly/modules/system/layers/base/com/rha/main/
