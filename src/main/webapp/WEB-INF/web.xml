@@ -23,6 +23,42 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>v/service/List.xhtml</welcome-file>
+        <welcome-file>/index.xhtml</welcome-file>
     </welcome-file-list>
+    
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>headpro</web-resource-name>
+            <url-pattern>/v/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>DELETE</http-method>
+            <http-method>PUT</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>user</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>welcome</web-resource-name>
+            <url-pattern>/v/welcome</url-pattern>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <login-config>
+        <auth-method>KEYCLOAK</auth-method>
+        <realm-name>headpro</realm-name>
+    </login-config>
+    <security-role>
+        <role-name>user</role-name>
+    </security-role>
+    <security-role>
+        <role-name>user1</role-name>
+    </security-role>
+        
 </web-app>

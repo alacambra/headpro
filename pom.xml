@@ -77,6 +77,18 @@
             <version>10.10.2.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-core</artifactId>
+            <version>1.4.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-undertow-adapter</artifactId>
+            <version>1.4.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
     <build>

@@ -14,10 +14,15 @@
     </h:head>
 
     <h:body>
-        <p:growl id="growl" life="3000" />
-
-        <p:layout fullPage="true" id="all">
+        <p:layout>
+            <p:growl id="growl" life="3000" />
             <p:layoutUnit position="north" id="north-panel">
+                <h:panelGroup rendered="#{headerController.principal != null}">
+                    <h:outputLabel value="Logged as: "></h:outputLabel>
+                    <h:outputLabel value="#{headerController.user}"/>
+                </h:panelGroup>
+                <a href="http://192.168.59.103:8080/auth/realms/headpro/tokens/logout?redirect_uri=http://localhost:8080/v/project/List.xhtml?i=1" value="Logout">Logout</a>
+
                 <h:form id="menuForm">
                     <p:tabMenu activeIndex="#{param.i}">
                         <p:menuitem value="Services" outcome="/service/List.xhtml?i=0" />
@@ -40,5 +45,4 @@
         </p:layout>
 
     </h:body>
-
 </html>
