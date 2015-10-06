@@ -25,68 +25,13 @@ public class CalendarEntriesGenerator {
     Logger logger;
 
     /**
-     *
-     * @param <T>
-     * @param periodicEntities: entities loaded from db
-     * @param periods: periods to load
-     * @param supplier: supplier to build the new desired objects
-     * @return
+     * For the given periodicEntities, generates periods to fulfill all calendar slots
+     * @param <T> type of the periodic value
+     * @param periodicEntities entities loaded from DB
+     * @param allPeriods  periods to load
+     * @param supplier a supplier to generate PeridosWithVAlue of type T
+     * @return 
      */
-    public <T extends PeriodWithValue> List<T> getCalendarEntries2(
-            List<T> periodicEntities, List<LocalDate[]> periods, Supplier<T> supplier) {
-
-        List<T> generatedEntries = new ArrayList<>();
-
-        Iterator<T> it = periodicEntities.iterator();
-        T pointer = null;
-
-        if (it.hasNext()) {
-            pointer = it.next();
-
-            if (pointer.getStartDate().isBefore(periods.get(0)[0])) {
-                logger.log(Level.SEVERE, "pointer can not be before than first period: {0} : {1}", new Object[]{
-                    pointer.getStartDate(), periods.get(0)[0]
-                });
-            }
-        }
-
-        int i = 0;
-        for (LocalDate[] period : periods) {
-
-            if (pointer != null && pointer.getStartDate().isBefore(period[0])) {
-
-                logger.fine("pointer earlier than the period. Synchronising...");
-
-                while (pointer != null && pointer.getStartDate().isBefore(period[0])) {
-                    if (it.hasNext()) {
-                        pointer = it.next();
-                    } else {
-                        pointer = null;
-                    }
-                }
-            }
-
-            if (pointer != null && areEquals(period[0], pointer.getStartDate())) {
-
-                generatedEntries.add(pointer);
-
-                if (it.hasNext()) {
-                    pointer = it.next();
-                } else {
-                    pointer = null;
-                }
-
-            } else {
-                T entity = generateEntity(supplier, period);
-                generatedEntries.add(entity);
-            }
-
-            i++;
-        }
-
-        return generatedEntries;
-    }
-
     public <T extends PeriodWithValue> List<T> getCalendarEntries(
             List<T> periodicEntities, List<LocalDate[]> allPeriods, Supplier<T> supplier) {
 
