@@ -17,6 +17,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * @author alacambra
  */
+//TODO why not just ResourcesRow?
 public class ResultRow implements Serializable {
 
     Service service;
