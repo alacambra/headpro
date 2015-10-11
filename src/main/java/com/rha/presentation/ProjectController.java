@@ -28,15 +28,12 @@ import javax.inject.Inject;
 public class ProjectController implements Serializable {
 
     @EJB
-    private com.rha.boundary.ProjectFacade ejbFacade;
+    private transient com.rha.boundary.ProjectFacade ejbFacade;
     private List<Project> items = null;
     private Project selected;
     
     @Inject
-    Event<ProjectEvent> projectEvent;
-
-    public ProjectController() {
-    }
+    transient Event<ProjectEvent> projectEvent;
 
     public Date getSelectedProjectStartDate() {
         if (selected != null && selected.getStartLocalDate() != null) {
@@ -74,19 +71,12 @@ public class ProjectController implements Serializable {
         this.selected = selected;
     }
 
-    protected void setEmbeddableKeys() {
-    }
-
-    protected void initializeEmbeddableKey() {
-    }
-
     private ProjectFacade getFacade() {
         return ejbFacade;
     }
 
     public Project prepareCreate() {
         selected = new Project();
-        initializeEmbeddableKey();
         return selected;
     }
 
@@ -118,7 +108,6 @@ public class ProjectController implements Serializable {
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
-            setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
                     getFacade().edit(selected);
