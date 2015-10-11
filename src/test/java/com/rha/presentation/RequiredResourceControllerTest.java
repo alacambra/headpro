@@ -17,16 +17,16 @@ import static org.junit.Assert.*;
  *
  * @author alacambra
  */
-public class BookedResourceControllerTest {
+public class RequiredResourceControllerTest {
 
-    BookedResourceController cut;
+    RequiredResourceController cut;
 
-    public BookedResourceControllerTest() {
+    public RequiredResourceControllerTest() {
     }
 
     @Before
     public void setUp() {
-        cut = new BookedResourceController();
+        cut = new RequiredResourceController();
         cut.periodController = new PeriodController();
     }
 

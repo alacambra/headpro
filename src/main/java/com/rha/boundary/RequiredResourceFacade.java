@@ -1,7 +1,7 @@
 package com.rha.boundary;
 
 import com.rha.control.LocalDateConverter;
-import com.rha.entity.BookedResource;
+import com.rha.entity.RequiredResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Service;
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author alacambra
  */
 @Stateless
-public class BookedResourceFacade extends AbstractFacade<BookedResource> {
+public class RequiredResourceFacade extends AbstractFacade<RequiredResource> {
 
     @PersistenceContext
     EntityManager em;
@@ -25,11 +25,11 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         return em;
     }
 
-    public List<BookedResource> getBookedResourcesForServiceInPeriod(
+    public List<RequiredResource> getBookedResourcesForServiceInPeriod(
             Service service, LocalDate startDate, LocalDate endDate) {
 
-        List<BookedResource> bookedResources
-                = em.createNamedQuery(BookedResource.forServiceInPeriod)
+        List<RequiredResource> bookedResources
+                = em.createNamedQuery(RequiredResource.forServiceInPeriod)
                 .setParameter("service", service)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
@@ -42,7 +42,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
             Service service, LocalDate startDate, LocalDate endDate) {
 
         List<PeriodTotal> bookedResources
-                = em.createNamedQuery(BookedResource.totalForServiceInPeriod, PeriodTotal.class)
+                = em.createNamedQuery(RequiredResource.totalForServiceInPeriod, PeriodTotal.class)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .setParameter("service", service)
@@ -54,7 +54,7 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
     public List<PeriodTotal> getTotalBookedResourcesByServiceInPeriod(LocalDate startDate, LocalDate endDate) {
 
         List<PeriodTotal> bookedResources
-                = em.createNamedQuery(BookedResource.totalByServiceInPeriod, PeriodTotal.class)
+                = em.createNamedQuery(RequiredResource.totalByServiceInPeriod, PeriodTotal.class)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();
@@ -62,11 +62,11 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
         return bookedResources;
     }
 
-    public BookedResourceFacade() {
-        super(BookedResource.class);
+    public RequiredResourceFacade() {
+        super(RequiredResource.class);
     }
 
-    public void updateOrCreateBookings(List<BookedResource> resources) {
+    public void updateOrCreateBookings(List<RequiredResource> resources) {
 
         resources.stream().filter((resource) -> (resource.isPersisted() || resource.getBooked() != 0))
                 .forEach(br -> {
@@ -79,9 +79,9 @@ public class BookedResourceFacade extends AbstractFacade<BookedResource> {
                 });
     }
 
-    public List<BookedResource> getBookedResourcesInPeriod(LocalDate startDate, LocalDate endDate) {
-        List<BookedResource> r
-                = em.createNamedQuery(BookedResource.bookedInPeriod)
+    public List<RequiredResource> getBookedResourcesInPeriod(LocalDate startDate, LocalDate endDate) {
+        List<RequiredResource> r
+                = em.createNamedQuery(RequiredResource.bookedInPeriod)
                 .setParameter("startDate", LocalDateConverter.toDate(startDate))
                 .setParameter("endDate", LocalDateConverter.toDate(endDate))
                 .getResultList();

@@ -29,7 +29,7 @@ public class Project implements Serializable {
     Integer id;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
-    List<BookedResource> bookedResources;
+    List<RequiredResource> bookedResources;
 
     String name;
     Integer probability = 100;

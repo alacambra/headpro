@@ -1,7 +1,7 @@
 package com.rha.presentation;
 
 import com.rha.boundary.AvailableResourceFacade;
-import com.rha.boundary.BookedResourceFacade;
+import com.rha.boundary.RequiredResourceFacade;
 import com.rha.boundary.ResultsFacade;
 import com.rha.boundary.ServiceFacade;
 import com.rha.control.CalendarEntriesGenerator;
@@ -9,7 +9,7 @@ import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.control.LocalDateConverter;
 import com.rha.control.PeriodComparator;
 import com.rha.entity.AvailableResource;
-import com.rha.entity.BookedResource;
+import com.rha.entity.RequiredResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.PeriodWithValue;
 import com.rha.entity.RemainingResource;
@@ -55,7 +55,7 @@ public class ResultsController implements Serializable {
     transient AvailableResourceFacade availableResourceFacade;
 
     @Inject
-    transient BookedResourceFacade bookedResourceFacade;
+    transient RequiredResourceFacade bookedResourceFacade;
 
     @Inject
     transient ServiceFacade serviceFacade;
@@ -80,7 +80,7 @@ public class ResultsController implements Serializable {
         List<AvailableResource> availableResources
                 = availableResourceFacade.getAvailableResourcesInPeriod(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
-        List<BookedResource> bookedResources
+        List<RequiredResource> bookedResources
                 = bookedResourceFacade.getBookedResourcesInPeriod(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
         List<AvailableResource> res = calendarEntriesGenerator
@@ -100,7 +100,7 @@ public class ResultsController implements Serializable {
 
         bookedResources = calendarEntriesGenerator
                 .getCalendarEntries(bookedResources, periodController.getPeriods(), () -> {
-                    BookedResource ar = new BookedResource();
+                    RequiredResource ar = new RequiredResource();
                     ar.setPersisted(false);
                     return ar;
                 });
@@ -142,7 +142,7 @@ public class ResultsController implements Serializable {
         List<AvailableResource> availableResources
                 = availableResourceFacade.getAvailableResourcesInPeriod(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
-        List<BookedResource> bookedResources
+        List<RequiredResource> bookedResources
                 = bookedResourceFacade.getBookedResourcesInPeriod(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
         List<AvailableResource> res = calendarEntriesGenerator
@@ -162,7 +162,7 @@ public class ResultsController implements Serializable {
 
         bookedResources = calendarEntriesGenerator
                 .getCalendarEntries(bookedResources, periodController.getPeriods(), () -> {
-                    BookedResource ar = new BookedResource();
+                    RequiredResource ar = new RequiredResource();
                     ar.setPersisted(false);
                     return ar;
                 });
@@ -272,7 +272,7 @@ public class ResultsController implements Serializable {
         return periodController.getPeriods().stream().map(period -> period[0]).collect(toList());
     }
 
-    private LocalDate getDate(BookedResource br) {
+    private LocalDate getDate(RequiredResource br) {
         return br.getStartDate();
     }
 

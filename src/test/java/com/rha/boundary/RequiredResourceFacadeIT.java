@@ -5,7 +5,7 @@
  */
 package com.rha.boundary;
 
-import com.rha.entity.BookedResource;
+import com.rha.entity.RequiredResource;
 import com.rha.entity.Service;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
@@ -27,19 +27,19 @@ import static org.junit.Assert.*;
  *
  * @author alacambra
  */
-public class BookedResourceFacadeIT {
+public class RequiredResourceFacadeIT {
 
     EntityManager em;
     EntityTransaction tx;
-    BookedResourceFacade cut;
+    RequiredResourceFacade cut;
 
-    public BookedResourceFacadeIT() {
+    public RequiredResourceFacadeIT() {
 
     }
 
     @Before
     public void setUp() {
-        cut = new BookedResourceFacade();
+        cut = new RequiredResourceFacade();
         cut.em = Persistence.createEntityManagerFactory("it").createEntityManager();
         this.em = cut.em;
         this.tx = this.em.getTransaction();
@@ -63,7 +63,7 @@ public class BookedResourceFacadeIT {
         p.setStep(Step.MONTH);
         p = em.merge(p);
 
-        BookedResource br = new BookedResource();
+        RequiredResource br = new RequiredResource();
         br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
@@ -72,7 +72,7 @@ public class BookedResourceFacadeIT {
 
         cut.create(br);
 
-        br = new BookedResource();
+        br = new RequiredResource();
         br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
@@ -81,7 +81,7 @@ public class BookedResourceFacadeIT {
 
         cut.create(br);
 
-        List<BookedResource> r
+        List<RequiredResource> r
                 = cut.getBookedResourcesInPeriod(LocalDate.of(2010, Month.MARCH, 30), LocalDate.of(2017, Month.MARCH, 30));
 
         assertThat(r.size(), is(2));
@@ -103,7 +103,7 @@ public class BookedResourceFacadeIT {
         p.setStep(Step.MONTH);
         p = em.merge(p);
 
-        BookedResource br = new BookedResource();
+        RequiredResource br = new RequiredResource();
         br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
@@ -112,7 +112,7 @@ public class BookedResourceFacadeIT {
 
         cut.create(br);
 
-        br = new BookedResource();
+        br = new RequiredResource();
         br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
@@ -121,7 +121,7 @@ public class BookedResourceFacadeIT {
 
         cut.create(br);
 
-        List<BookedResource> r = cut.getBookedResourcesForServiceInPeriod(s,
+        List<RequiredResource> r = cut.getBookedResourcesForServiceInPeriod(s,
                 LocalDate.of(2015, Month.JANUARY, 1), LocalDate.of(2015, Month.DECEMBER, 31));
 
         assertThat(r.size(), Is.is(2));
@@ -148,7 +148,7 @@ public class BookedResourceFacadeIT {
         p2.setStep(Step.MONTH);
         p2 = em.merge(p2);
 
-        BookedResource br = new BookedResource();
+        RequiredResource br = new RequiredResource();
         br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
@@ -157,7 +157,7 @@ public class BookedResourceFacadeIT {
 
         cut.create(br);
 
-        br = new BookedResource();
+        br = new RequiredResource();
         br.setBooked(15f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
@@ -166,7 +166,7 @@ public class BookedResourceFacadeIT {
 
         cut.create(br);
 
-        br = new BookedResource();
+        br = new RequiredResource();
         br.setBooked(30f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.JULY, 1));
@@ -197,7 +197,7 @@ public class BookedResourceFacadeIT {
         p.setStep(Step.MONTH);
         p = em.merge(p);
 
-        BookedResource br = new BookedResource();
+        RequiredResource br = new RequiredResource();
         br.setBooked(10f);
         br.setService(s);
         br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));

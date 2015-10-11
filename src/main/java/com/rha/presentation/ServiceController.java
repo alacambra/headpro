@@ -32,7 +32,7 @@ public class ServiceController implements Serializable {
     transient Logger logger;
     
     @Inject
-    BookedResourceController bookedResourceController;
+    RequiredResourceController bookedResourceController;
     
     private List<Service> items = null;
     private Service selected;

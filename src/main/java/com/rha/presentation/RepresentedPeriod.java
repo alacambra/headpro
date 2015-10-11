@@ -5,7 +5,7 @@
  */
 package com.rha.presentation;
 
-import com.rha.entity.BookedResource;
+import com.rha.entity.RequiredResource;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class RepresentedPeriod {
     LocalDate startDate;
     LocalDate endDate;
     
-    List<BookedResource> bookedResources;
+    List<RequiredResource> bookedResources;
 
     public RepresentedPeriod(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
@@ -33,11 +33,11 @@ public class RepresentedPeriod {
         return endDate;
     }
 
-    public List<BookedResource> getBookedResources() {
+    public List<RequiredResource> getBookedResources() {
         return bookedResources;
     }
 
-    public void setBookedResources(List<BookedResource> bookedResources) {
+    public void setBookedResources(List<RequiredResource> bookedResources) {
         this.bookedResources = bookedResources;
     }
     

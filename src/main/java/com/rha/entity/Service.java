@@ -24,7 +24,7 @@ public class Service implements Serializable {
     String name;
     
     @OneToMany(mappedBy = "service", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    List<BookedResource> bookedResources;
+    List<RequiredResource> bookedResources;
     
     @OneToMany(mappedBy = "service", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<AvailableResource> availableResources;

@@ -2,7 +2,7 @@ package com.rha.boundary;
 
 import com.rha.control.PeriodTotalsMerger;
 import com.rha.entity.AvailableResource;
-import com.rha.entity.BookedResource;
+import com.rha.entity.RequiredResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Service;
@@ -21,10 +21,10 @@ import javax.inject.Inject;
 public class ResultsFacade {
 
     AvailableResourceFacade availableResourceFacade;
-    BookedResourceFacade bookedResourceFacade;
+    RequiredResourceFacade bookedResourceFacade;
 
     @Inject
-    public ResultsFacade(AvailableResourceFacade availableResourceFacade, BookedResourceFacade bookedResourceFacade) {
+    public ResultsFacade(AvailableResourceFacade availableResourceFacade, RequiredResourceFacade bookedResourceFacade) {
         this.availableResourceFacade = availableResourceFacade;
         this.bookedResourceFacade = bookedResourceFacade;
     }
@@ -47,7 +47,7 @@ public class ResultsFacade {
     public Map<Service, List<PeriodWithValue>> getWeighedRemainingResourcesByService(LocalDate startDate, LocalDate endDate) {
 
         List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
-        List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate);
+        List<RequiredResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate);
 
         Map<Service, List<PeriodWithValue>> brs = booked.stream().map(br -> {
 
@@ -55,7 +55,7 @@ public class ResultsFacade {
             probability = 1;
             br.setBooked((-1 * br.getBooked() * probability));
             return br;
-        }).collect(groupingBy(BookedResource::getService, mapping(r -> (PeriodWithValue) r, toList())));
+        }).collect(groupingBy(RequiredResource::getService, mapping(r -> (PeriodWithValue) r, toList())));
 
         Map<Service, List<PeriodWithValue>> ars = available.stream()
                 .collect(groupingBy(AvailableResource::getService, mapping(r -> (PeriodWithValue) r, toList())));
@@ -83,8 +83,8 @@ public class ResultsFacade {
             return ((AvailableResource)resource).getService();
         }
         
-        if(resource instanceof BookedResource){
-            return ((BookedResource)resource).getService();
+        if(resource instanceof RequiredResource){
+            return ((RequiredResource)resource).getService();
         }
         
         throw new RuntimeException("Invalid instance");
@@ -93,7 +93,7 @@ public class ResultsFacade {
     public Map<Service, Map<LocalDate, Float>> getWeighedRemainingResourcesByService2(LocalDate startDate, LocalDate endDate) {
 
         List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
-        List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()
+        List<RequiredResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()
                 .map(br -> {
                     int probability = br.getProject().getProbability() / 100;
                     probability = 1;
@@ -123,7 +123,7 @@ public class ResultsFacade {
     public Map<LocalDate, Map<Service, Float>> getWeighedRemainingResourcesByService3(LocalDate startDate, LocalDate endDate) {
 
         List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
-        List<BookedResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()
+        List<RequiredResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()
                 .map(br -> {
                     int probability = br.getProject().getProbability() / 100;
                     probability = 1;

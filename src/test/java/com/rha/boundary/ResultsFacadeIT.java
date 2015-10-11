@@ -6,7 +6,7 @@
 package com.rha.boundary;
 
 import com.rha.entity.AvailableResource;
-import com.rha.entity.BookedResource;
+import com.rha.entity.RequiredResource;
 import com.rha.entity.Project;
 import com.rha.entity.Service;
 import com.rha.entity.Step;
@@ -39,7 +39,7 @@ public class ResultsFacadeIT {
 
         this.em = Persistence.createEntityManagerFactory("it").createEntityManager();
 
-        BookedResourceFacade bookedResourceFacade = new BookedResourceFacade();
+        RequiredResourceFacade bookedResourceFacade = new RequiredResourceFacade();
         bookedResourceFacade.em = em;
 
         AvailableResourceFacade availableResourceFacade = new AvailableResourceFacade();
@@ -105,9 +105,9 @@ public class ResultsFacadeIT {
         return s;
     }
 
-    private BookedResource creatBookedResource(Project p, Service s, LocalDate startDate) {
+    private RequiredResource creatBookedResource(Project p, Service s, LocalDate startDate) {
 
-        BookedResource br = new BookedResource();
+        RequiredResource br = new RequiredResource();
         br.setStartDate(startDate);
         br.setEndDate(startDate.plusWeeks(2));
         br.setService(s);

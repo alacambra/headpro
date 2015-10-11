@@ -1,12 +1,12 @@
 package com.rha.presentation;
 
 import com.rha.boundary.AvailableResourceFacade;
-import com.rha.boundary.BookedResourceFacade;
+import com.rha.boundary.RequiredResourceFacade;
 import com.rha.boundary.ServiceFacade;
 import com.rha.boundary.ProjectFacade;
 import com.rha.control.LocalDateConverter;
 import com.rha.entity.AvailableResource;
-import com.rha.entity.BookedResource;
+import com.rha.entity.RequiredResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.Project;
 import com.rha.entity.Service;
@@ -27,13 +27,13 @@ import org.primefaces.model.chart.LineChartSeries;
 
 @SessionScoped
 @Named("brc")
-public class BookedResourceController extends ResourceController<Project, BookedResource> implements Serializable {
+public class RequiredResourceController extends ResourceController<Project, RequiredResource> implements Serializable {
 
     @Inject
     transient Logger logger;
 
     @Inject
-    BookedResourceFacade bookedResourceFacade;
+    RequiredResourceFacade bookedResourceFacade;
 
     @Inject
     AvailableResourceFacade availableResourceFacade;
@@ -49,7 +49,7 @@ public class BookedResourceController extends ResourceController<Project, Booked
     }
 
     @Override
-    protected List<BookedResource> getResourcesInPeriod() {
+    protected List<RequiredResource> getResourcesInPeriod() {
 
         return bookedResourceFacade.getBookedResourcesForServiceInPeriod(periodController.getActiveSerivice(), periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
@@ -96,14 +96,14 @@ public class BookedResourceController extends ResourceController<Project, Booked
     }
 
     @Override
-    protected Project collectResourceByKey(BookedResource value) {
+    protected Project collectResourceByKey(RequiredResource value) {
         return value.getProject();
     }
 
     @Override
-    protected Supplier<BookedResource> getResourceSupplierForKey(Project key) {
+    protected Supplier<RequiredResource> getResourceSupplierForKey(Project key) {
         return () -> {
-            BookedResource br = new BookedResource();
+            RequiredResource br = new RequiredResource();
             br.setPersisted(false);
             br.setProject(key);
             br.setService(periodController.getActiveSerivice());
@@ -130,7 +130,7 @@ public class BookedResourceController extends ResourceController<Project, Booked
     }
 
     @Override
-    protected void updateOrCreateResource(List<BookedResource> resources) {
+    protected void updateOrCreateResource(List<RequiredResource> resources) {
         bookedResourceFacade.updateOrCreateBookings(resources);
     }
 

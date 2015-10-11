@@ -5,7 +5,7 @@
  */
 package com.rha.control;
 
-import com.rha.entity.BookedResource;
+import com.rha.entity.RequiredResource;
 import com.rha.entity.Step;
 import java.time.LocalDate;
 import java.time.Month;
@@ -236,14 +236,14 @@ public class ResourcesCalendarTest {
     @Test
     public void testMergeCalenderEntriesMonth() {
 
-        List<BookedResource> existentResources = new ArrayList<>();
+        List<RequiredResource> existentResources = new ArrayList<>();
 
-        BookedResource br = new BookedResource();
+        RequiredResource br = new RequiredResource();
         br.setStartDate(LocalDate.of(2015, Month.JANUARY, 1));
 
         existentResources.add(br);
 
-        br = new BookedResource();
+        br = new RequiredResource();
         br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
 
         existentResources.add(br);
@@ -253,9 +253,8 @@ public class ResourcesCalendarTest {
                 .setStep(Step.MONTH)
                 .generatePeriods();
 
-        List<BookedResource> result = entriesGenerator.getCalendarEntries(
-                existentResources, periods, () -> {
-                    BookedResource res = new BookedResource();
+        List<RequiredResource> result = entriesGenerator.getCalendarEntries(existentResources, periods, () -> {
+                    RequiredResource res = new RequiredResource();
                     res.setPersisted(false);
                     return res;
                 });
@@ -268,9 +267,9 @@ public class ResourcesCalendarTest {
     @Test
     public void testMergeCalendarEntriesHalfYeyar() {
 
-        List<BookedResource> existentResources = new ArrayList<>();
+        List<RequiredResource> existentResources = new ArrayList<>();
 
-        BookedResource br = new BookedResource();
+        RequiredResource br = new RequiredResource();
         br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
 
         existentResources.add(br);
@@ -280,9 +279,8 @@ public class ResourcesCalendarTest {
                 .setStep(Step.MONTH)
                 .generatePeriods();
 
-        List<BookedResource> result = entriesGenerator.getCalendarEntries(
-                existentResources, periods, () -> {
-                    BookedResource res = new BookedResource();
+        List<RequiredResource> result = entriesGenerator.getCalendarEntries(existentResources, periods, () -> {
+                    RequiredResource res = new RequiredResource();
                     res.setPersisted(false);
                     return res;
                 });
@@ -295,14 +293,14 @@ public class ResourcesCalendarTest {
     @Test
     public void testMergeCalendarEntriesWeek() {
 
-        List<BookedResource> existentResources = new ArrayList<>();
+        List<RequiredResource> existentResources = new ArrayList<>();
 
-        BookedResource br = new BookedResource();
+        RequiredResource br = new RequiredResource();
         br.setStartDate(LocalDate.of(2015, Month.FEBRUARY, 1));
 
         existentResources.add(br);
 
-        br = new BookedResource();
+        br = new RequiredResource();
         br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
 
         existentResources.add(br);
@@ -313,9 +311,8 @@ public class ResourcesCalendarTest {
                 .setStep(Step.MONTH)
                 .generatePeriods();
 
-        List<BookedResource> result = entriesGenerator.getCalendarEntries(
-                existentResources, periods, () -> {
-                    BookedResource res = new BookedResource();
+        List<RequiredResource> result = entriesGenerator.getCalendarEntries(existentResources, periods, () -> {
+                    RequiredResource res = new RequiredResource();
                     res.setPersisted(false);
                     return res;
                 });
