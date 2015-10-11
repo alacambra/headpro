@@ -118,7 +118,7 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
 
         if (newValue != null && !newValue.equals(oldValue)) {
 
-            updateOrCreateResource(entity.getResources());
+            updateOrCreateResource(entity.getColumns());
 
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
             FacesContext.getCurrentInstance().addMessage(null, msg);

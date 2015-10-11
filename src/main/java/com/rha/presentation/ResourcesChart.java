@@ -49,7 +49,7 @@ public class ResourcesChart<R, C extends PeriodWithValue> {
             ChartSeries chartSerie = new BarChartSeries();
             chartSerie.setLabel(row.getTitle());
 
-            row.getResources().stream().forEach(resource -> {
+            row.getColumns().stream().forEach(resource -> {
 
                 String columnName;
                 float value = Optional.ofNullable(resource.getValue()).orElse(0f);

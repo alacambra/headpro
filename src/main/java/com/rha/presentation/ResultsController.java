@@ -365,7 +365,7 @@ public class ResultsController implements Serializable {
                 ChartSeries chartSeriePositive = new ChartSeries();
                 chartSeriePositive.setLabel(row.getKey().getName());
 
-                row.getResources().stream().forEach(remainingresource -> {
+                row.getColumns().stream().forEach(remainingresource -> {
                     float remainingResources = Optional.ofNullable(remainingresource.getValue()).orElse(0f);
 
                     String columnName;

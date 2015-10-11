@@ -15,7 +15,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class ResourcesRow<K, T extends PeriodWithValue> implements Serializable{
 
     K key;
-    List<T> resources;
+    List<T> columns;
     String title;
     
     @Inject
@@ -23,12 +23,12 @@ public class ResourcesRow<K, T extends PeriodWithValue> implements Serializable{
     private boolean rowIsActive;
 
     public ResourcesRow(List<T> resources, K key) {
-        this.resources = resources;
+        this.columns = resources;
         this.key = key;
     }
 
-    public List<T> getResources() {
-        return resources;
+    public List<T> getColumns() {
+        return columns;
     }
 
     public K getKey() {
@@ -71,6 +71,6 @@ public class ResourcesRow<K, T extends PeriodWithValue> implements Serializable{
     
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(key).append(resources).toHashCode();
+        return new HashCodeBuilder().append(key).append(columns).toHashCode();
     }
 }
