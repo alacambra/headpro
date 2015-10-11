@@ -22,17 +22,17 @@ import javax.persistence.Transient;
 @NamedQueries({
     @NamedQuery(name = RequiredResource.totalByServiceInPeriod,
             query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked)) "
-            + "FROM BookedResource br "
+            + "FROM RequiredResource br "
             + "WHERE ((br.startDate>=:startDate AND br.startDate<=:endDate)"
             + " OR (br.endDate>=:startDate AND br.endDate<=:endDate) "
             + " OR (br.startDate<=:startDate AND br.endDate>=:endDate)) "
             + "group by br.service, br.startDate, br.endDate order by br.startDate"),
 
     @NamedQuery(name = RequiredResource.forService,
-            query = "SELECT br FROM BookedResource br JOIN br.service s WHERE s=:service"),
+            query = "SELECT br FROM RequiredResource br JOIN br.service s WHERE s=:service"),
 
     @NamedQuery(name = RequiredResource.forServiceInPeriod,
-            query = "SELECT br FROM BookedResource br JOIN br.service s "
+            query = "SELECT br FROM RequiredResource br JOIN br.service s "
             + "WHERE ((br.startDate>=:startDate AND br.startDate<=:endDate)"
             + " OR (br.endDate>=:startDate AND br.endDate<=:endDate) "
             + " OR (br.startDate<=:startDate AND br.endDate>=:endDate)) "
@@ -40,7 +40,7 @@ import javax.persistence.Transient;
 
     @NamedQuery(name = RequiredResource.totalForServiceInPeriod,
             query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked))"
-            + " FROM BookedResource br JOIN br.service s "
+            + " FROM RequiredResource br JOIN br.service s "
             + "WHERE ((br.startDate>=:startDate AND br.startDate<=:endDate)"
             + " OR (br.endDate>=:startDate AND br.endDate<=:endDate) "
             + " OR (br.startDate<=:startDate AND br.endDate>=:endDate)) "
@@ -48,7 +48,7 @@ import javax.persistence.Transient;
             + "group by br.startDate, br.endDate order by br.startDate"),
 
     @NamedQuery(name = RequiredResource.bookedInPeriod,
-            query = "SELECT br FROM BookedResource br "
+            query = "SELECT br FROM RequiredResource br "
             + " WHERE ((br.startDate>=:startDate AND br.startDate<=:endDate)"
             + " OR (br.endDate>=:startDate AND br.endDate<=:endDate) "
             + " OR (br.startDate<=:startDate AND br.endDate>=:endDate)) "
@@ -56,7 +56,7 @@ import javax.persistence.Transient;
 })
 public class RequiredResource implements Serializable, Comparable<RequiredResource>, PeriodWithValue {
 
-    private static final String prefix = "com.rha.entity.BookedResource.";
+    private static final String prefix = "com.rha.entity.RequiredResource.";
     public static final String bookedInPeriod = prefix + "bookedInPeriod";
     public static final String totalByServiceInPeriod = prefix + "totalByServiceInPeriod";
     public static final String totalForServiceInPeriod = prefix + "totalForServiceForPeriod";
