@@ -49,6 +49,12 @@
             <scope>provided</scope>
         </dependency>-->
         <dependency>
+            <groupId>com.airhacks</groupId>
+            <artifactId>enhydrator</artifactId>
+            <version>0.0.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>

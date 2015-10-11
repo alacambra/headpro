@@ -10,6 +10,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.security.Principal;
+import javax.servlet.http.HttpServletRequest;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 
@@ -33,5 +34,11 @@ public class HeaderController implements Serializable {
 
     public void removePrincipal() {
         this.principal = null;
+    }
+    
+    public String getUrl(){
+        String host = ((HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest()).getServerName();
+        int port = FacesContext.getCurrentInstance().getExternalContext().getRequestServerPort();
+        return host + ":" + port;
     }
 }

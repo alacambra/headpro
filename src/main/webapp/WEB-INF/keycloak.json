@@ -1,11 +1,10 @@
 {
   "realm": "headpro",
-  "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmVajnuEIM0P1twDaF12NyUIvS28F1iZ3La7wMBPWpzkGhhXA6Ukl9CSl96mBnH62o2gJ/eAJIVGLK3s1XrJQ0gmMbE2u1Q1vIGFCczNbjSwN9m+jZX4Ul1UEalyemyBCbE6+K1z8CQErbc/HZ5G6iz6H7IrcUP9OLg06v84LnzBe2GR3iU3YESY5Yy8AEgu4qY1M+OMdN55k/K3rnzTmFVmlfUvxbY5KIw+5dovvwZ1B0B0hULjMcL/bYQscNgKKivj00I4rvememttZIZkTYXwzicmFMp6oQvn/L3pJ5cPIdV6vgMzJANacAHJa1ok3DhnbcYD8AgqoskYxTpcVZwIDAQAB",
-  "auth-server-url": "http://192.168.59.103:8080/auth",
+  "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjKciLR+bq/m0tyQGQx8ZjAwCKJMpBLZHRaI/DrPdRGJMsZHsJU97Dj1tGTUQ9VPh1qA54KwMMKKIRBTS5P9ho5ioE/o5LTa9wYmeP+0OYZi5TisSiUJt9mUQr+EsQcv7Hr4ALlK7Dl2EbrUYsMvAFk1ChBmvgO13nYReQWC61U+3Mmt466jdQqdBxbl87sLbes9hUGKWM7zxA4llvLp+x2Vbu0pUdxD9G1tUFoOGYuxSxWIPxFae3vnW1yVff6vfI8nQfEy5KeHbVK4II0niEtzsm7R9iMup31nWTWDquqja8jr8Xo0nrFh3wuZZrKhqJkEsPHSBgiqQ8BTiTVLfZwIDAQAB",
+  "auth-server-url": "https://headpro.io:10012/auth",
   "ssl-required": "external",
   "resource": "headpro",
   "credentials": {
-    "secret": "0ae07ab5-362b-48bc-8f7a-63725ffa273a"
-  },
-  "use-resource-role-mappings": true
+    "secret": "15cd374c-cd74-494f-a34f-70476301e957"
+  }
 }

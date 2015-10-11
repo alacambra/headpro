@@ -1,4 +1,4 @@
-FROM alacambra/wildfly:8.2.1
+FROM alacambra/wildfly:8.2.1-keycloak
 RUN rm ${WILDFLY_HOME}/standalone/configuration/standalone.xml
 ADD standalone.xml ${WILDFLY_HOME}/standalone/configuration/
 RUN ${WILDFLY_HOME}/bin/add-user.sh ${COOKINGHELPER_WF_USR} ${COOKINGHELPER_WF_PSW} --silent
