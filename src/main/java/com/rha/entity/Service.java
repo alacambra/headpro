@@ -2,7 +2,6 @@ package com.rha.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.enterprise.event.Event;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
