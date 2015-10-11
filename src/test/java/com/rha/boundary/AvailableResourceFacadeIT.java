@@ -42,7 +42,7 @@ public class AvailableResourceFacadeIT {
             tx.begin();
 
             Query q1 = em.createNativeQuery("DELETE FROM AvailableResource");
-            Query q2 = em.createNativeQuery("DELETE FROM BookedResource");
+            Query q2 = em.createNativeQuery("DELETE FROM RequiredResource");
             Query q3 = em.createNativeQuery("DELETE FROM Project");
             Query q4 = em.createNativeQuery("DELETE FROM Service");
 
