@@ -12,8 +12,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.RollbackException;
@@ -27,47 +25,23 @@ import static org.junit.Assert.*;
  *
  * @author alacambra
  */
-public class AvailableResourceFacadeIT {
+public class AvailableResourceFacadeIT extends BaseTestIT{
 
-    EntityManager em;
-    EntityTransaction tx;
     AvailableResourceFacade cut;
 
     public AvailableResourceFacadeIT() {
     }
 
-    private void clearTables() {
-        try {
-
-            tx.begin();
-
-            Query q1 = em.createNativeQuery("DELETE FROM AvailableResource");
-            Query q2 = em.createNativeQuery("DELETE FROM RequiredResource");
-            Query q3 = em.createNativeQuery("DELETE FROM Project");
-            Query q4 = em.createNativeQuery("DELETE FROM Service");
-
-            q1.executeUpdate();
-            q2.executeUpdate();
-            q3.executeUpdate();
-            q4.executeUpdate();
-
-            tx.commit();
-        } catch (SecurityException | IllegalStateException | RollbackException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Before
     public void setUp() {
+        super.setUp();
         cut = new AvailableResourceFacade();
         cut.em = Persistence.createEntityManagerFactory("it").createEntityManager();
-        this.em = cut.em;
-        this.tx = this.em.getTransaction();
     }
 
     @After
     public void tearDown() {
-        clearTables();
+        super.tearDown();
     }
 
     @Test
@@ -110,6 +84,64 @@ public class AvailableResourceFacadeIT {
 
         tx.commit();
         assertThat(result.size(), is(2));
+    }
+    
+    @Test
+    public void testGetAvailableResourcesInPeriodBig() throws Exception {
+        loadServiceTestTable();
+        tx.begin();
+
+        List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2015, Month.MARCH, 1), LocalDate.of(2016, Month.MARCH, 1));
+
+        tx.commit();
+        
+        assertThat(result.size(), is(27));
+    }
+
+    @Test
+    public void testGetAvailableResourcesInPeriodEmpty() throws Exception {
+        loadServiceTestTable();
+        tx.begin();
+
+        List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2015, Month.MARCH, 1), LocalDate.of(2015, Month.APRIL, 30));
+
+        tx.commit();
+
+        assertThat(result.size(), is(0));
+    }
+
+    @Test
+    public void testGetAvailableResourcesInPeriodShort() throws Exception {
+        loadServiceTestTable();
+        tx.begin();
+
+        List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2015, Month.OCTOBER, 1), LocalDate.of(2015, Month.NOVEMBER, 1));
+
+        tx.commit();
+
+        assertThat(result.size(), is(20));
+    }
+
+    @Test
+    public void testGetTotalAvailableResourcesInPeriodBig() throws Exception {
+        loadServiceTestTable();
+        tx.begin();
+
+        List<PeriodTotal> result = cut.getTotalAvailableResourcesInPeriod(
+                LocalDate.of(2015, Month.MARCH, 1), LocalDate.of(2016, Month.MARCH, 1));
+
+        tx.commit();
+
+        assertThat(result.size(), is(4));
+
+        List<Float> expectedTotal = Arrays.asList(75f,66f,60f,63.5f);
+
+        for(int i = 0; i<4; i++){
+            assertThat(result.get(i).getTotal(), is(expectedTotal.get(i)));
+        }
     }
 
     @Test

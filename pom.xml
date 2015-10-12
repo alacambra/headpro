@@ -49,6 +49,12 @@
             <scope>provided</scope>
         </dependency>-->
         <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-se</artifactId>
+            <version>1.0.1-Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.airhacks</groupId>
             <artifactId>enhydrator</artifactId>
             <version>0.0.5</version>
