@@ -18,7 +18,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "BOOKEDRESOURCE")
+@Table(name = "REQUIREDRESOURCE")
 @NamedQueries({
     @NamedQuery(name = RequiredResource.totalByServiceInPeriod,
             query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked)) "
