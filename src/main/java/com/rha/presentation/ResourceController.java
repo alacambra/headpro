@@ -44,14 +44,13 @@ public abstract class ResourceController<K, V extends PeriodWithValue> implement
         List<V> availableResources = getResourcesInPeriod();
         List<K> emptyKeys = getKeysWithoutValues();
 
+        //TODO: belongs to facade
         final Map<K, List<V>> resourcesByKey
                 = availableResources.stream().collect(groupingBy(this::collectResourceByKey));
 
         emptyKeys.stream().forEach(servcie -> {
             resourcesByKey.putIfAbsent(servcie, new ArrayList<>());
         });
-
-        resourcesRows = new ArrayList<>();
 
         resourcesRows = resourcesByKey.keySet().stream()
                 .map(key -> generateRow(key, resourcesByKey))
