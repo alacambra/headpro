@@ -6,6 +6,8 @@
 package com.rha.control;
 
 import com.rha.entity.PeriodWithValue;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -16,10 +18,10 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 
-public class CalendarEntriesGenerator {
+public class CalendarEntriesGenerator implements Serializable{
 
     @Inject
-    Logger logger;
+    transient Logger logger;
 
     /**
      * For the given periodicEntities, generates periods to fulfill all calendar slots

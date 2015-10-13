@@ -105,6 +105,7 @@ public class RemianiningResourcesController implements Serializable {
                     return ar;
                 });
 
+        //TODO: belongs to facade
         Map<LocalDate, Float> allBookedResources = bookedResources.stream().collect(
                 groupingBy(
                         PeriodWithValue::getStartDate,
@@ -152,6 +153,7 @@ public class RemianiningResourcesController implements Serializable {
                     return ar;
                 });
 
+        //TODO: belongs to facade
         Map<LocalDate, Float> allAvailableResources = res.stream().collect(
                 groupingBy(
                         PeriodWithValue::getStartDate,
@@ -167,6 +169,7 @@ public class RemianiningResourcesController implements Serializable {
                     return ar;
                 });
 
+        //TODO belongs to facade
         Map<LocalDate, Float> allBookedResources = bookedResources.stream().collect(
                 groupingBy(
                         PeriodWithValue::getStartDate,
@@ -233,6 +236,7 @@ public class RemianiningResourcesController implements Serializable {
                 return p1;
             };
 
+            //TODO belongs to facade
             Map<LocalDate, PeriodWithValue> p = remainingResources.get(service).stream()
                     .collect(
                             groupingBy(

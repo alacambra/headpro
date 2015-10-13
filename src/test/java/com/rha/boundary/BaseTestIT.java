@@ -30,7 +30,6 @@ import static org.hamcrest.core.Is.is;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  *
@@ -79,7 +78,7 @@ public class BaseTestIT {
 
     public void loadServiceTestTable() {
         tx.begin();
-        Source source = new CSVFileSource(INPUT + "ServiceTestTable.csv", ",", "utf-8", true);
+        Source source = new CSVFileSource(INPUT + "ServiceTestTableSmall.csv", ",", "utf-8", true);
         VirtualSinkSource output = new VirtualSinkSource();
         Pump pump = new Pump.Engine()
                 .from(source)
