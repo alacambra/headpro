@@ -6,33 +6,27 @@
 package com.rha.boundary;
 
 import com.airhacks.enhydrator.Pump;
-import com.airhacks.enhydrator.in.CSVFileSource;
+import com.airhacks.enhydrator.in.*;
 import com.airhacks.enhydrator.in.Column;
-import com.airhacks.enhydrator.in.Row;
-import com.airhacks.enhydrator.in.Source;
-import com.airhacks.enhydrator.in.VirtualSinkSource;
 import com.airhacks.enhydrator.out.LogSink;
 import com.airhacks.enhydrator.transform.Memory;
 import com.airhacks.enhydrator.transform.SkipFirstRow;
 import com.rha.entity.AvailableResource;
 import com.rha.entity.Service;
 import com.rha.presentation.AvailableResourceController;
+import org.junit.After;
+import org.junit.Before;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
-import javax.persistence.RollbackException;
-import static org.hamcrest.CoreMatchers.*;
+
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import static org.junit.Assert.assertThat;
 
 /**
- *
  * @author alacambra
  */
 public class BaseTestIT {
@@ -76,9 +70,9 @@ public class BaseTestIT {
         }
     }
 
-    public void loadServiceTestTable() {
+    public void loadServiceTestTable(String testFileName) {
         tx.begin();
-        Source source = new CSVFileSource(INPUT + "ServiceTestTableSmall.csv", ",", "utf-8", true);
+        Source source = new CSVFileSource(INPUT + testFileName, ",", "utf-8", true);
         VirtualSinkSource output = new VirtualSinkSource();
         Pump pump = new Pump.Engine()
                 .from(source)
@@ -86,7 +80,7 @@ public class BaseTestIT {
                 .to(new LogSink()).to(output).build();
         Memory memory = pump.start();
         List<Row> rows = output.getRows();
-
+        int totalArs = 0;
         for (Row row : rows) {
 
             if (row.getColumnByIndex(0).getValue().equals("Total")) {
@@ -108,12 +102,14 @@ public class BaseTestIT {
                 AvailableResource availableResource = new AvailableResource();
                 availableResource.setPeriod(new LocalDate[]{startDate, endDate});
                 availableResource.setService(service);
-                if(c.getValue() == null) continue;
+                if (c.getValue() == null) continue;
                 availableResource.setValue(Float.parseFloat((String) c.getValue()));
                 em.merge(availableResource);
+                totalArs++;
             }
-        };
+        }
         tx.commit();
+        System.out.println(totalArs);
     }
 
     private Service persistService(Row row) {

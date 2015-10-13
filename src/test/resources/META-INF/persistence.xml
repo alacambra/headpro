@@ -6,11 +6,11 @@
         <class>com.rha.entity.Project</class>
         <class>com.rha.entity.AvailableResource</class>
         <properties>
-            <property name="javax.persistence.jdbc.url" value="jdbc:derby:./integration-test;create=true"/>
-            <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
+            <property name="javax.persistence.jdbc.driver" value="org.h2.jdbcx.JdbcDataSource"/>
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/>
-            <property name="eclipselink.logging.parameters" value="true"/>
+            <!--<property name="eclipselink.logging.level.sql" value="FINER"/>-->
+            <!--<property name="eclipselink.logging.parameters" value="true"/>-->
         </properties>
     </persistence-unit>
 </persistence>

@@ -88,7 +88,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
     
     @Test
     public void testGetAvailableResourcesInPeriodBig() throws Exception {
-        loadServiceTestTable();
+        loadServiceTestTable("ServiceTestTableSmall.csv");
         tx.begin();
 
         List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
@@ -100,8 +100,88 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
     }
 
     @Test
+    public void testGetAvailableResourcesInPeriodBig2() throws Exception {
+        loadServiceTestTable("ServiceTestTableBig.csv");
+        tx.begin();
+
+        List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.JANUARY, 14));
+
+        tx.commit();
+
+        assertThat(result.size(), is(12));
+
+        tx.begin();
+
+        result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.JANUARY, 16));
+        assertThat(result.size(), is(24));
+
+        tx.commit();
+
+        tx.begin();
+
+        result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.JUNE, 30));
+
+        tx.commit();
+
+        assertThat(result.size(), is(2*12*6));
+
+        tx.begin();
+
+        result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.DECEMBER, 30));
+
+        tx.commit();
+
+        assertThat(result.size(), is(2*12*12));
+    }
+
+    @Test
+    public void testGetAvailableResourcesInPeriodBig2WithNulls() throws Exception {
+        loadServiceTestTable("ServiceTestTableBigWithNulls.csv");
+        tx.begin();
+
+        List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.JANUARY, 14));
+
+        tx.commit();
+
+        assertThat(result.size(), is(8));
+
+        tx.begin();
+
+        result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.JANUARY, 16));
+        assertThat(result.size(), is(16));
+
+        tx.commit();
+
+        tx.begin();
+
+        result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.JUNE, 30));
+
+        tx.commit();
+
+        assertThat(result.size(), is(104));
+
+        tx.begin();
+
+        result = cut.getAvailableResourcesInPeriod(
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.DECEMBER, 30));
+
+        tx.commit();
+
+        assertThat(result.size(), is(212));
+    }
+
+
+
+    @Test
     public void testGetAvailableResourcesInPeriodEmpty() throws Exception {
-        loadServiceTestTable();
+        loadServiceTestTable("ServiceTestTableSmall.csv");
         tx.begin();
 
         List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
@@ -114,7 +194,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
     @Test
     public void testGetAvailableResourcesInPeriodShort() throws Exception {
-        loadServiceTestTable();
+        loadServiceTestTable("ServiceTestTableSmall.csv");
         tx.begin();
 
         List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
@@ -127,7 +207,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
     @Test
     public void testGetTotalAvailableResourcesInPeriodBig() throws Exception {
-        loadServiceTestTable();
+        loadServiceTestTable("ServiceTestTableSmall.csv");
         tx.begin();
 
         List<PeriodTotal> result = cut.getTotalAvailableResourcesInPeriod(
