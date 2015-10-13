@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  */
 public class ResultsFacadeIT {
 
-    ResultsFacade cut;
+    RemainingResourcesFacade cut;
     EntityManager em;
     EntityTransaction tx;
 
@@ -45,7 +45,7 @@ public class ResultsFacadeIT {
         AvailableResourceFacade availableResourceFacade = new AvailableResourceFacade();
         availableResourceFacade.em = em;
 
-        cut = new ResultsFacade(availableResourceFacade, bookedResourceFacade);
+        cut = new RemainingResourcesFacade(availableResourceFacade, bookedResourceFacade);
         this.tx = this.em.getTransaction();
     }
 

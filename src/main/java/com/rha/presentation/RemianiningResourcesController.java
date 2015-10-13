@@ -2,7 +2,7 @@ package com.rha.presentation;
 
 import com.rha.boundary.AvailableResourceFacade;
 import com.rha.boundary.RequiredResourceFacade;
-import com.rha.boundary.ResultsFacade;
+import com.rha.boundary.RemainingResourcesFacade;
 import com.rha.boundary.ServiceFacade;
 import com.rha.control.CalendarEntriesGenerator;
 import com.rha.control.CalendarPeriodsGenerator;
@@ -43,13 +43,13 @@ import org.primefaces.model.chart.ChartSeries;
 
 @SessionScoped
 @Named
-public class ResultsController implements Serializable {
+public class RemianiningResourcesController implements Serializable {
 
     @Inject
     transient Logger logger;
 
     @Inject
-    transient ResultsFacade resultsFacade;
+    transient RemainingResourcesFacade remainingResourcesFacade;
 
     @Inject
     transient AvailableResourceFacade availableResourceFacade;
@@ -207,7 +207,7 @@ public class ResultsController implements Serializable {
     public void loadAvailableResourcesForPeriod() {
 
         Map<Service, List<PeriodWithValue>> remainingResources
-                = resultsFacade.getWeighedRemainingResourcesByService(periodController.getLocalStartDate(), periodController.getLocalEndDate());
+                = remainingResourcesFacade.getWeighedRemainingResourcesByService(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
         List<Service> emptyServices = serviceFacade.findAll();
 
@@ -317,7 +317,7 @@ public class ResultsController implements Serializable {
         resourcesChart = new BarChartModel();
 
         Map<Service, Map<LocalDate, Float>> resources
-                = resultsFacade.getWeighedRemainingResourcesByService2(periodController.getLocalStartDate(), periodController.getLocalEndDate());
+                = remainingResourcesFacade.getWeighedRemainingResourcesByService2(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
         resources.entrySet().forEach(serviceEntry -> {
 

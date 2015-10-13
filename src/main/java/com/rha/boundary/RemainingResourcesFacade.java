@@ -6,6 +6,8 @@ import com.rha.entity.RequiredResource;
 import com.rha.entity.PeriodTotal;
 import com.rha.entity.PeriodWithValue;
 import com.rha.entity.Service;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,13 +20,13 @@ import javax.inject.Inject;
  *
  * @author alacambra
  */
-public class ResultsFacade {
+public class RemainingResourcesFacade implements Serializable{
 
     AvailableResourceFacade availableResourceFacade;
     RequiredResourceFacade bookedResourceFacade;
 
     @Inject
-    public ResultsFacade(AvailableResourceFacade availableResourceFacade, RequiredResourceFacade bookedResourceFacade) {
+    public RemainingResourcesFacade(AvailableResourceFacade availableResourceFacade, RequiredResourceFacade bookedResourceFacade) {
         this.availableResourceFacade = availableResourceFacade;
         this.bookedResourceFacade = bookedResourceFacade;
     }
