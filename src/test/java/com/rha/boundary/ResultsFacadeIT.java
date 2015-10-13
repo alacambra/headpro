@@ -18,6 +18,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -54,6 +55,7 @@ public class ResultsFacadeIT {
     }
 
     @Test
+    @Ignore
     public void testGetWeighedRemainingResources() {
         
         tx.begin();
