@@ -51,14 +51,14 @@ public class RequiredResourceController extends ResourceController<Project, Requ
     @Override
     protected List<RequiredResource> getResourcesInPeriod() {
 
-        return bookedResourceFacade.getBookedResourcesForServiceInPeriod(periodController.getActiveSerivice(), periodController.getLocalStartDate(), periodController.getLocalEndDate());
+        return bookedResourceFacade.getBookedResourcesForServiceInPeriod(periodController.getActiveService(), periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
 
     @Override
     protected void createResourcesChart() {
         List<AvailableResource> availableResources
                 = availableResourceFacade.getAvailableResourcesOfServiceInPeriod(
-                        periodController.getLocalStartDate(), periodController.getLocalEndDate(), periodController.getActiveSerivice()
+                        periodController.getLocalStartDate(), periodController.getLocalEndDate(), periodController.getActiveService()
                 );
 
         Map<LocalDate, List<AvailableResource>> res
@@ -106,7 +106,7 @@ public class RequiredResourceController extends ResourceController<Project, Requ
             RequiredResource br = new RequiredResource();
             br.setPersisted(false);
             br.setProject(key);
-            br.setService(periodController.getActiveSerivice());
+            br.setService(periodController.getActiveService());
             return br;
         };
     }
@@ -122,11 +122,11 @@ public class RequiredResourceController extends ResourceController<Project, Requ
     }
 
     public Service getCurrentService() {
-        return periodController.getActiveSerivice();
+        return periodController.getActiveService();
     }
 
     public boolean somethingToShow() {
-        return periodController.getActiveSerivice() != null && getResourceRows().size() > 0;
+        return periodController.getActiveService() != null && getResourceRows().size() > 0;
     }
 
     @Override
@@ -137,12 +137,12 @@ public class RequiredResourceController extends ResourceController<Project, Requ
     @Override
     protected List<PeriodTotal> getTotalResourcesInPeriod() {
         return bookedResourceFacade.getTotalBookedResourcesForServiceInPeriod(
-                periodController.getActiveSerivice(), periodController.getLocalStartDate(), periodController.getLocalEndDate());
+                periodController.getActiveService(), periodController.getLocalStartDate(), periodController.getLocalEndDate());
     }
 
     @Override
     protected String getResourcesGraphTitle() {
-        return "Resources booked for service " + periodController.getActiveSerivice().getName();
+        return "Resources booked for service " + periodController.getActiveService().getName();
     }
 
     @Override

@@ -9,7 +9,7 @@ import com.rha.control.CalendarPeriodsGenerator;
 import com.rha.control.LocalDateConverter;
 import com.rha.entity.Service;
 import com.rha.entity.Step;
-import java.io.IOException;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -18,11 +18,8 @@ import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.event.Event;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -35,7 +32,7 @@ public class PeriodController implements Serializable {
 
     LocalDate startDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
-    Service activeSerivice;
+    Service activeService;
     List<LocalDate[]> periods;
     Step step = Step.BIWEEK;
     
@@ -84,12 +81,12 @@ public class PeriodController implements Serializable {
         this.endDate = LocalDateConverter.toLocalDate(endDate);
     }
 
-    public Service getActiveSerivice() {
-        return activeSerivice;
+    public Service getActiveService() {
+        return activeService;
     }
 
-    public void setActiveSerivice(@NotNull Service activeSerivice) {
-        this.activeSerivice = activeSerivice;
+    public void setActiveService(@NotNull Service activeService) {
+        this.activeService = activeService;
     }
 
     public void setStartDate(@NotNull LocalDate startDate) {
@@ -117,7 +114,7 @@ public class PeriodController implements Serializable {
         loadPeriods();
         PeriodChangedEvent periodChangedEvent = 
                 new PeriodChangedEvent()
-                .setActiveSerivice(activeSerivice)
+                .setActiveSerivice(activeService)
                 .setEndDate(endDate)
                 .setStartDate(startDate)
                 .setPeriods(periods)
