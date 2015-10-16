@@ -20,14 +20,6 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "REQUIREDRESOURCE")
 @NamedQueries({
-    @NamedQuery(name = RequiredResource.totalByServiceInPeriod,
-            query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked)) "
-            + "FROM RequiredResource br "
-            + "WHERE ((br.startDate>=:startDate AND br.startDate<=:endDate)"
-            + " OR (br.endDate>=:startDate AND br.endDate<=:endDate) "
-            + " OR (br.startDate<=:startDate AND br.endDate>=:endDate)) "
-            + "group by br.service, br.startDate, br.endDate order by br.startDate"),
-
     @NamedQuery(name = RequiredResource.forService,
             query = "SELECT br FROM RequiredResource br JOIN br.service s WHERE s=:service"),
 
@@ -58,7 +50,6 @@ public class RequiredResource implements Serializable, Comparable<RequiredResour
 
     private static final String prefix = "com.rha.entity.RequiredResource.";
     public static final String bookedInPeriod = prefix + "bookedInPeriod";
-    public static final String totalByServiceInPeriod = prefix + "totalByServiceInPeriod";
     public static final String totalForServiceInPeriod = prefix + "totalForServiceForPeriod";
     public static final String forService = prefix + "forService";
     public static final String forServiceInPeriod = prefix + "forServiceForPeriod";

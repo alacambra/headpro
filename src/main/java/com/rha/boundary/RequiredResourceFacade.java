@@ -51,17 +51,6 @@ public class RequiredResourceFacade extends AbstractFacade<RequiredResource> {
         return bookedResources;
     }
 
-    public List<PeriodTotal> getTotalBookedResourcesByServiceInPeriod(LocalDate startDate, LocalDate endDate) {
-
-        List<PeriodTotal> bookedResources
-                = em.createNamedQuery(RequiredResource.totalByServiceInPeriod, PeriodTotal.class)
-                .setParameter("startDate", LocalDateConverter.toDate(startDate))
-                .setParameter("endDate", LocalDateConverter.toDate(endDate))
-                .getResultList();
-
-        return bookedResources;
-    }
-
     public RequiredResourceFacade() {
         super(RequiredResource.class);
     }
