@@ -38,13 +38,13 @@ public class RemainingResourcesFacade implements Serializable{
      * @param endDate
      * @return
      */
-    public List<PeriodTotal> getNetoRemainingResources(LocalDate startDate, LocalDate endDate) {
-
-        List<PeriodTotal> available = availableResourceFacade.getTotalAvailableResourcesInPeriod(startDate, endDate);
-        List<PeriodTotal> booked = bookedResourceFacade.getTotalBookedResourcesByServiceInPeriod(startDate, endDate);
-
-        return PeriodTotalsMerger.reduce(available, booked);
-    }
+//    public List<PeriodTotal> getNetoRemainingResources(LocalDate startDate, LocalDate endDate) {
+//
+//        List<PeriodTotal> available = availableResourceFacade.getTotalAvailableResourcesInPeriod(startDate, endDate);
+//        List<PeriodTotal> booked = bookedResourceFacade.getTotalBookedResourcesByServiceInPeriod(startDate, endDate);
+//
+//        return PeriodTotalsMerger.reduce(available, booked);
+//    }
 
     public Map<Service, List<PeriodWithValue>> getWeighedRemainingResourcesByService(LocalDate startDate, LocalDate endDate) {
 

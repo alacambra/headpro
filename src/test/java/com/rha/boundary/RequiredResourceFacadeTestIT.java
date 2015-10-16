@@ -32,7 +32,7 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
 
     @Test
     public void testGetBookedResourcesForServiceInPeriod() throws Exception {
-        Service s1 = loadRequiredServiceTestTable("RequiredResourcesTestTable.csv", null);
+        Service s1 = loadRequiredServiceTestTable("RequiredResourcesTestTableS1.csv", null);
         tx.begin();
 
         List<RequiredResource> r = cut.getBookedResourcesForServiceInPeriod(s1,
@@ -83,7 +83,7 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
     public void testGetTotalBookedResourcesForServiceInPeriod() throws Exception {
 
         List<Float> totals = new ArrayList<>();
-        Service s1 = loadRequiredServiceTestTable("RequiredResourcesTestTable.csv", totals);
+        Service s1 = loadRequiredServiceTestTable("RequiredResourcesTestTableS1.csv", totals);
 
         List<PeriodTotal> r = cut.getTotalBookedResourcesForServiceInPeriod(s1,
                 LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.DECEMBER, 31));
@@ -99,29 +99,37 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
 
     @Test
     public void testGetTotalBookedResourcesByServiceInPeriod() throws Exception {
-        tx.begin();
-        Service s = new Service();
-        s.setName("testDivision");
-        s = em.merge(s);
 
-        Project p = new Project();
-        p.setName("testProject");
-        p.setStep(Step.MONTH);
-        p = em.merge(p);
+        List<Float> totals = new ArrayList<>();
+        Service s1 = loadRequiredServiceTestTable("RequiredResourcesTestTableS1.csv", totals);
 
-        RequiredResource br = new RequiredResource();
-        br.setBooked(10f);
-        br.setService(s);
-        br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
-        br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
-        br.setProject(p);
+        List<Float> totals2 = new ArrayList<>();
+        Service s2 = loadRequiredServiceTestTable("RequiredResourcesTestTableS2.csv", totals2);
 
-        em.persist(br);
+        List<Float> totals3 = new ArrayList<>();
+        Service s3 = loadRequiredServiceTestTable("RequiredResourcesTestTableS3.csv", totals3);
 
-        tx.commit();
+
+//        Service s = new Service();
+//        s.setName("testDivision");
+//        s = em.merge(s);
+//
+//        Project p = new Project();
+//        p.setName("testProject");
+//        p.setStep(Step.MONTH);
+//        p = em.merge(p);
+//
+//        RequiredResource br = new RequiredResource();
+//        br.setBooked(10f);
+//        br.setService(s);
+//        br.setStartDate(LocalDate.of(2015, Month.MARCH, 1));
+//        br.setEndDate(LocalDate.of(2015, Month.MARCH, 30));
+//        br.setProject(p);
+//
+//        em.persist(br);
 
         List<PeriodTotal> result = cut.getTotalBookedResourcesByServiceInPeriod(
-                LocalDate.of(2015, Month.FEBRUARY, 1), LocalDate.of(2015, Month.FEBRUARY, 1).plusMonths(12));
+                LocalDate.of(2013, Month.FEBRUARY, 1), LocalDate.of(2013, Month.FEBRUARY, 1).plusMonths(12));
 
         assertThat(result.size(), is(1));
         assertThat(result.get(0).getTotal(), is(10F));
