@@ -8,7 +8,6 @@ package com.rha.boundary;
 import com.airhacks.enhydrator.Pump;
 import com.airhacks.enhydrator.in.*;
 import com.airhacks.enhydrator.in.Column;
-import com.airhacks.enhydrator.out.LogSink;
 import com.airhacks.enhydrator.transform.Memory;
 import com.airhacks.enhydrator.transform.SkipFirstRow;
 import com.rha.entity.AvailableResource;
@@ -115,7 +114,9 @@ public class BaseTestIT {
         System.out.println(totalArs);
     }
 
-    public void loadRequiredServiceTestTable(String testFileName) {
+    public Service loadRequiredServiceTestTable(String testFileName, List<Float> totals) {
+
+
         tx.begin();
         Source source = new CSVFileSource(INPUT + testFileName, ",", "utf-8", true);
         VirtualSinkSource output = new VirtualSinkSource();
@@ -127,7 +128,7 @@ public class BaseTestIT {
         Memory memory = pump.start();
         List<Row> rows = output.getRows();
 
-        String serviceName = (String) rows.get(rows.size()-1).getColumnByIndex(1).getValue();
+        String serviceName = (String) rows.get(rows.size() - 1).getColumnByIndex(1).getValue();
         Service service = new Service();
         service.setName(serviceName);
         service = em.merge(service);
@@ -135,7 +136,19 @@ public class BaseTestIT {
         int totalArs = 0;
         for (Row row : rows) {
 
-            if (row.getColumnByIndex(0).getValue().equals("Total") || row.getColumnByIndex(0).getValue().equals("Service")) {
+            if (row.getColumnByIndex(0).getValue().equals("Total")) {
+
+                if (totals == null) continue;
+
+                for (int i = 1; i < row.getNumberOfColumns(); i++) {
+                    float value = Float.parseFloat((String) row.getColumnByIndex(i).getValue());
+                    totals.add(value);
+                }
+
+                continue;
+            }
+
+            if (row.getColumnByIndex(0).getValue().equals("Service")) {
                 continue;
             }
 
@@ -163,6 +176,7 @@ public class BaseTestIT {
         }
         tx.commit();
         System.out.println(totalArs);
+        return service;
     }
 
     private Service persistService(Row row) {
@@ -175,7 +189,7 @@ public class BaseTestIT {
         return service;
     }
 
-    private Project persistProject(Row row){
+    private Project persistProject(Row row) {
         Project project = new Project();
         String projectName = (String) row.getColumnByIndex(0).getValue();
         project.setName(projectName);
