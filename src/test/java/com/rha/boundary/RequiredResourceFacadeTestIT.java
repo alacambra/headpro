@@ -118,6 +118,8 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
 
         em.persist(br);
 
+        tx.commit();
+
         List<PeriodTotal> result = cut.getTotalBookedResourcesByServiceInPeriod(
                 LocalDate.of(2015, Month.FEBRUARY, 1), LocalDate.of(2015, Month.FEBRUARY, 1).plusMonths(12));
 
