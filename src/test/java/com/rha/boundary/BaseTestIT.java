@@ -12,6 +12,8 @@ import com.airhacks.enhydrator.out.LogSink;
 import com.airhacks.enhydrator.transform.Memory;
 import com.airhacks.enhydrator.transform.SkipFirstRow;
 import com.rha.entity.AvailableResource;
+import com.rha.entity.Project;
+import com.rha.entity.RequiredResource;
 import com.rha.entity.Service;
 import com.rha.presentation.AvailableResourceController;
 import org.junit.After;
@@ -70,14 +72,15 @@ public class BaseTestIT {
         }
     }
 
-    public void loadServiceTestTable(String testFileName) {
+    public void loadAvailableServiceTestTable(String testFileName) {
         tx.begin();
         Source source = new CSVFileSource(INPUT + testFileName, ",", "utf-8", true);
         VirtualSinkSource output = new VirtualSinkSource();
         Pump pump = new Pump.Engine()
                 .from(source)
                 .startWith(new SkipFirstRow())
-                .to(new LogSink()).to(output).build();
+                .to(output)
+                .build();
         Memory memory = pump.start();
         List<Row> rows = output.getRows();
         int totalArs = 0;
@@ -112,14 +115,71 @@ public class BaseTestIT {
         System.out.println(totalArs);
     }
 
+    public void loadRequiredServiceTestTable(String testFileName) {
+        tx.begin();
+        Source source = new CSVFileSource(INPUT + testFileName, ",", "utf-8", true);
+        VirtualSinkSource output = new VirtualSinkSource();
+        Pump pump = new Pump.Engine()
+                .from(source)
+                .startWith(new SkipFirstRow())
+                .to(output)
+                .build();
+        Memory memory = pump.start();
+        List<Row> rows = output.getRows();
+
+        String serviceName = (String) rows.get(rows.size()-1).getColumnByIndex(1).getValue();
+        Service service = new Service();
+        service.setName(serviceName);
+        service = em.merge(service);
+
+        int totalArs = 0;
+        for (Row row : rows) {
+
+            if (row.getColumnByIndex(0).getValue().equals("Total") || row.getColumnByIndex(0).getValue().equals("Service")) {
+                continue;
+            }
+
+            for (int i = 1; i < row.getColumnNames().size(); i++) {
+                Column c = row.getColumnByIndex(i);
+                String dateAsString = c.getName().toString();
+
+                LocalDate startDate = LocalDate.parse(dateAsString, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+                LocalDate endDate = startDate.getDayOfMonth() == 1 ? startDate.plusDays(14)
+                        : startDate.plusDays(startDate.lengthOfMonth() - 16);
+
+                Project project = persistProject(row);
+
+                RequiredResource requiredResource = new RequiredResource();
+                requiredResource.setPeriod(new LocalDate[]{startDate, endDate});
+                requiredResource.setService(service);
+                requiredResource.setProject(project);
+
+                if (c.getValue() == null) continue;
+
+                requiredResource.setValue(Float.parseFloat((String) c.getValue()));
+                em.persist(requiredResource);
+                totalArs++;
+            }
+        }
+        tx.commit();
+        System.out.println(totalArs);
+    }
+
     private Service persistService(Row row) {
 
         Service service = new Service();
-        String serviceName = "";
-        serviceName = (String) row.getColumnByIndex(0).getValue();
+        String serviceName = (String) row.getColumnByIndex(0).getValue();
         service.setName(serviceName);
         service = em.merge(service);
 
         return service;
+    }
+
+    private Project persistProject(Row row){
+        Project project = new Project();
+        String projectName = (String) row.getColumnByIndex(0).getValue();
+        project.setName(projectName);
+        project = em.merge(project);
+        return project;
     }
 }

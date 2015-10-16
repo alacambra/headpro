@@ -13,8 +13,7 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
-import javax.persistence.RollbackException;
+
 import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Ignore;
@@ -48,7 +47,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
     @Test
     public void testGetAvailableResourcesInPeriodSmall() throws Exception {
-        loadServiceTestTable("ServiceTestTableSmall.csv");
+        loadAvailableServiceTestTable("ServiceTestTableSmall.csv");
         tx.begin();
 
         List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
@@ -61,7 +60,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
     @Test
     public void testGetAvailableResourcesInPeriodBig() throws Exception {
-        loadServiceTestTable("ServiceTestTableBig.csv");
+        loadAvailableServiceTestTable("ServiceTestTableBig.csv");
         tx.begin();
 
         List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
@@ -100,7 +99,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
     @Test
     public void testGetAvailableResourcesInPeriodBigWithNulls() throws Exception {
-        loadServiceTestTable("ServiceTestTableBigWithNulls.csv");
+        loadAvailableServiceTestTable("ServiceTestTableBigWithNulls.csv");
         tx.begin();
 
         List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
@@ -141,7 +140,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
     @Test
     public void testGetAvailableResourcesInPeriodEmpty() throws Exception {
-        loadServiceTestTable("ServiceTestTableSmall.csv");
+        loadAvailableServiceTestTable("ServiceTestTableSmall.csv");
         tx.begin();
 
         List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
@@ -154,7 +153,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
     @Test
     public void testGetAvailableResourcesInPeriodShort() throws Exception {
-        loadServiceTestTable("ServiceTestTableSmall.csv");
+        loadAvailableServiceTestTable("ServiceTestTableSmall.csv");
         tx.begin();
 
         List<AvailableResource> result = cut.getAvailableResourcesInPeriod(
@@ -167,7 +166,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
     @Test
     public void testGetTotalAvailableResourcesInPeriodSmall() throws Exception {
-        loadServiceTestTable("ServiceTestTableSmall.csv");
+        loadAvailableServiceTestTable("ServiceTestTableSmall.csv");
         tx.begin();
 
         List<PeriodTotal> result = cut.getTotalAvailableResourcesInPeriod(
@@ -186,7 +185,7 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
     @Test
     public void testGetTotalAvailableResourcesInPeriodBig() throws Exception {
-        loadServiceTestTable("ServiceTestTableBig.csv");
+        loadAvailableServiceTestTable("ServiceTestTableBig.csv");
         tx.begin();
 
         List<PeriodTotal> result = cut.getTotalAvailableResourcesInPeriod(
@@ -196,8 +195,11 @@ public class AvailableResourceFacadeIT extends BaseTestIT{
 
         assertThat(result.size(), is(24));
 
-        List<Float> expectedTotal = Arrays.asList(25f, 25f, 25f, 25f, 26f, 26f, 26f,
-                26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f);
+        List<Float> expectedTotal = Arrays.asList(
+                25f, 25f, 25f, 25f, 26f, 26f, 26f, 26f,
+                26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f,
+                26f, 26f, 26f, 26f, 26f, 26f, 26f, 26f
+        );
 
         for(int i = 0; i<4; i++){
             assertThat(result.get(i).getTotal(), is(expectedTotal.get(i)));

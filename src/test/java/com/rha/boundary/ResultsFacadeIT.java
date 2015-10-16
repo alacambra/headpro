@@ -69,13 +69,13 @@ public class ResultsFacadeIT {
         Project p1 = createProject("p1", periodStartDate, periodEndDate);
         Project p2 = createProject("p2", periodStartDate, periodEndDate);
 
-        creatBookedResource(p1, s1, periodStartDate);
-        creatBookedResource(p1, s1, periodStartDate);
-        creatBookedResource(p1, s2, periodStartDate);
+        createBookedResource(p1, s1, periodStartDate);
+        createBookedResource(p1, s1, periodStartDate);
+        createBookedResource(p1, s2, periodStartDate);
 
-        creatBookedResource(p2, s1, periodStartDate);
-        creatBookedResource(p2, s1, periodStartDate);
-        creatBookedResource(p2, s2, periodStartDate);
+        createBookedResource(p2, s1, periodStartDate);
+        createBookedResource(p2, s1, periodStartDate);
+        createBookedResource(p2, s2, periodStartDate);
 
         createAvailableResource(s1);
         createAvailableResource(s2);
@@ -107,7 +107,7 @@ public class ResultsFacadeIT {
         return s;
     }
 
-    private RequiredResource creatBookedResource(Project p, Service s, LocalDate startDate) {
+    private RequiredResource createBookedResource(Project p, Service s, LocalDate startDate) {
 
         RequiredResource br = new RequiredResource();
         br.setStartDate(startDate);

@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  *
  * @author alacambra
  */
-public class RequiredResourceFacadeIT {
+public class RequiredResourceFacadeIT extends BaseTestIT {
 
     EntityManager em;
     EntityTransaction tx;
@@ -40,22 +40,21 @@ public class RequiredResourceFacadeIT {
 
     @Before
     public void setUp() {
+        super.setUp();
         cut = new RequiredResourceFacade();
-        cut.em = Persistence.createEntityManagerFactory("it").createEntityManager();
-        this.em = cut.em;
-        this.tx = this.em.getTransaction();
-        tx.begin();
+        cut.em = this.em;
     }
 
     @After
     public void tearDown() {
-        tx.commit();
+        super.tearDown();
     }
 
     @Test
     @Ignore
     public void testGetBookedResourcesInPeriod() throws Exception {
 
+        tx.begin();
         Service s = new Service();
         s.setName("testDivision");
         s = em.merge(s);
@@ -91,11 +90,12 @@ public class RequiredResourceFacadeIT {
 
     @Test
     public void testGetBookedResourcesForDivision_int() throws Exception {
+        loadRequiredServiceTestTable("RequiredResourcesTestTable.csv");
     }
 
     @Test
     public void testGetBookedResourcesForDivision_3args() throws Exception {
-
+        tx.begin();
         Service s = new Service();
         s.setName("testDivision");
         s = em.merge(s);
@@ -137,6 +137,7 @@ public class RequiredResourceFacadeIT {
     @Test
     @Ignore
     public void testGetTotalBookedResourcesPerProjectForDivision_int() throws Exception {
+        tx.begin();
         Service s = new Service();
         s.setName("testDivision");
         s = em.merge(s);
@@ -190,7 +191,7 @@ public class RequiredResourceFacadeIT {
 
     @Test
     public void testGetTotalBookedResourcesByServiceInPeriod() {
-
+        tx.begin();
         Service s = new Service();
         s.setName("testDivision");
         s = em.merge(s);
