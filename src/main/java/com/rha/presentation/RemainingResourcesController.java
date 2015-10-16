@@ -14,16 +14,12 @@ import com.rha.entity.PeriodTotal;
 import com.rha.entity.PeriodWithValue;
 import com.rha.entity.RemainingResource;
 import com.rha.entity.Service;
-import com.rha.entity.Step;
+
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.temporal.WeekFields;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
@@ -43,7 +39,7 @@ import org.primefaces.model.chart.ChartSeries;
 
 @SessionScoped
 @Named
-public class RemianiningResourcesController implements Serializable {
+public class RemainingResourcesController implements Serializable {
 
     @Inject
     transient Logger logger;
@@ -71,8 +67,8 @@ public class RemianiningResourcesController implements Serializable {
 
     List<ResourcesRow<Service, PeriodWithValue>> resultRows;
     List<PeriodTotal> totalResources;
-    BarChartModel resourcesChart;
-    BarChartModel chart2;
+    BarChartModel remainingByProjectChart;
+    BarChartModel availableVsRequiredResourcesChart;
     BarChartModel chartTotalDifference;
 
     public void loadAvailableVsRequiredResources() {
@@ -114,9 +110,9 @@ public class RemianiningResourcesController implements Serializable {
                 )
         );
 
-        chart2 = new BarChartModel();
-        chart2.setLegendPosition("ne");
-        chart2.setExtender("ext");
+        availableVsRequiredResourcesChart = new BarChartModel();
+        availableVsRequiredResourcesChart.setLegendPosition("ne");
+        availableVsRequiredResourcesChart.setExtender("ext");
         ChartSeries available = new BarChartSeries();
         ChartSeries required = new BarChartSeries();
 
@@ -125,17 +121,17 @@ public class RemianiningResourcesController implements Serializable {
 
         periodController.getPeriods().stream().map(period -> period[0]).forEach(date -> {
             available.set(Utils.defaultDateFormat(
-                    LocalDateConverter.toDate(date)),
+                            LocalDateConverter.toDate(date)),
                     allAvailableResources.get(date));
 
             required.set(Utils.defaultDateFormat(
-                    LocalDateConverter.toDate(date)),
+                            LocalDateConverter.toDate(date)),
                     allBookedResources.get(date));
         });
 
-        chart2.addSeries(available);
-        chart2.addSeries(required);
-        chart2.setTitle("Available vs required");
+        availableVsRequiredResourcesChart.addSeries(available);
+        availableVsRequiredResourcesChart.addSeries(required);
+        availableVsRequiredResourcesChart.setTitle("Available vs required");
     }
 
     public void loadTotalDifferenceResources() {
@@ -193,11 +189,11 @@ public class RemianiningResourcesController implements Serializable {
         chartTotalDifference.addSeries(remaining);
     }
 
-    public BarChartModel getChart2() {
-        if (chart2 == null) {
+    public BarChartModel getAvailableVsRequiredChart() {
+        if (availableVsRequiredResourcesChart == null) {
             loadAvailableVsRequiredResources();
         }
-        return chart2;
+        return availableVsRequiredResourcesChart;
     }
 
     public BarChartModel getChartTotalDifference() {
@@ -259,8 +255,8 @@ public class RemianiningResourcesController implements Serializable {
     private void resetValues(@Observes PeriodChangedEvent event) {
         resultRows = null;
         totalResources = null;
-        resourcesChart = null;
-        chart2 = null;
+        remainingByProjectChart = null;
+        availableVsRequiredResourcesChart = null;
         chartTotalDifference = null;
     }
 
@@ -280,48 +276,21 @@ public class RemianiningResourcesController implements Serializable {
         return br.getStartDate();
     }
 
-    public BarChartModel getAreaModel() {
+    public BarChartModel getRemainingByProjectChart() {
 
-        if (resourcesChart == null) {
-            getChart3();
-//            loadAvailableResourcesForPeriod();
-//            createAreaModel();
-//            resourcesChart = new ResourcesChart<Service, PeriodWithValue>()
-//                    .setGraphTitle("Remaining resources")
-//                    .setPeriods(periodController.getPeriods())
-//                    .setResourcesRows(resultRows)
-//                    .setTotalResources(totalResources)
-//                    .setStep(step)
-//                    .setLocale(Locale.GERMANY)
-//                    .setExetender("ext")
-//                    .createResourcesGraph();
-//
-//            resourcesChart.setStacked(false);
+        if (remainingByProjectChart == null) {
+            loadRemainingByProjectChart();
         }
 
-        return resourcesChart;
+        return remainingByProjectChart;
     }
 
-    public BarChartModel getAreaModel2() {
+    private void loadRemainingByProjectChart() {
 
-//        Map<Service, Float> res = resultsFacade.getWeighedRemainingResourcesByService2(periodController.getLocalStartDate(), periodController.getLocalEndDate());
-//        resourcesChart = new BarChartModel();
-//        
-//        res.entrySet().forEach(r -> {
-//            
-//            ChartSeries chartSeries = new BarChartSeries();
-//            chartSeries.setLabel(r.getKey().getName());
-//            chart
-//        });
-        return resourcesChart;
-    }
-
-    private void getChart3() {
-
-        resourcesChart = new BarChartModel();
+        remainingByProjectChart = new BarChartModel();
 
         Map<Service, Map<LocalDate, Float>> resources
-                = remainingResourcesFacade.getWeighedRemainingResourcesByService2(periodController.getLocalStartDate(), periodController.getLocalEndDate());
+                = remainingResourcesFacade.getWeighedRemainingResourcesByServiceAndDate(periodController.getLocalStartDate(), periodController.getLocalEndDate());
 
         resources.entrySet().forEach(serviceEntry -> {
 
@@ -339,81 +308,22 @@ public class RemianiningResourcesController implements Serializable {
                 chartSeries.set(date, 0f);
             });
 
-            resourcesChart.addSeries(chartSeries);
+            remainingByProjectChart.addSeries(chartSeries);
         });
 
-        resourcesChart.setExtender("ext");
-        resourcesChart.setTitle("Remaining resources per Project");
-        resourcesChart.setLegendPosition("ne");
-        resourcesChart.setStacked(true);
-        resourcesChart.setShowPointLabels(true);
+        remainingByProjectChart.setExtender("ext");
+        remainingByProjectChart.setTitle("Remaining resources per Project");
+        remainingByProjectChart.setLegendPosition("ne");
+        remainingByProjectChart.setStacked(true);
+        remainingByProjectChart.setShowPointLabels(true);
 
         Axis xAxis = new CategoryAxis("Period (" + periodController.getStep().name().toLowerCase() + ")");
         xAxis.setTickAngle(0);
 
-        resourcesChart.getAxes().put(AxisType.X, xAxis);
-        Axis yAxis = resourcesChart.getAxis(AxisType.Y);
+        remainingByProjectChart.getAxes().put(AxisType.X, xAxis);
+        Axis yAxis = remainingByProjectChart.getAxis(AxisType.Y);
 
         yAxis.setLabel("Resources (hours)");
 
     }
-
-    private void createAreaModel() {
-        resourcesChart = new BarChartModel();
-        int size = resultRows.size() * periodController.getPeriods().size();
-
-        if (size < 1200) {
-
-            resultRows.stream().forEach(row -> {
-
-                ChartSeries chartSeriePositive = new ChartSeries();
-                chartSeriePositive.setLabel(row.getKey().getName());
-
-                row.getColumns().stream().forEach(remainingresource -> {
-                    float remainingResources = Optional.ofNullable(remainingresource.getValue()).orElse(0f);
-
-                    String columnName;
-                    if (periodController.getStep() == Step.WEEK) {
-                        WeekFields fields = WeekFields.of(Locale.GERMANY);
-                        int kw = remainingresource.getStartDate().get(fields.weekOfYear());
-                        columnName = "CW" + kw;
-                    } else {
-                        columnName = Utils.defaultDateFormat(LocalDateConverter.toDate(remainingresource.getStartDate()));
-                    }
-
-                    chartSeriePositive.set(columnName, remainingResources);
-                });
-
-                resourcesChart.addSeries(chartSeriePositive);
-
-            });
-        } else {
-            ChartSeries chartSerie = new ChartSeries();
-            chartSerie.setLabel("total");
-
-            totalResources.stream().forEach((booking) -> {
-                chartSerie.set(booking.getStartDate(), booking.getTotal());
-            });
-            resourcesChart.addSeries(chartSerie);
-        }
-
-        resourcesChart.setExtender("ext");
-        resourcesChart.setTitle("Remaining resources");
-        resourcesChart.setLegendPosition("ne");
-        resourcesChart.setStacked(true);
-        resourcesChart.setShowPointLabels(true);
-
-        Axis xAxis = new CategoryAxis("Period (" + periodController.getStep().name().toLowerCase() + ")");
-        xAxis.setTickAngle(0);
-
-        resourcesChart.getAxes().put(AxisType.X, xAxis);
-        Axis yAxis = resourcesChart.getAxis(AxisType.Y);
-
-        yAxis.setLabel("Resources (hours)");
-    }
-
-    public List<Step> getSteps() {
-        return Arrays.asList(Step.BIWEEK);
-    }
-
 }

@@ -19,6 +19,7 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
     RequiredResourceFacade cut;
 
     @Before
+    @Override
     public void setUp() {
         super.setUp();
         cut = new RequiredResourceFacade();
@@ -26,6 +27,7 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
     }
 
     @After
+    @Override
     public void tearDown() {
         super.tearDown();
     }
@@ -33,6 +35,7 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
     @Test
     public void testGetBookedResourcesForServiceInPeriod() throws Exception {
         Service s1 = loadRequiredServiceTestTable("RequiredResourcesTestTableS1.csv", null);
+
         tx.begin();
 
         List<RequiredResource> r = cut.getBookedResourcesForServiceInPeriod(s1,
@@ -80,6 +83,19 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
     }
 
     @Test
+    public void testGetBookedResourcesForServiceInPeriodMultipleServices() throws Exception {
+        Service s1 = loadRequiredServiceTestTable("RequiredResourcesTestTableS1.csv", null);
+        Service s2 = loadRequiredServiceTestTable("RequiredResourcesTestTableS2.csv", null);
+
+        tx.begin();
+
+        List<RequiredResource> r = cut.getBookedResourcesForServiceInPeriod(s1,
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.DECEMBER, 31));
+
+        assertThat(r.size(), is(126));
+    }
+    
+    @Test
     public void testGetTotalBookedResourcesForServiceInPeriod() throws Exception {
 
         List<Float> totals = new ArrayList<>();
@@ -94,7 +110,6 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
         for(int i = 0; i<r.size(); i++){
             assertThat(r.get(i).getTotal(), is(totals.get(i)));
         }
-
     }
 
     @Test
@@ -104,6 +119,19 @@ public class RequiredResourceFacadeTestIT extends BaseTestIT {
 
     @Test
     public void testGetBookedResourcesInPeriod() throws Exception {
+
+        loadRequiredServiceTestTable("RequiredResourcesTestTableS1.csv", null);
+        loadRequiredServiceTestTable("RequiredResourcesTestTableS2.csv", null);
+        loadRequiredServiceTestTable("RequiredResourcesTestTableS3.csv", null);
+
+        tx.begin();
+
+        List<RequiredResource> r = cut.getBookedResourcesInPeriod(
+                LocalDate.of(2013, Month.JANUARY, 1), LocalDate.of(2013, Month.DECEMBER, 31));
+
+        assertThat(r.size(), is(3*126));
+
+        tx.commit();
 
     }
 }

@@ -64,20 +64,8 @@ public class RemainingResourcesFacade implements Serializable{
 
         return result;
     }
-    
-    private Service getService(PeriodWithValue resource){
-        if(resource instanceof AvailableResource){
-            return ((AvailableResource)resource).getService();
-        }
-        
-        if(resource instanceof RequiredResource){
-            return ((RequiredResource)resource).getService();
-        }
-        
-        throw new RuntimeException("Invalid instance");
-    }
 
-    public Map<Service, Map<LocalDate, Float>> getWeighedRemainingResourcesByService2(LocalDate startDate, LocalDate endDate) {
+    public Map<Service, Map<LocalDate, Float>> getWeighedRemainingResourcesByServiceAndDate(LocalDate startDate, LocalDate endDate) {
 
         List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
         List<RequiredResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()
@@ -106,8 +94,20 @@ public class RemainingResourcesFacade implements Serializable{
 
         return allResources;
     }
-    
-    public Map<LocalDate, Map<Service, Float>> getWeighedRemainingResourcesByService3(LocalDate startDate, LocalDate endDate) {
+
+    private Service getService(PeriodWithValue resource){
+        if(resource instanceof AvailableResource){
+            return ((AvailableResource)resource).getService();
+        }
+
+        if(resource instanceof RequiredResource){
+            return ((RequiredResource)resource).getService();
+        }
+
+        throw new RuntimeException("Invalid instance");
+    }
+
+    public Map<LocalDate, Map<Service, Float>> getWeighedRemainingResourcesByDateAndService(LocalDate startDate, LocalDate endDate) {
 
         List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
         List<RequiredResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()

@@ -80,7 +80,7 @@ public class ResultsFacadeIT {
         createAvailableResource(s1);
         createAvailableResource(s2);
         
-        Map<Service, Map<LocalDate, Float>> r = cut.getWeighedRemainingResourcesByService2(periodStartDate, periodEndDate);
+        Map<Service, Map<LocalDate, Float>> r = cut.getWeighedRemainingResourcesByServiceAndDate(periodStartDate, periodEndDate);
         
         assertThat(r.size(), is(2));
         assertThat(r.get(s1).size(), is(1));
