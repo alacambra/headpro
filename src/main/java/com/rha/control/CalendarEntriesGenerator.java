@@ -43,15 +43,17 @@ public class CalendarEntriesGenerator implements Serializable{
             return p[0];
         }).collect(Collectors.toSet());
 
+        /*
+        Only leave those periods that not have any periodic entity.
+         */
         periodicEntities.stream().map(p -> p.getStartDate()).forEach(date -> {
-            if(!periods.contains(date)){
-                logger.info("Invalid dte fetch. Date " +  LocalDateConverter.toDate(date));
-                
-            }
             periods.remove(date);
         });
         logger.finer("to introduce: " + periods.size());
 
+        /*
+        Generate periodicEntity for periods without entity
+         */
         periods.stream().forEach(d -> periodicEntities.add(generateEntity(supplier, dates.get(d))));
         logger.finer("total after generation: " + periodicEntities.size());
 
