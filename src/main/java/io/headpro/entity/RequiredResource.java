@@ -32,7 +32,7 @@ import javax.persistence.Transient;
             + "AND s=:service order by br.startDate"),
 
     @NamedQuery(name = RequiredResource.totalForServiceInPeriod,
-            query = "SELECT new com.rha.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked))"
+            query = "SELECT new io.headpro.entity.PeriodTotal(br.startDate, br.endDate, sum(br.booked))"
             + " FROM RequiredResource br JOIN br.service s "
             + "WHERE ((br.startDate>=:startDate AND br.startDate<=:endDate)"
             + " OR (br.endDate>=:startDate AND br.endDate<=:endDate) "

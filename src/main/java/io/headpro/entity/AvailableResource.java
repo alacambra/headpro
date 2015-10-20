@@ -35,7 +35,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
             + " OR (ar.startDate<=:startDate AND ar.endDate>=:endDate)) AND s=:service"
             + " order by ar.startDate"),
     @NamedQuery(name = AvailableResource.totalAvailabiltyInPeriod, query
-            = "SELECT new com.rha.entity.PeriodTotal(ar.startDate, ar.endDate, sum(ar.available))"
+            = "SELECT new io.headpro.entity.PeriodTotal(ar.startDate, ar.endDate, sum(ar.available))"
             + "FROM AvailableResource ar "
             + "WHERE ((ar.startDate>=:startDate AND ar.startDate<=:endDate)"
             + " OR (ar.endDate>=:startDate AND ar.endDate<=:endDate) "
