@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
     <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
-        <class>io.rha.entity.RequiredResource</class>
-        <class>io.rha.entity.Service</class>
-        <class>io.rha.entity.Project</class>
-        <class>io.rha.entity.AvailableResource</class>
+        <class>io.headpro.entity.RequiredResource</class>
+        <class>io.headpro.entity.Service</class>
+        <class>io.headpro.entity.Project</class>
+        <class>io.headpro.entity.AvailableResource</class>
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
             <property name="javax.persistence.jdbc.driver" value="org.h2.jdbcx.JdbcDataSource"/>
