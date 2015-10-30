@@ -1,18 +1,19 @@
 package io.headpro.boundary;
 
 import io.headpro.entity.AvailableResource;
-import io.headpro.entity.RequiredResource;
 import io.headpro.entity.PeriodWithValue;
+import io.headpro.entity.RequiredResource;
 import io.headpro.entity.Service;
 
+import javax.inject.Inject;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import static java.util.stream.Collectors.*;
-import javax.inject.Inject;
 
 /**
  *
@@ -36,9 +37,7 @@ public class RemainingResourcesFacade implements Serializable{
 
         Map<Service, List<PeriodWithValue>> brs = booked.stream().map(br -> {
 
-            int probability = br.getProject().getProbability() / 100;
-            probability = 1;
-            br.setBooked((-1 * br.getBooked() * probability));
+            br.setBooked((-1 * br.getBooked()));
             return br;
         }).collect(groupingBy(RequiredResource::getService, mapping(r -> (PeriodWithValue) r, toList())));
 
@@ -68,9 +67,7 @@ public class RemainingResourcesFacade implements Serializable{
         List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
         List<RequiredResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()
                 .map(br -> {
-                    int probability = br.getProject().getProbability() / 100;
-                    probability = 1;
-                    br.setBooked((-1 * br.getBooked() * probability));
+                    br.setBooked((-1 * br.getBooked()));
                     return br;
                 }).collect(toList());
 
@@ -110,9 +107,7 @@ public class RemainingResourcesFacade implements Serializable{
         List<AvailableResource> available = availableResourceFacade.getAvailableResourcesInPeriod(startDate, endDate);
         List<RequiredResource> booked = bookedResourceFacade.getBookedResourcesInPeriod(startDate, endDate).stream()
                 .map(br -> {
-                    int probability = br.getProject().getProbability() / 100;
-                    probability = 1;
-                    br.setBooked((-1 * br.getBooked() * probability));
+                    br.setBooked((-1 * br.getBooked()));
                     return br;
                 }).collect(toList());
 

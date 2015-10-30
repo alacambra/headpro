@@ -33,9 +33,7 @@ public class Project implements Serializable {
     List<RequiredResource> bookedResources;
 
     String name;
-    Integer probability = 100;
-    Integer abscence = 0;
-    Step step = Step.MONTH;
+    Step step = Step.WEEK;
 
     @Temporal(TemporalType.DATE)
     Date startDate;
@@ -49,14 +47,6 @@ public class Project implements Serializable {
 
     public void setStep(Step step) {
         this.step = step;
-    }
-
-    public Integer getProbability() {
-        return probability;
-    }
-
-    public void setProbability(Integer probability) {
-        this.probability = probability;
     }
 
     public String getName() {
@@ -73,14 +63,6 @@ public class Project implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getAbscence() {
-        return abscence;
-    }
-
-    public void setAbscence(Integer abscence) {
-        this.abscence = abscence;
     }
 
     public LocalDate getStartLocalDate() {

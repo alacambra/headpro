@@ -5,12 +5,13 @@
  */
 package io.headpro.control;
 
-import io.headpro.entity.RequiredResource;
 import io.headpro.entity.PeriodTotal;
+
 import java.util.List;
 import java.util.function.BinaryOperator;
-import static java.util.stream.Collectors.*;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.*;
 
 /**
  *
@@ -34,15 +35,4 @@ public class PeriodTotalsMerger {
 
         return periods;
     }
-
-    public static List<RequiredResource> factorsPonderation(List<RequiredResource> bookedResources) {
-
-        List<RequiredResource> r = bookedResources.stream().map(br -> {
-            br.setBooked(br.getBooked() * br.getProject().getProbability() / (1 - br.getProject().getAbscence()));
-            return br;
-        }).collect(toList());
-    
-        return r;
-    }
-
 }
