@@ -15,13 +15,6 @@
             <h:form>
                 <span>From </span><p:calendar style="width: 70px" id="startDate" value="#{periodController.startDate}"></p:calendar>
                 <span>to</span> <p:calendar style="width: 70px" id="endDate" value="#{periodController.endDate}"></p:calendar>
-                <span>in</span>
-                <p:selectOneMenu style="margin-left: 5px; vertical-align: bottom" id="step" value="#{periodController.step}" >
-                    <f:selectItem itemLabel="Step"/>
-                    <f:selectItems value="#{periodController.steps}"
-                                   var="step"
-                                   itemValue="#{step}"/>
-                </p:selectOneMenu>
                 <p:commandButton value="Set" action="#{periodController.submitChanges()}" update=":contents">
                 </p:commandButton>
             </h:form>
