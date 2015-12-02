@@ -14,10 +14,6 @@
                     <p:panelGrid columns="2" rendered="#{projectController.selected != null}">
                         <h:outputText value="#{bundle.ViewProjectLabel_id}"/>
                         <h:outputText value="#{projectController.selected.id}" title="#{bundle.ViewProjectTitle_id}"/>
-                        <h:outputText value="#{bundle.ViewProjectLabel_step}"/>
-                        <h:outputText value="#{projectController.selected.step}" title="#{bundle.ViewProjectTitle_step}"/>
-                        <h:outputText value="#{bundle.ViewProjectLabel_probability}"/>
-                        <h:outputText value="#{projectController.selected.probability}" title="#{bundle.ViewProjectTitle_probability}"/>
                         <h:outputText value="#{bundle.ViewProjectLabel_name}"/>
                         <h:outputText value="#{projectController.selected.name}" title="#{bundle.ViewProjectTitle_name}"/>
                     </p:panelGrid>

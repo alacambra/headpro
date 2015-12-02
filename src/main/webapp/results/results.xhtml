@@ -1,50 +1,55 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+        >
 
-    <ui:composition template="/main-layout.xhtml">
-        <ui:define name="browser-title">
-            <h:outputText value="RHA-Results"></h:outputText>
-        </ui:define>
-        <ui:define name="submit-period">
+<ui:composition template="/main-layout.xhtml">
+    <ui:define name="browser-title">
+        <h:outputText value="RHA-Results"></h:outputText>
+    </ui:define>
+    <ui:define name="submit-period">
+        <h:form>
+            <span>From </span><p:calendar style="width: 70px" id="startDate"
+                                          value="#{periodController.startDate}"></p:calendar>
+            <span>to</span> <p:calendar style="width: 70px" id="endDate"
+                                        value="#{periodController.endDate}"></p:calendar>
+            <p:commandButton value="Set" action="#{periodController.submitChanges()}" update=":contents">
+            </p:commandButton>
+        </h:form>
+    </ui:define>
+    <ui:define name="body">
+        <h:panelGroup id="contents">
+            <p:chart id="graph" widgetVar="chart" type="bar"
+                     model="#{remainingResourcesController.remainingByProjectChart}" style="height:300px"/>
+            <p:chart id="graph2" widgetVar="chart2" type="bar"
+                     model="#{remainingResourcesController.availableVsRequiredChart}" style="height:300px"/>
+            <p:chart id="totalDifference" widgetVar="chart3" type="bar"
+                     model="#{remainingResourcesController.chartTotalDifference}" style="height:300px"/>
+            <h:outputScript library="js" name="jqplot/jqplot.canvasOverlay.min.js"/>
+
+            <script type="text/javascript">
+                function ext() {
+                    this.cfg.canvasOverlay = {
+                        show: true,
+                        objects: [
+                            {horizontalLine: {
+                                y: 0,
+                                lineWidth: 1,
+                                color: 'black',
+                                shadow: false
+                            }}
+                        ]
+                    };
+                }
+            </script>
             <h:form>
-                <span>From </span><p:calendar style="width: 70px" id="startDate" value="#{periodController.startDate}"></p:calendar>
-                <span>to</span> <p:calendar style="width: 70px" id="endDate" value="#{periodController.endDate}"></p:calendar>
-                <p:commandButton value="Set" action="#{periodController.submitChanges()}" update=":contents">
-                </p:commandButton>
+                <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
             </h:form>
-        </ui:define>
-        <ui:define name="body">
-            <h:panelGroup id="contents">
-                <p:chart id="graph" widgetVar="chart" type="bar" model="#{remainingResourcesController.remainingByProjectChart}" style="height:300px" />
-                <p:chart id="graph2" widgetVar="chart2" type="bar" model="#{remainingResourcesController.availableVsRequiredChart}" style="height:300px" />
-                <p:chart id="totalDifference" widgetVar="chart3" type="bar" model="#{remainingResourcesController.chartTotalDifference}" style="height:300px" />
-                <h:outputScript library="js" name="jqplot/jqplot.canvasOverlay.min.js" />
-
-                <script type="text/javascript">
-                    function ext() {
-                        this.cfg.canvasOverlay = {
-                            show: true,
-                            objects: [
-                                {horizontalLine: {
-                                        y: 0,
-                                        lineWidth: 1,
-                                        color: 'black',
-                                        shadow: false
-                                    }}
-                            ]
-                        };
-                    }
-                </script>
-                <h:form>
-                    <p:commandButton type="button" value="Reset" icon="ui-icon-cancel" onclick="PF('chart').resetZoom()"/>
-                </h:form>
-            </h:panelGroup>
-        </ui:define>
-    </ui:composition>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>
 </html>

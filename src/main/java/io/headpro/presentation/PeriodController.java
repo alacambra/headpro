@@ -10,17 +10,17 @@ import io.headpro.control.LocalDateConverter;
 import io.headpro.entity.Service;
 import io.headpro.entity.Step;
 
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -34,7 +34,7 @@ public class PeriodController implements Serializable {
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Service activeService;
     List<LocalDate[]> periods;
-    Step step = Step.BIWEEK;
+    Step step = Step.WEEK;
     
     @Inject
     Event<PeriodChangedEvent> event;
@@ -106,7 +106,7 @@ public class PeriodController implements Serializable {
     }
 
     public List<Step> getSteps() {
-        return Arrays.asList(Step.BIWEEK);
+        return Arrays.asList(Step.WEEK);
     }
 
     public void submitChanges() {
