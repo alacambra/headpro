@@ -7,6 +7,11 @@ package io.headpro.control;
 
 import io.headpro.entity.RequiredResource;
 import io.headpro.entity.Step;
+import org.hamcrest.core.Is;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
@@ -16,10 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
-import org.hamcrest.core.Is;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -265,12 +267,13 @@ public class ResourcesCalendarTest {
     }
 
     @Test
-    public void testMergeCalendarEntriesHalfYeyar() {
+    public void testMergeCalendarEntriesHalfYear() {
 
         List<RequiredResource> existentResources = new ArrayList<>();
 
         RequiredResource br = new RequiredResource();
         br.setStartDate(LocalDate.of(2015, Month.JUNE, 1));
+        br.setEndDate(LocalDate.of(2015, Month.JUNE, 1).plusWeeks(1));
 
         existentResources.add(br);
 

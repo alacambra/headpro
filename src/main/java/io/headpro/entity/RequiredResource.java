@@ -156,32 +156,27 @@ public class RequiredResource implements Serializable, Comparable<RequiredResour
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RequiredResource)) return false;
 
-        hash = 29 * hash + Objects.hashCode(this.startDate);
-        hash = 29 * hash + Objects.hashCode(this.endDate);
+        RequiredResource that = (RequiredResource) o;
 
-        return hash;
+        if (!endDate.equals(that.endDate)) return false;
+        if (!project.equals(that.project)) return false;
+        if (!service.equals(that.service)) return false;
+        if (!startDate.equals(that.startDate)) return false;
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final RequiredResource other = (RequiredResource) obj;
-        if (!Objects.equals(this.startDate, other.startDate)) {
-            return false;
-        }
-        if (!Objects.equals(this.endDate, other.endDate)) {
-            return false;
-        }
-
-        return true;
+    public int hashCode() {
+        int result = service.hashCode();
+        result = 31 * result + project.hashCode();
+        result = 31 * result + startDate.hashCode();
+        result = 31 * result + endDate.hashCode();
+        return result;
     }
 
     @Override

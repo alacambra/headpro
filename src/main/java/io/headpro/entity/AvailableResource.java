@@ -138,20 +138,25 @@ public class AvailableResource implements Serializable, PeriodWithValue {
     }
 
     @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(id).toHashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AvailableResource)) return false;
+
+        AvailableResource that = (AvailableResource) o;
+
+        if (!endDate.equals(that.endDate)) return false;
+        if (!service.equals(that.service)) return false;
+        if (!startDate.equals(that.startDate)) return false;
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof AvailableResource) {
-            final AvailableResource other = (AvailableResource) obj;
-            return new EqualsBuilder()
-                    .append(id, other.getId())
-                    .isEquals();
-        } else {
-            return false;
-        }
+    public int hashCode() {
+        int result = service.hashCode();
+        result = 31 * result + startDate.hashCode();
+        result = 31 * result + endDate.hashCode();
+        return result;
     }
 
     @Override

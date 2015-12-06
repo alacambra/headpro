@@ -26,7 +26,7 @@ public class Project implements Serializable {
     public static final String projectsInPeriod = "Project.projectsInPeriod";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
