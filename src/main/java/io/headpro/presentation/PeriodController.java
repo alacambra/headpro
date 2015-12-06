@@ -34,7 +34,7 @@ public class PeriodController implements Serializable {
     LocalDate endDate = LocalDate.now().plusMonths(3).with(TemporalAdjusters.lastDayOfMonth());
     Service activeService;
     List<LocalDate[]> periods;
-    Step step = Step.WEEK;
+    Step step = Step.BIWEEK;
     
     @Inject
     Event<PeriodChangedEvent> event;
