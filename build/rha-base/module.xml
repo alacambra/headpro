@@ -1,9 +1,0 @@
-<module xmlns="urn:jboss:module:1.1" name="com.rha">
-    <resources>
-        <resource-root path="primefaces-5.0.jar"/>
-    </resources>
-    <dependencies>
-        <module name="javaee.api"/>
-        <module name="javax.faces.api"/>
-    </dependencies>
-</module>

@@ -13,3 +13,4 @@ src/main/.DS_Store
 .idea
 *.iml
 /build/test/
+/build/rha-base/
